@@ -1,7 +1,7 @@
 # observer-equivariance-lean
 
 A Lean 4 + [mathlib](https://github.com/leanprover-community/mathlib4) formalization of the
-strict classification theorem (Section 4) of
+strict and twisted classification theorems (Sections 4–5) of
 
 > G. Ullman, *Observer Equivariance as a Condition for Shared Physical Law*.
 > Zenodo — concept DOI: `10.5281/zenodo.17077437`; version DOI: `10.5281/zenodo.<FILL-IN>`.
@@ -12,7 +12,7 @@ Everything lives in a single file: [`ObserverEquivariance.lean`](ObserverEquivar
 
 For a *split principal `G`-fibration in groupoids* `p : O ⥤ S` together with a normalized,
 transport-compatible basepoint section — bundled as the structure `OEData` — the file proves
-the **theorem-level core of §4**:
+the **theorem-level core of §§4–5**:
 
 - **`strict_lift` (§4.1):** every base autoequivalence of `S` lifts to a `G`-equivariant,
   cleavage-preserving bundle autoequivalence of `O` covering it.
@@ -28,10 +28,25 @@ the **theorem-level core of §4**:
 - **`witness` / `witness₂`:** a concrete `OEData` for an arbitrary group `G`, and an explicit
   `|G| = 2` instance, so the theorem is non-vacuous (the assumptions are jointly satisfiable
   with a nontrivial structure group).
+- **Twisted (semidirect) generalization (§5).** The strict sequence above always gives the
+  direct-product case at the level of conjugation. For a functorial twist
+  `θ : StrictAut S →* MulAut G` (base symmetries acting on the structure group),
+  `θ`-twisted equivariance `F(x·g) = F x·(θ_A g)` yields the twisted exact sequence
+  `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1`, together with the semidirect conjugation relation
+  `Λ_comp_liftθ : Ã ∘ Λ_g ∘ Ã⁻¹ = Λ_{θ_A g}` (`strict_liftθ`, `rigidityθ`, `Φθ_surjective`,
+  `ΛHomθ_injective`, `ker_Φθ_eq_range_Λθ`). These are the formal ingredients of the
+  semidirect-product interpretation `G ⋊_θ Aut(S)`. This is the form needed for genuine physical
+  symmetry groups such as the Poincaré group `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`; setting `θ = 1` recovers
+  the strict theorem. A non-vacuous **nontrivial-twist** witness (Lean file §8) uses `labData K Q`,
+  a `Q`-labelled codiscrete groupoid with object set `K` and projection to `SingleObj Q`; the final
+  nontrivial witness specializes to `Q = K` and uses `θSingleObj K`, together with
+  `θSingleObj_ne_one`, to show §5 is used beyond `θ = 1`.
 
-It does **not** formalize the physical specializations (Wigner–Uhlhorn, the fixed-spacetime
-Lorentz model, the qubit phase model), the symmetry-breaking and observables sections, or the
-philosophical discussion. Those appear in the paper but are out of scope for this development.
+The **literal** physical specializations (Wigner–Uhlhorn, a literal `ℝ⁴ ⋊ O(1,3)` frame bundle,
+the qubit phase model), the symmetry-breaking and observables sections, and the philosophical
+discussion are **not** formalized. The twisted core of §5 supplies the abstract sequence those
+models instantiate; a literal Lorentz bundle additionally needs the Lorentz group `O(1,3)`, which
+mathlib does not yet provide. Those parts of the paper are out of scope for this development.
 
 ## Assumptions
 
@@ -62,7 +77,7 @@ Modelling choices worth flagging:
 
 ## Sorry-free
 
-The build is clean (no `sorry`, no `admit`). `#print axioms` on every top-level result:
+The build is clean (no `sorry`, no `admit`). `#print axioms` on the main declarations:
 
 ```
 'strict_lift'       depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -72,6 +87,12 @@ The build is clean (no `sorry`, no `admit`). `#print axioms` on every top-level 
 'ΛHom_injective'    depends on axioms: [propext, Classical.choice, Quot.sound]
 'ker_Φ_eq_range_Λ'  depends on axioms: [propext, Classical.choice, Quot.sound]
 'witness₂'          depends on axioms: [propext, Classical.choice, Quot.sound]
+'rigidityθ'           depends on axioms: [propext, Classical.choice, Quot.sound]
+'Λ_comp_liftθ'        depends on axioms: [propext, Classical.choice, Quot.sound]
+'Φθ_surjective'       depends on axioms: [propext, Classical.choice, Quot.sound]
+'ker_Φθ_eq_range_Λθ'  depends on axioms: [propext, Classical.choice, Quot.sound]
+'θSingleObj_ne_one'   depends on axioms: [propext, Classical.choice, Quot.sound]
+'labData'             depends on axioms: [propext]
 ```
 
 `propext`, `Classical.choice` and `Quot.sound` are mathlib's three standard axioms; there is

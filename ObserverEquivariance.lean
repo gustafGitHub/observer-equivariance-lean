@@ -6,8 +6,9 @@
 
       1 → G → Aut□_G(O/p) → Aut(S) → 1.
 
-  STATUS: COMPLETE — builds cleanly, no `sorry`.  `#print axioms` on every top-level result
-  gives exactly [propext, Classical.choice, Quot.sound] (no `sorryAx`).  Proven:
+  STATUS: builds cleanly, no `sorry`.  `#print axioms` reports only standard mathlib axioms
+  ([propext, Classical.choice, Quot.sound]) on the main theorem-level results (no `sorryAx`).
+  Proven:
     • `strict_lift` (§4.1): every base autoequivalence lifts to a `G`-equivariant,
       cleavage-preserving bundle autoequivalence covering it (⇒ Φ surjective);
     • `rigidity`  (§4.2): two such lifts of one base symmetry differ by a unique `Λ d g`;
@@ -18,6 +19,22 @@
       short exact sequence  1 → G → Aut□_G(O/p) → Aut(S) → 1.
     • `witness` / `witness₂`: a concrete `OEData` for any group `G` (e.g. |G| = 2), so the
       theorem is non-vacuous and `p_faithful` is consistent with nontrivial `G`.
+    • TWISTED generalization (§7): the strict SES above realizes only the DIRECT product
+      `G × Aut(S)`.  For a functorial twist `θ : Aut(S) →* MulAut G` (base symmetries acting on
+      the structure group), `θ`-twisted equivariance `F(x·g) = F x·(θ_A g)` gives the exact
+      sequence `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1` whose conjugation on the kernel is `θ`
+      (`Λ_comp_liftθ`) — the semidirect structure of `G ⋊_θ Aut(S)`, though no explicit
+      `SemidirectProduct` isomorphism is built (`strict_liftθ`, `rigidityθ`, `Φθ_surjective`,
+      `ΛHomθ_injective`, `ker_Φθ_eq_range_Λθ`).
+      This is the home of the Poincaré model `ℝ⁴ ⋊ O(1,3) = ISO(1,3)` (Ex. 2, corrected:
+      `G = ℝ⁴` translations, `Aut(S) = O(1,3)` Lorentz acting by `a ↦ Λ a`).  Setting `θ = 1`
+      recovers §§1–6.
+    • NON-VACUOUS twist witness (§8): `labData G Q : OEData G (pLab G Q)` — the `Q`-labelled
+      codiscrete groupoid on `G` over `S = SingleObj Q` — together with the NONTRIVIAL twist
+      `θSingleObj G : StrictAut (SingleObj G) →* MulAut G` (`θSingleObj_surjective`,
+      `θSingleObj_ne_one`).  So §7 is genuinely instantiated for `θ ≠ 1` (e.g.
+      `Multiplicative (ZMod 3)`).  A literal `ℝ⁴ ⋊ O(1,3)` instance is deferred — mathlib has no
+      Lorentz group `O(1,3)` yet.
 
   GROUP PACKAGING NOTE.  `Aut(S)` and `Aut□_G(O/p)` are the groups of STRICT (on-the-nose)
   automorphisms (`StrictAut S` / `AutBoxG d`), not `CategoryTheory.Equivalence` (`≌`): an
@@ -731,3 +748,520 @@ theorem ker_Φ_eq_range_Λ (d : OEData G p) [IsConnected S] : (Φ d).ker = (ΛHo
       _ = e.inv := by rw [key, Functor.comp_id]
   · rintro ⟨g, rfl⟩
     rfl
+
+/-! ## 7. Twisted (semidirect) generalization — toward the Poincaré model (§5, Ex. 2)
+
+  The strict theorem of §§1–6 realizes only DIRECT products `G × Aut(S)`: the conjugation
+  `liftFunctor A ⋙ Λ d g ⋙ (liftFunctor A)⁻¹ = Λ d g` is trivial, because strict
+  `G`-equivariance commutes on the nose with the right action.  Genuine semidirect symmetry
+  groups — notably the Poincaré group `ISO(1,3) = ℝ⁴ ⋊ O(1,3)` with structure group
+  `G = ℝ⁴` (translations) and base symmetries `Aut(S) = O(1,3)` acting by `a ↦ Λ a` — require
+  *twisted* equivariance: the lift `F` of a base symmetry `A` acts on the fiber through a
+  group automorphism `θ ∈ MulAut G`,
+
+        `F (x · g) = F x · (θ g)`,
+
+  so that `liftFunctorθ A θ ⋙ Λ d g ⋙ (…)⁻¹ = Λ d (θ g)` (`Λ_comp_liftθ`) and the kernel `G`
+  carries the nontrivial action — the semidirect structure on `Aut□^θ_G` (the group-theoretic
+  data of `G ⋊_θ Aut(S)`; an explicit `SemidirectProduct` isomorphism is not formalized).
+  Setting `θ = 1` recovers §§1–6.
+
+  This section proves the twisted analogues of `strict_lift` and `rigidity`, the conjugation
+  relation `Λ_comp_liftθ`, and the group-level exact sequence `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1`
+  (`Φθ_surjective`, `ΛHomθ_injective`, `ker_Φθ_eq_range_Λθ`).  The twist threads through because
+  the lift's fiber coordinate transforms by `coord_act`, on which `θ` (a homomorphism) distributes,
+  and it cancels in `rigidityθ` since both lifts carry the same `θ`. -/
+
+/-- `θ`-twisted `G`-equivariance: `F (x · g) = F x · (θ g)` for a fiber-twist `θ ∈ MulAut G`.
+    `θ = 1` is ordinary (strict) `G`-equivariance. -/
+def IsTwistedEquivariant (d : OEData G p) (θ : MulAut G) (F : O ⥤ O) : Prop :=
+  ∀ (x : O) (g : G), F.obj (d.act x g) = d.act (F.obj x) (θ g)
+
+/-- At `θ = 1`, twisted equivariance is exactly `IsGEquivariant`. -/
+theorem isTwistedEquivariant_one (d : OEData G p) (F : O ⥤ O) :
+    IsTwistedEquivariant d (1 : MulAut G) F ↔ IsGEquivariant d F := Iff.rfl
+
+namespace OEData
+/-- Projection of a twisted lift on objects (for ANY fiber element):  `p(b_{A s} · g') = A s`. -/
+theorem p_liftObjθ (d : OEData G p) (A : S ⥤ S) (x : O) (g' : G) :
+    p.obj (d.act (d.base (A.obj (p.obj x))) g') = A.obj (p.obj x) :=
+  (d.p_act _ _).trans (d.p_base _)
+end OEData
+
+/-- The `θ`-twisted lift of a base functor `A`.  On objects `x ↦ b_{A(p x)} · θ(coord x)`;
+    on morphisms the unique lift of `A(p f)` (faithfulness), exactly as `liftFunctor`. -/
+noncomputable def liftFunctorθ (d : OEData G p) (A : S ⥤ S) (θ : MulAut G) : O ⥤ O :=
+  haveI := d.isFull
+  haveI := d.p_faithful
+  { obj := fun x => d.act (d.base (A.obj (p.obj x))) (θ (d.coord x))
+    map := fun {x y} f =>
+      p.preimage (eqToHom (d.p_liftObjθ A x (θ (d.coord x)))
+        ≫ A.map (p.map f) ≫ eqToHom (d.p_liftObjθ A y (θ (d.coord y))).symm)
+    map_id := fun x => by
+      refine p.map_injective ?_
+      simp [eqToHom_trans]
+    map_comp := fun {x y z} f g => by
+      refine p.map_injective ?_
+      simp [p.map_preimage, p.map_comp, Category.assoc] }
+
+/-- The twisted lift is `θ`-twisted `G`-equivariant (analogue of `lift_isGEquivariant`). -/
+theorem liftθ_isTwistedEquivariant (d : OEData G p) (A : S ⥤ S) (θ : MulAut G) :
+    IsTwistedEquivariant d θ (liftFunctorθ d A θ) := by
+  intro x g
+  show d.act (d.base (A.obj (p.obj (d.act x g)))) (θ (d.coord (d.act x g)))
+     = d.act (d.act (d.base (A.obj (p.obj x))) (θ (d.coord x))) (θ g)
+  rw [d.p_act, d.coord_act, map_mul, d.act_mul]
+
+/-- The twisted lift covers `A`:  `liftFunctorθ d A θ ⋙ p = p ⋙ A`. -/
+theorem liftθ_covers (d : OEData G p) (A : S ⥤ S) (θ : MulAut G) :
+    liftFunctorθ d A θ ⋙ p = p ⋙ A := by
+  have hobj : ∀ x, (liftFunctorθ d A θ ⋙ p).obj x = (p ⋙ A).obj x :=
+    fun x => d.p_liftObjθ A x (θ (d.coord x))
+  refine CategoryTheory.Functor.ext hobj (fun x y f => ?_)
+  haveI := d.isFull
+  haveI := d.p_faithful
+  show p.map (p.preimage (eqToHom (d.p_liftObjθ A x (θ (d.coord x))) ≫ A.map (p.map f)
+      ≫ eqToHom (d.p_liftObjθ A y (θ (d.coord y))).symm)) = _
+  rw [p.map_preimage]
+  rfl
+
+/-- Twisted lift at `θ = 1` is the strict lift. -/
+theorem liftFunctorθ_one (d : OEData G p) (A : S ⥤ S) :
+    liftFunctorθ d A (1 : MulAut G) = liftFunctor d A := rfl
+
+/-- The twisted lift preserves the chosen cleavage (same `PreservesCleavage` predicate —
+    the twist does not affect the source-identity, since `coord (Ã y) = θ (coord y)`). -/
+theorem liftθ_preservesCleavage (d : OEData G p) (A : S ⥤ S) (θ : MulAut G) :
+    PreservesCleavage d (liftFunctorθ d A θ) A where
+  covers := liftθ_covers d A θ
+  src u y hy := by
+    simp only [liftFunctorθ, d.reind_eq, d.coord_base, d.p_act, d.p_base]
+
+/-- Twisted strict lift (analogue of `strict_lift`):  every base autoequivalence admits a
+    `θ`-twisted equivariant cleavage-preserving lift covering it. -/
+theorem strict_liftθ (d : OEData G p) (A : S ≌ S) (θ : MulAut G) :
+    ∃ F : O ⥤ O, IsTwistedEquivariant d θ F ∧ PreservesCleavage d F A.functor :=
+  ⟨liftFunctorθ d A.functor θ, liftθ_isTwistedEquivariant d A.functor θ,
+    liftθ_preservesCleavage d A.functor θ⟩
+
+/-- Twisted rigidity (analogue of `rigidity`).  Two `θ`-twisted equivariant cleavage-preserving
+    lifts of the same base autoequivalence (the SAME twist `θ`) differ by a unique normalized
+    fiber translation `Λ d g`.  The twist cancels — both carry it — so the difference is the
+    untwisted `Λ d g`.  (`[IsConnected S]`; `p` faithful for the morphism step.) -/
+theorem rigidityθ (d : OEData G p) (A : S ≌ S) (θ : MulAut G) [IsConnected S] (F₁ F₂ : O ⥤ O)
+    (h₁ : IsTwistedEquivariant d θ F₁) (h₂ : IsTwistedEquivariant d θ F₂)
+    (pc₁ : PreservesCleavage d F₁ A.functor) (pc₂ : PreservesCleavage d F₂ A.functor) :
+    ∃! g : G, F₂ = F₁ ⋙ Λ d g := by
+  haveI := d.p_faithful
+  have funct_ext : ∀ (G₁ G₂ : O ⥤ O), (∀ x, G₁.obj x = G₂.obj x) → G₁ ⋙ p = G₂ ⋙ p →
+      G₁ = G₂ := by
+    intro G₁ G₂ hobj hcomp
+    refine CategoryTheory.Functor.ext hobj (fun x y f => ?_)
+    apply p.map_injective
+    rw [p.map_comp, p.map_comp, eqToHom_map, eqToHom_map]
+    exact Functor.congr_hom hcomp f
+  -- Object form of a `θ`-twisted lift:  F x = b_{A(p x)} · (k(p x) · θ(coord x)).
+  have Fobj : ∀ (F : O ⥤ O), IsTwistedEquivariant d θ F → F ⋙ p = p ⋙ A.functor → ∀ x,
+      F.obj x = d.act (d.base (A.functor.obj (p.obj x)))
+                  (d.coord (F.obj (d.base (p.obj x))) * θ (d.coord x)) := by
+    intro F hF hc x
+    have e1 : F.obj x = d.act (F.obj (d.base (p.obj x))) (θ (d.coord x)) := by
+      conv_lhs => rw [← d.base_coord x]
+      exact hF _ _
+    have e2 : F.obj (d.base (p.obj x))
+        = d.act (d.base (A.functor.obj (p.obj x))) (d.coord (F.obj (d.base (p.obj x)))) := by
+      conv_lhs => rw [← d.base_coord (F.obj (d.base (p.obj x)))]
+      congr 1
+      exact congrArg d.base ((Functor.congr_obj hc (d.base (p.obj x))).trans
+        (congrArg A.functor.obj (d.p_base (p.obj x))))
+    rw [e1, ← d.act_mul, ← e2]
+  -- Local constancy of `k` from cleavage preservation (twist-free: evaluated at basepoints).
+  have kconst : ∀ (F : O ⥤ O), F ⋙ p = p ⋙ A.functor → PreservesCleavage d F A.functor →
+      ∀ {s t : S}, (s ⟶ t) → d.coord (F.obj (d.base s)) = d.coord (F.obj (d.base t)) := by
+    intro F hc pc s t u
+    have key := pc.src u (d.base t) (d.p_base t)
+    rw [d.reind_base, d.reind_eq] at key
+    have hFs : F.obj (d.base s)
+        = d.act (d.base (A.functor.obj s)) (d.coord (F.obj (d.base s))) := by
+      conv_lhs => rw [← d.base_coord (F.obj (d.base s))]
+      congr 1
+      exact congrArg d.base ((Functor.congr_obj hc (d.base s)).trans
+        (congrArg A.functor.obj (d.p_base s)))
+    rw [hFs] at key
+    exact d.act_free _ _ _ key
+  obtain ⟨s₀⟩ := (inferInstance : Nonempty S)
+  have k₁c : ∀ s, d.coord (F₁.obj (d.base s)) = d.coord (F₁.obj (d.base s₀)) := fun s =>
+    constant_of_preserves_morphisms (fun s => d.coord (F₁.obj (d.base s)))
+      (fun _ _ u => kconst F₁ pc₁.covers pc₁ u) s s₀
+  have k₂c : ∀ s, d.coord (F₂.obj (d.base s)) = d.coord (F₂.obj (d.base s₀)) := fun s =>
+    constant_of_preserves_morphisms (fun s => d.coord (F₂.obj (d.base s)))
+      (fun _ _ u => kconst F₂ pc₂.covers pc₂ u) s s₀
+  have hcovΛ : ∀ g, (F₁ ⋙ Λ d g) ⋙ p = p ⋙ A.functor := by
+    intro g
+    rw [Functor.assoc, Λ_comp_p]; exact pc₁.covers
+  refine ⟨d.coord (F₂.obj (d.base s₀)) * (d.coord (F₁.obj (d.base s₀)))⁻¹, ?_, ?_⟩
+  · refine funct_ext _ _ (fun x => ?_) ?_
+    · rw [Fobj F₂ h₂ pc₂.covers x]
+      show _ = (Λ d _).obj (F₁.obj x)
+      rw [Fobj F₁ h₁ pc₁.covers x]
+      simp only [Λ, d.p_act, d.p_base, d.coord_base]
+      rw [k₂c (p.obj x), k₁c (p.obj x)]
+      congr 1
+      group
+    · rw [pc₂.covers]; exact (hcovΛ _).symm
+  · intro g' hg'
+    have hev := congrArg (fun (F : O ⥤ O) => d.coord (F.obj (d.base s₀))) hg'
+    simp only [Functor.comp_obj, Λ, d.coord_base] at hev
+    rw [hev]; group
+
+/-- The SEMIDIRECT relation.  The fiber translation `Λ d g` commutes past the twisted lift
+    `Ã = liftFunctorθ d A θ` up to twisting `g` by `θ`:
+        `Λ d g ⋙ Ã = Ã ⋙ Λ d (θ g)`,   i.e.   `Ã ∘ Λ d g ∘ Ã⁻¹ = Λ d (θ g)`.
+    This is trivial (`Ã Λ_g Ã⁻¹ = Λ_g`) exactly when `θ = 1` — recovering the direct product
+    `G × Aut(S)` of the strict theorem — and nontrivial otherwise, making the extension semidirect
+    rather than direct (the kernel `G` is acted on by `θ`, as in `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`). -/
+theorem Λ_comp_liftθ (d : OEData G p) (A : S ⥤ S) (θ : MulAut G) (g : G) :
+    Λ d g ⋙ liftFunctorθ d A θ = liftFunctorθ d A θ ⋙ Λ d (θ g) := by
+  have hL : (Λ d g ⋙ liftFunctorθ d A θ) ⋙ p = p ⋙ A := by
+    rw [Functor.assoc, liftθ_covers, ← Functor.assoc, Λ_comp_p]
+  have hR : (liftFunctorθ d A θ ⋙ Λ d (θ g)) ⋙ p = p ⋙ A := by
+    rw [Functor.assoc, Λ_comp_p, liftθ_covers]
+  refine funct_ext d (fun x => ?_) (hL.trans hR.symm)
+  simp only [Functor.comp_obj, Λ, liftFunctorθ, d.p_act, d.p_base, d.coord_base, map_mul]
+
+/-- At `θ = 1` the semidirect relation degenerates to commutation `Λ d g ⋙ Ã = Ã ⋙ Λ d g`
+    (the direct-product case): conjugation by a strict lift fixes every `Λ d g`. -/
+theorem Λ_comp_lift_one (d : OEData G p) (A : S ⥤ S) (g : G) :
+    Λ d g ⋙ liftFunctor d A = liftFunctor d A ⋙ Λ d g := by
+  have := Λ_comp_liftθ d A (1 : MulAut G) g
+  rwa [liftFunctorθ_one] at this
+
+/-- Composition of twisted lifts:  `liftθ A θ ⋙ liftθ B φ = liftθ (A ⋙ B) (φ * θ)`.  The
+    twists multiply in `MulAut G` (contravariantly, matching the lift's action on coordinates). -/
+theorem liftθ_comp (d : OEData G p) (A B : S ⥤ S) (θ φ : MulAut G) :
+    liftFunctorθ d A θ ⋙ liftFunctorθ d B φ = liftFunctorθ d (A ⋙ B) (φ * θ) := by
+  have hcov : (liftFunctorθ d A θ ⋙ liftFunctorθ d B φ) ⋙ p = p ⋙ (A ⋙ B) := by
+    rw [Functor.assoc, liftθ_covers, ← Functor.assoc, liftθ_covers, Functor.assoc]
+  refine funct_ext d (fun x => ?_) (hcov.trans (liftθ_covers d (A ⋙ B) (φ * θ)).symm)
+  simp only [Functor.comp_obj, liftFunctorθ, d.p_act, d.p_base, d.coord_base, MulAut.mul_apply]
+
+/-- The twisted lift of the identity at the trivial twist is the identity. -/
+theorem liftθ_id (d : OEData G p) : liftFunctorθ d (𝟭 S) (1 : MulAut G) = 𝟭 O := by
+  rw [liftFunctorθ_one]; exact lift_id d
+
+/-- Twisted equivariance is closed under composition; the twists multiply in `MulAut G`. -/
+theorem isTwistedEquivariant_comp {F F' : O ⥤ O} {θ θ' : MulAut G}
+    (h : IsTwistedEquivariant d θ F) (h' : IsTwistedEquivariant d θ' F') :
+    IsTwistedEquivariant d (θ' * θ) (F ⋙ F') := fun x g => by
+  show F'.obj (F.obj (d.act x g)) = d.act (F'.obj (F.obj x)) ((θ' * θ) g)
+  rw [h x g, h' (F.obj x) (θ g), MulAut.mul_apply]
+
+/-- Twisted equivariance transfers to a strict inverse, inverting the twist. -/
+theorem isTwistedEquivariant_inv {F Finv : O ⥤ O} {θ : MulAut G}
+    (hi : F ⋙ Finv = 𝟭 O) (ih : Finv ⋙ F = 𝟭 O) (h : IsTwistedEquivariant d θ F) :
+    IsTwistedEquivariant d θ⁻¹ Finv := by
+  have hθ : ∀ g, θ (θ⁻¹ g) = g := fun g => by
+    rw [← MulAut.mul_apply, mul_inv_cancel, MulAut.one_apply]
+  have hFcancel : ∀ z, F.obj (Finv.obj z) = z := fun z => by
+    have := Functor.congr_obj ih z; simpa using this
+  have hinj : Function.Injective F.obj := fun a b hab => by
+    have e : ∀ z, Finv.obj (F.obj z) = z := fun z => by
+      have := Functor.congr_obj hi z; simpa using this
+    have := congrArg Finv.obj hab; rw [e, e] at this; exact this
+  intro x g
+  apply hinj
+  rw [h (Finv.obj x) (θ⁻¹ g), hFcancel, hFcancel, hθ]
+
+/-! ### The semidirect bundle-automorphism group  `Aut□^θ_G(O/p)`  and its exact sequence
+
+  Fix a *functorial twist* `θ : StrictAut S →* MulAut G` — the physical action of base symmetries
+  on the structure group (for Poincaré, `O(1,3) → MulAut ℝ⁴`, the defining representation).  A
+  `θ`-twisted bundle automorphism covers a base symmetry `A` and is `θ A`-twisted equivariant.
+  These assemble into a group `AutBoxGθ d θ`, and `Φθ`/`ΛHomθ` give the short exact sequence
+
+        `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1`.
+
+  By `Λ_comp_liftθ` the conjugation action of this group on the kernel `G` is `θ`, so the extension
+  is semidirect rather than direct — the group-theoretic data of `G ⋊_θ Aut(S)` (e.g.
+  `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`), though an explicit `SemidirectProduct` isomorphism is not built; at
+  `θ = 1` it is the direct product of §6.  No new `OEData` assumption is used beyond §§1–6. -/
+
+variable (θ : StrictAut S →* MulAut G)
+
+/-- A `θ`-twisted bundle automorphism:  a strict autoequivalence `hom` of `O` that is
+    `θ(base)`-twisted `G`-equivariant and cleavage-preserving over the strict base
+    automorphism `base`.  Forms `Aut□^θ_G(O/p)`. -/
+@[ext]
+structure AutBoxGθ (d : OEData G p) (θ : StrictAut S →* MulAut G) where
+  hom : O ⥤ O
+  inv : O ⥤ O
+  hom_inv_id : hom ⋙ inv = 𝟭 O
+  inv_hom_id : inv ⋙ hom = 𝟭 O
+  base : StrictAut S
+  equiv : IsTwistedEquivariant d (θ base) hom
+  pres : PreservesCleavage d hom base.hom
+
+namespace AutBoxGθ
+
+instance : Group (AutBoxGθ d θ) where
+  mul e₁ e₂ :=
+    { hom := e₂.hom ⋙ e₁.hom
+      inv := e₁.inv ⋙ e₂.inv
+      hom_inv_id := by
+        show e₂.hom ⋙ (e₁.hom ⋙ e₁.inv) ⋙ e₂.inv = 𝟭 O
+        rw [e₁.hom_inv_id, Functor.id_comp, e₂.hom_inv_id]
+      inv_hom_id := by
+        show e₁.inv ⋙ (e₂.inv ⋙ e₂.hom) ⋙ e₁.hom = 𝟭 O
+        rw [e₂.inv_hom_id, Functor.id_comp, e₁.inv_hom_id]
+      base := e₁.base * e₂.base
+      equiv := by
+        rw [map_mul]; exact isTwistedEquivariant_comp d e₂.equiv e₁.equiv
+      pres := preservesCleavage_comp d e₂.pres e₁.pres }
+  one := ⟨𝟭 O, 𝟭 O, rfl, rfl, 1, by rw [map_one]; exact id_isGEquivariant d,
+    id_preservesCleavage d⟩
+  inv e :=
+    { hom := e.inv
+      inv := e.hom
+      hom_inv_id := e.inv_hom_id
+      inv_hom_id := e.hom_inv_id
+      base := e.base⁻¹
+      equiv := by
+        rw [map_inv]; exact isTwistedEquivariant_inv d e.hom_inv_id e.inv_hom_id e.equiv
+      pres := preservesCleavage_inv d e.hom_inv_id e.inv_hom_id e.pres }
+  mul_assoc a b c := by refine AutBoxGθ.ext ?_ ?_ ?_ <;> rfl
+  one_mul a := by refine AutBoxGθ.ext ?_ ?_ ?_ <;> rfl
+  mul_one a := by refine AutBoxGθ.ext ?_ ?_ ?_ <;> rfl
+  inv_mul_cancel a := by
+    refine AutBoxGθ.ext ?_ ?_ ?_ <;> first | exact a.hom_inv_id | exact inv_mul_cancel _
+
+@[simp] lemma mul_hom (e₁ e₂ : AutBoxGθ d θ) : (e₁ * e₂).hom = e₂.hom ⋙ e₁.hom := rfl
+@[simp] lemma mul_base (e₁ e₂ : AutBoxGθ d θ) : (e₁ * e₂).base = e₁.base * e₂.base := rfl
+@[simp] lemma one_hom : (1 : AutBoxGθ d θ).hom = 𝟭 O := rfl
+@[simp] lemma one_base : (1 : AutBoxGθ d θ).base = 1 := rfl
+
+end AutBoxGθ
+
+/-- `Φθ : Aut□^θ_G(O/p) →* Aut(S)`:  the base symmetry covered by a twisted bundle automorphism. -/
+def Φθ (d : OEData G p) (θ : StrictAut S →* MulAut G) : AutBoxGθ d θ →* StrictAut S where
+  toFun e := e.base
+  map_one' := rfl
+  map_mul' _ _ := rfl
+
+/-- `Λθ : G →* Aut□^θ_G(O/p)`:  the normalized fiber-translation embedding (base `1`, twist `1`). -/
+noncomputable def ΛHomθ (d : OEData G p) (θ : StrictAut S →* MulAut G) : G →* AutBoxGθ d θ where
+  toFun g :=
+    { hom := Λ d g
+      inv := Λ d g⁻¹
+      hom_inv_id := by rw [Λ_comp, inv_mul_cancel, Λ_one]
+      inv_hom_id := by rw [Λ_comp, mul_inv_cancel, Λ_one]
+      base := 1
+      equiv := by rw [map_one]; exact Λ_isGEquivariant d g
+      pres := Λ_preservesCleavage d g }
+  map_one' := by
+    refine AutBoxGθ.ext ?_ ?_ ?_
+    · exact Λ_one d
+    · show Λ d (1 : G)⁻¹ = 𝟭 O; rw [inv_one, Λ_one]
+    · rfl
+  map_mul' g h := by
+    refine AutBoxGθ.ext ?_ ?_ ?_
+    · show Λ d (g * h) = Λ d h ⋙ Λ d g; rw [Λ_comp]
+    · show Λ d (g * h)⁻¹ = Λ d g⁻¹ ⋙ Λ d h⁻¹; rw [Λ_comp, mul_inv_rev]
+    · rfl
+
+/-- `Φθ` is surjective:  every base symmetry is covered by its `θ`-twisted strict lift. -/
+theorem Φθ_surjective (d : OEData G p) (θ : StrictAut S →* MulAut G) :
+    Function.Surjective (Φθ d θ) := fun A =>
+  ⟨{ hom := liftFunctorθ d A.hom (θ A)
+     inv := liftFunctorθ d A.inv (θ A)⁻¹
+     hom_inv_id := by rw [liftθ_comp, inv_mul_cancel, A.hom_inv_id, liftθ_id]
+     inv_hom_id := by rw [liftθ_comp, mul_inv_cancel, A.inv_hom_id, liftθ_id]
+     base := A
+     equiv := liftθ_isTwistedEquivariant d A.hom (θ A)
+     pres := liftθ_preservesCleavage d A.hom (θ A) }, rfl⟩
+
+/-- `Λθ` is injective (needs a basepoint; freeness of the action does the rest). -/
+theorem ΛHomθ_injective (d : OEData G p) (θ : StrictAut S →* MulAut G) [Nonempty S] :
+    Function.Injective (ΛHomθ d θ) := by
+  intro g h hgh
+  obtain ⟨s₀⟩ := ‹Nonempty S›
+  have hev : (Λ d g).obj (d.base s₀) = (Λ d h).obj (d.base s₀) :=
+    congrArg (·.obj (d.base s₀)) (congrArg AutBoxGθ.hom hgh)
+  have hc : d.coord (d.base s₀) = 1 := by
+    have h1 := d.coord_base s₀ 1; rwa [d.act_one] at h1
+  simp only [Λ, d.p_base, hc, mul_one] at hev
+  exact d.act_free _ _ _ hev
+
+/-- Exactness at the middle:  `ker Φθ = range Λθ`.  A twisted bundle automorphism covers `id_S`
+    (twist `θ 1 = 1`, so it is strictly equivariant) iff it is a normalized fiber translation.
+    With `Φθ_surjective` and `ΛHomθ_injective` this is the SEMIDIRECT exact sequence
+    `1 → G →[Λθ] Aut□^θ_G(O/p) →[Φθ] Aut(S) → 1`. -/
+theorem ker_Φθ_eq_range_Λθ (d : OEData G p) (θ : StrictAut S →* MulAut G) [IsConnected S] :
+    (Φθ d θ).ker = (ΛHomθ d θ).range := by
+  ext e
+  simp only [MonoidHom.mem_ker, MonoidHom.mem_range]
+  constructor
+  · intro he
+    have hb : e.base = 1 := he
+    have hgeq : IsGEquivariant d e.hom := by
+      have h := e.equiv; rw [hb, map_one] at h; exact h
+    have hpc : PreservesCleavage d e.hom (𝟭 S) := by
+      have hp := e.pres; rw [hb] at hp; exact hp
+    obtain ⟨g, hg⟩ := ((exact_sequence d).2 e.hom hgeq).1 hpc
+    refine ⟨g, AutBoxGθ.ext hg.symm ?_ hb.symm⟩
+    show Λ d g⁻¹ = e.inv
+    have key : e.hom ⋙ Λ d g⁻¹ = 𝟭 O := by rw [hg, Λ_comp, inv_mul_cancel, Λ_one]
+    calc Λ d g⁻¹ = (e.inv ⋙ e.hom) ⋙ Λ d g⁻¹ := by rw [e.inv_hom_id, Functor.id_comp]
+      _ = e.inv ⋙ e.hom ⋙ Λ d g⁻¹ := rfl
+      _ = e.inv := by rw [key, Functor.comp_id]
+  · rintro ⟨g, rfl⟩
+    rfl
+
+
+/-! ## 8. A non-vacuous NONTRIVIAL-twist witness  (§7 is not vacuous for `θ ≠ 1`)
+
+  We exhibit a concrete `OEData G p` together with a NONTRIVIAL functorial twist
+  `θ : StrictAut S →* MulAut G`, so the semidirect theory of §7 is non-vacuous beyond `θ = 1`.
+
+  The base is `S = SingleObj Q`, whose strict autoequivalences are `MulAut Q` (so taking
+  `Q = G` gives the twist `θ : StrictAut S ≅ MulAut G`, the identity — nontrivial whenever `G`
+  has a nontrivial automorphism, e.g. `Multiplicative (ZMod 3)`).
+
+  The total groupoid is the `Q`-LABELLED codiscrete groupoid on `G` (`Lab G Q`): objects are
+  `G`, every hom-set is `Q`, and `p` reads off the label.  Crucially the label is INDEPENDENT of
+  the endpoints, so the structure-group action can leave it fixed (`actHom f g = f`) and the
+  chosen vertical translation `ltrans` can be labelled `1` — genuinely vertical, as the current
+  `OEData` requires.  (The naive `Codisc G` with `p(a⟶b) = b·a⁻¹` would force `ltrans` to project
+  to a nonidentity, violating `p_ltrans`.) -/
+
+/-- The `Q`-labelled codiscrete groupoid on objects `B`: `Hom x y := Q`, composing by flipped
+    multiplication (matching `SingleObj Q`), so `pLab` below is a functor. -/
+@[ext] structure Lab (B Q : Type*) where pt : B
+
+instance (B Q : Type*) [Group Q] : Groupoid (Lab B Q) where
+  Hom _ _ := Q
+  id _ := 1
+  comp f g := g * f
+  id_comp _ := mul_one _
+  comp_id _ := one_mul _
+  assoc f g h := (mul_assoc h g f).symm
+  inv f := f⁻¹
+  inv_comp _ := mul_inv_cancel _
+  comp_inv _ := inv_mul_cancel _
+
+/-- The projection `Lab B Q ⥤ SingleObj Q` reading off the `Q`-label (faithful and full). -/
+def pLab (B Q : Type*) [Group Q] : Lab B Q ⥤ SingleObj Q where
+  obj _ := SingleObj.star Q
+  map f := f
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+/-- The non-vacuous twist witness as an `OEData`: structure group `G` acts on objects by right
+    multiplication, leaving the `Q`-label fixed; basepoint `⟨1⟩`, `coord = pt`; the chosen
+    cleavage is the identity reindexing with `chi` the label `u`, and `ltrans` the label `1`
+    (vertical). -/
+def labData (G Q : Type*) [Group G] [Group Q] : OEData G (pLab G Q) where
+  act x g := ⟨x.pt * g⟩
+  act_one x := by simp
+  act_mul x g h := by simp [mul_assoc]
+  p_act _ _ := rfl
+  act_free x g h e := mul_left_cancel (congrArg Lab.pt e)
+  actHom f _ := f
+  actHom_id _ _ := rfl
+  actHom_comp _ _ _ := rfl
+  p_actHom _ _ := by simp [pLab]
+  base _ := ⟨1⟩
+  p_base _ := rfl
+  coord x := x.pt
+  base_coord x := by simp
+  coord_base _ g := by simp
+  reind _ y _ := y
+  p_reind _ _ _ := rfl
+  chi u _ _ := u
+  p_chi := fun {s t} u y hy => by
+    obtain rfl : s = SingleObj.star Q := rfl
+    obtain rfl : t = SingleObj.star Q := rfl
+    simp [pLab]
+  reind_base _ := rfl
+  reind_act _ _ _ _ := rfl
+  chi_act _ _ _ _ := by simp
+  ltrans _ _ := 1
+  p_ltrans _ _ := by aesop_cat
+  reind_id _ _ := rfl
+  chi_id _ _ := by aesop_cat
+  reind_comp _ _ _ _ := rfl
+  chi_comp _ _ _ _ := by aesop_cat
+  p_faithful := ⟨fun h => h⟩
+
+/-- Reading a strict autoequivalence of `SingleObj G` as a group automorphism of `G` (its
+    underlying monoid hom, via `SingleObj.mapHom`).  This realizes `StrictAut (SingleObj G) ≅
+    MulAut G`. -/
+def toMulAutSingleObj (G : Type*) [Group G] (e : StrictAut (SingleObj G)) : MulAut G where
+  toFun := (SingleObj.mapHom G G).symm e.hom
+  invFun := (SingleObj.mapHom G G).symm e.inv
+  left_inv g := by
+    have h : ((SingleObj.mapHom G G).symm e.inv).comp ((SingleObj.mapHom G G).symm e.hom)
+        = MonoidHom.id G := by
+      apply (SingleObj.mapHom G G).injective
+      rw [SingleObj.mapHom_comp, Equiv.apply_symm_apply, Equiv.apply_symm_apply, e.hom_inv_id,
+          SingleObj.mapHom_id]
+    exact DFunLike.congr_fun h g
+  right_inv g := by
+    have h : ((SingleObj.mapHom G G).symm e.hom).comp ((SingleObj.mapHom G G).symm e.inv)
+        = MonoidHom.id G := by
+      apply (SingleObj.mapHom G G).injective
+      rw [SingleObj.mapHom_comp, Equiv.apply_symm_apply, Equiv.apply_symm_apply, e.inv_hom_id,
+          SingleObj.mapHom_id]
+    exact DFunLike.congr_fun h g
+  map_mul' := ((SingleObj.mapHom G G).symm e.hom).map_mul
+
+/-- The functorial twist `θ : StrictAut (SingleObj G) →* MulAut G`, the identity under the
+    equivalence `StrictAut (SingleObj G) ≅ MulAut G`. -/
+def θSingleObj (G : Type*) [Group G] : StrictAut (SingleObj G) →* MulAut G where
+  toFun := toMulAutSingleObj G
+  map_one' := by
+    ext g
+    show ((SingleObj.mapHom G G).symm (𝟭 (SingleObj G))) g = g
+    rw [← SingleObj.mapHom_id, Equiv.symm_apply_apply]; rfl
+  map_mul' e₁ e₂ := by
+    have key : (SingleObj.mapHom G G).symm (e₂.hom ⋙ e₁.hom)
+        = ((SingleObj.mapHom G G).symm e₁.hom).comp ((SingleObj.mapHom G G).symm e₂.hom) := by
+      apply (SingleObj.mapHom G G).injective
+      rw [SingleObj.mapHom_comp, Equiv.apply_symm_apply, Equiv.apply_symm_apply,
+          Equiv.apply_symm_apply]
+    ext g
+    show ((SingleObj.mapHom G G).symm (e₂.hom ⋙ e₁.hom)) g = _
+    rw [key]; rfl
+
+/-- `θSingleObj` is surjective:  every group automorphism of `G` is realized by a strict
+    autoequivalence of `SingleObj G` (so `θSingleObj` is the iso `StrictAut (SingleObj G) ≅
+    MulAut G`). -/
+theorem θSingleObj_surjective (G : Type*) [Group G] : Function.Surjective (θSingleObj G) := by
+  intro φ
+  have hi : φ.symm.toMonoidHom.comp φ.toMonoidHom = MonoidHom.id G := by
+    ext g; exact φ.symm_apply_apply g
+  have hi' : φ.toMonoidHom.comp φ.symm.toMonoidHom = MonoidHom.id G := by
+    ext g; exact φ.apply_symm_apply g
+  refine ⟨{ hom := SingleObj.mapHom G G φ.toMonoidHom
+            inv := SingleObj.mapHom G G φ.symm.toMonoidHom
+            hom_inv_id := by rw [← SingleObj.mapHom_comp, hi, SingleObj.mapHom_id]
+            inv_hom_id := by rw [← SingleObj.mapHom_comp, hi', SingleObj.mapHom_id] }, ?_⟩
+  ext g
+  show ((SingleObj.mapHom G G).symm (SingleObj.mapHom G G φ.toMonoidHom)) g = φ g
+  rw [Equiv.symm_apply_apply]; rfl
+
+/-- Hence the twist is NONTRIVIAL whenever `G` has a nontrivial automorphism (e.g.
+    `Multiplicative (ZMod 3)`), so §7 is genuinely used beyond `θ = 1`. -/
+theorem θSingleObj_ne_one (G : Type*) [Group G] [Nontrivial (MulAut G)] :
+    θSingleObj G ≠ 1 := by
+  obtain ⟨φ, hφ⟩ := exists_ne (1 : MulAut G)
+  obtain ⟨e, he⟩ := θSingleObj_surjective G φ
+  intro h
+  exact hφ (by rw [← he, h, MonoidHom.one_apply])
+
+/-- The semidirect exact sequence of §7, applied to the labelled witness with the nontrivial
+    twist `θSingleObj`:  `ker Φθ = range Λθ` for `OEData G (pLab G G)`.  Together with
+    `θSingleObj_ne_one` this shows the twisted (semidirect) theory is non-vacuous for `θ ≠ 1`. -/
+example (G : Type*) [Group G] :
+    (Φθ (labData G G) (θSingleObj G)).ker = (ΛHomθ (labData G G) (θSingleObj G)).range :=
+  ker_Φθ_eq_range_Λθ (labData G G) (θSingleObj G)
+
