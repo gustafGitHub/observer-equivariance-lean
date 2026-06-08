@@ -4,7 +4,7 @@ A Lean 4 + [mathlib](https://github.com/leanprover-community/mathlib4) formaliza
 strict and twisted classification theorems (Sections 4–5) of
 
 > G. Ullman, *Observer Equivariance as a Condition for Shared Physical Law*.
-> Zenodo — concept DOI: `10.5281/zenodo.17077437`; version DOI: `10.5281/zenodo.<FILL-IN>`.
+> Zenodo — concept DOI: `10.5281/zenodo.17077437`; version DOI: `10.5281/zenodo.20589116`.
 
 Everything lives in a single file: [`ObserverEquivariance.lean`](ObserverEquivariance.lean).
 
@@ -112,7 +112,7 @@ lake exe cache get   # download the pinned mathlib .olean cache
 lake build           # compiles ObserverEquivariance.lean (~1 min once mathlib is cached)
 ```
 
-> Local note: in this working copy, `.lake/packages` is a symlink to a sibling project's
-> already-built mathlib (a developer optimization to avoid recompiling mathlib). For a fresh
-> clone, remove that symlink and run `lake exe cache get` to fetch the pinned mathlib build,
-> then `lake build`.
+> Note: a fresh clone has no `.lake/` directory (it is gitignored). `lake exe cache get`
+> fetches the pinned mathlib build (downloading from the mathlib cache server, or reusing a
+> local `~/.cache/mathlib` if present); then `lake build` compiles this file in ~1 min.
+> Verified from a clean checkout.
