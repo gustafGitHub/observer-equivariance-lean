@@ -23,18 +23,20 @@
       `G × Aut(S)`.  For a functorial twist `θ : Aut(S) →* MulAut G` (base symmetries acting on
       the structure group), `θ`-twisted equivariance `F(x·g) = F x·(θ_A g)` gives the exact
       sequence `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1` whose conjugation on the kernel is `θ`
-      (`Λ_comp_liftθ`) — the semidirect structure of `G ⋊_θ Aut(S)`, though no explicit
-      `SemidirectProduct` isomorphism is built (`strict_liftθ`, `rigidityθ`, `Φθ_surjective`,
-      `ΛHomθ_injective`, `ker_Φθ_eq_range_Λθ`).
-      This is the home of the Poincaré model `ℝ⁴ ⋊ O(1,3) = ISO(1,3)` (Ex. 2, corrected:
-      `G = ℝ⁴` translations, `Aut(S) = O(1,3)` Lorentz acting by `a ↦ Λ a`).  Setting `θ = 1`
-      recovers §§1–6.
+      (`Λ_comp_liftθ`) (`strict_liftθ`, `rigidityθ`, `Φθ_surjective`, `ΛHomθ_injective`,
+      `ker_Φθ_eq_range_Λθ`).  This is the home of the Poincaré model `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`
+      (Ex. 2, corrected: `G = ℝ⁴` translations, `Aut(S) = O(1,3)` Lorentz acting by `a ↦ Λ a`).
+      Setting `θ = 1` recovers §§1–6.
     • NON-VACUOUS twist witness (§8): `labData G Q : OEData G (pLab G Q)` — the `Q`-labelled
       codiscrete groupoid on `G` over `S = SingleObj Q` — together with the NONTRIVIAL twist
       `θSingleObj G : StrictAut (SingleObj G) →* MulAut G` (`θSingleObj_surjective`,
       `θSingleObj_ne_one`).  So §7 is genuinely instantiated for `θ ≠ 1` (e.g.
       `Multiplicative (ZMod 3)`).  A literal `ℝ⁴ ⋊ O(1,3)` instance is deferred — mathlib has no
       Lorentz group `O(1,3)` yet.
+    • SEMIDIRECT iso (§9): the §7 sequence packaged as an explicit group isomorphism
+      `Aut□^θ_G(O/p) ≃* G ⋊[θ] Aut(S)` (`autBoxGθMulEquivSemidirect`, via `SemidirectProduct.lift`
+      of `Λθ`/`liftHomθ` and `MulEquiv.ofBijective`); so `G ⋊_θ Aut(S)` is now a literal
+      formalized identification, not only the exact-sequence data.
 
   GROUP PACKAGING NOTE.  `Aut(S)` and `Aut□_G(O/p)` are the groups of STRICT (on-the-nose)
   automorphisms (`StrictAut S` / `AutBoxG d`), not `CategoryTheory.Equivalence` (`≌`): an
@@ -762,8 +764,8 @@ theorem ker_Φ_eq_range_Λ (d : OEData G p) [IsConnected S] : (Φ d).ker = (ΛHo
         `F (x · g) = F x · (θ g)`,
 
   so that `liftFunctorθ A θ ⋙ Λ d g ⋙ (…)⁻¹ = Λ d (θ g)` (`Λ_comp_liftθ`) and the kernel `G`
-  carries the nontrivial action — the semidirect structure on `Aut□^θ_G` (the group-theoretic
-  data of `G ⋊_θ Aut(S)`; an explicit `SemidirectProduct` isomorphism is not formalized).
+  carries the nontrivial action — the semidirect structure on `Aut□^θ_G`, packaged in §9 as an
+  explicit isomorphism `Aut□^θ_G ≃* G ⋊_θ Aut(S)` (`autBoxGθMulEquivSemidirect`).
   Setting `θ = 1` recovers §§1–6.
 
   This section proves the twisted analogues of `strict_lift` and `rigidity`, the conjugation
@@ -982,9 +984,9 @@ theorem isTwistedEquivariant_inv {F Finv : O ⥤ O} {θ : MulAut G}
         `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1`.
 
   By `Λ_comp_liftθ` the conjugation action of this group on the kernel `G` is `θ`, so the extension
-  is semidirect rather than direct — the group-theoretic data of `G ⋊_θ Aut(S)` (e.g.
-  `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`), though an explicit `SemidirectProduct` isomorphism is not built; at
-  `θ = 1` it is the direct product of §6.  No new `OEData` assumption is used beyond §§1–6. -/
+  is semidirect rather than direct — `G ⋊_θ Aut(S)` (e.g. `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`), realized as an
+  explicit `≃*` in §9 (`autBoxGθMulEquivSemidirect`); at `θ = 1` it is the direct product of §6.
+  No new `OEData` assumption is used beyond §§1–6. -/
 
 variable (θ : StrictAut S →* MulAut G)
 
@@ -1264,4 +1266,124 @@ theorem θSingleObj_ne_one (G : Type*) [Group G] [Nontrivial (MulAut G)] :
 example (G : Type*) [Group G] :
     (Φθ (labData G G) (θSingleObj G)).ker = (ΛHomθ (labData G G) (θSingleObj G)).range :=
   ker_Φθ_eq_range_Λθ (labData G G) (θSingleObj G)
+
+
+/-! ## 9. The bundle-automorphism group as an explicit semidirect product
+
+  Upgrades the §7 exact sequence to a literal group isomorphism
+
+      `Aut□^θ_G(O/p)  ≃*  G ⋊[θ] Aut(S)`   (mathlib's `SemidirectProduct`).
+
+  The map `G ⋊[θ] Aut(S) → Aut□^θ_G` is `SemidirectProduct.lift` of the fiber-translation
+  embedding `Λθ` and the twisted-lift section `liftHomθ`, whose compatibility is exactly the
+  conjugation law `Λ_comp_liftθ`.  Bijectivity is the exactness `ker_Φθ_eq_range_Λθ` together with
+  `ΛHomθ_injective`.  Needs `[IsConnected S]`. -/
+
+/-- The twisted-lift section as a group homomorphism `Aut(S) →* Aut□^θ_G(O/p)`:
+    `A ↦ liftFunctorθ d A.hom (θ A)`, the canonical `θ_A`-twisted cleavage-preserving lift. -/
+noncomputable def liftHomθ (d : OEData G p) (θ : StrictAut S →* MulAut G) :
+    StrictAut S →* AutBoxGθ d θ where
+  toFun A :=
+    { hom := liftFunctorθ d A.hom (θ A)
+      inv := liftFunctorθ d A.inv (θ A)⁻¹
+      hom_inv_id := by rw [liftθ_comp, inv_mul_cancel, A.hom_inv_id, liftθ_id]
+      inv_hom_id := by rw [liftθ_comp, mul_inv_cancel, A.inv_hom_id, liftθ_id]
+      base := A
+      equiv := liftθ_isTwistedEquivariant d A.hom (θ A)
+      pres := liftθ_preservesCleavage d A.hom (θ A) }
+  map_one' := by
+    refine AutBoxGθ.ext ?_ ?_ ?_
+    · show liftFunctorθ d (𝟭 S) (θ 1) = 𝟭 O
+      rw [map_one]; exact liftθ_id d
+    · show liftFunctorθ d (𝟭 S) (θ 1)⁻¹ = 𝟭 O
+      rw [map_one, inv_one]; exact liftθ_id d
+    · rfl
+  map_mul' A B := by
+    refine AutBoxGθ.ext ?_ ?_ ?_
+    · show liftFunctorθ d (B.hom ⋙ A.hom) (θ (A * B))
+          = liftFunctorθ d B.hom (θ B) ⋙ liftFunctorθ d A.hom (θ A)
+      rw [liftθ_comp, map_mul]
+    · show liftFunctorθ d (A.inv ⋙ B.inv) (θ (A * B))⁻¹
+          = liftFunctorθ d A.inv (θ A)⁻¹ ⋙ liftFunctorθ d B.inv (θ B)⁻¹
+      rw [liftθ_comp, map_mul, mul_inv_rev]
+    · rfl
+
+@[simp] theorem liftHomθ_base (d : OEData G p) (θ : StrictAut S →* MulAut G) (A : StrictAut S) :
+    (liftHomθ d θ A).base = A := rfl
+
+@[simp] theorem Φθ_apply (d : OEData G p) (θ : StrictAut S →* MulAut G) (e : AutBoxGθ d θ) :
+    Φθ d θ e = e.base := rfl
+
+@[simp] theorem ΛHomθ_base (d : OEData G p) (θ : StrictAut S →* MulAut G) (g : G) :
+    (ΛHomθ d θ g).base = 1 := rfl
+
+@[simp] theorem AutBoxGθ_inv_base (d : OEData G p) (θ : StrictAut S →* MulAut G)
+    (e : AutBoxGθ d θ) : (e⁻¹).base = e.base⁻¹ := rfl
+
+/-- The compatibility condition for `SemidirectProduct.lift`:  conjugating `Λθ g` by the lift of
+    `A` twists `g` by `θ A` (this is `Λ_comp_liftθ` at the group level). -/
+theorem liftHomθ_conj (d : OEData G p) (θ : StrictAut S →* MulAut G) (A : StrictAut S) :
+    (ΛHomθ d θ).comp (θ A).toMonoidHom
+      = (MulAut.conj (liftHomθ d θ A)).toMonoidHom.comp (ΛHomθ d θ) := by
+  refine MonoidHom.ext fun g => ?_
+  simp only [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulAut.conj_apply]
+  refine AutBoxGθ.ext ?_ ?_ ?_
+  · show Λ d ((θ A) g)
+        = liftFunctorθ d A.inv (θ A)⁻¹ ⋙ Λ d g ⋙ liftFunctorθ d A.hom (θ A)
+    rw [Λ_comp_liftθ, ← Functor.assoc, liftθ_comp, A.inv_hom_id, mul_inv_cancel, liftθ_id,
+      Functor.id_comp]
+  · show Λ d ((θ A) g)⁻¹
+        = liftFunctorθ d A.inv (θ A)⁻¹ ⋙ Λ d g⁻¹ ⋙ liftFunctorθ d A.hom (θ A)
+    rw [Λ_comp_liftθ, ← Functor.assoc, liftθ_comp, A.inv_hom_id, mul_inv_cancel, liftθ_id,
+      Functor.id_comp, map_inv]
+  · simp
+
+/-- `G ⋊[θ] Aut(S) →* Aut□^θ_G(O/p)`:  `inl g ↦ Λθ g`, `inr A ↦ liftHomθ A`. -/
+noncomputable def semidirectToAutBoxGθ (d : OEData G p) (θ : StrictAut S →* MulAut G) :
+    SemidirectProduct G (StrictAut S) θ →* AutBoxGθ d θ :=
+  SemidirectProduct.lift (ΛHomθ d θ) (liftHomθ d θ) (liftHomθ_conj d θ)
+
+@[simp] theorem semidirectToAutBoxGθ_inl (d : OEData G p) (θ : StrictAut S →* MulAut G) (g : G) :
+    semidirectToAutBoxGθ d θ (SemidirectProduct.inl g) = ΛHomθ d θ g :=
+  SemidirectProduct.lift_inl _ _ _ g
+
+@[simp] theorem semidirectToAutBoxGθ_inr (d : OEData G p) (θ : StrictAut S →* MulAut G)
+    (A : StrictAut S) :
+    semidirectToAutBoxGθ d θ (SemidirectProduct.inr A) = liftHomθ d θ A :=
+  SemidirectProduct.lift_inr _ _ _ A
+
+/-- The §7 semidirect exact sequence, packaged as an explicit group isomorphism
+    `Aut□^θ_G(O/p) ≃* G ⋊[θ] Aut(S)`. -/
+noncomputable def autBoxGθMulEquivSemidirect (d : OEData G p) (θ : StrictAut S →* MulAut G)
+    [IsConnected S] : AutBoxGθ d θ ≃* SemidirectProduct G (StrictAut S) θ := by
+  have hinj : Function.Injective (semidirectToAutBoxGθ d θ) := by
+    rw [injective_iff_map_eq_one]
+    intro x hx
+    rw [← SemidirectProduct.inl_left_mul_inr_right x, map_mul,
+      semidirectToAutBoxGθ_inl, semidirectToAutBoxGθ_inr] at hx
+    have hright : x.right = 1 := by
+      have h2 := congrArg (Φθ d θ) hx
+      rw [map_mul, map_one] at h2
+      simpa using h2
+    rw [hright, map_one, mul_one] at hx
+    have hleft : x.left = 1 := ΛHomθ_injective d θ (by rw [hx, map_one])
+    exact SemidirectProduct.ext hleft hright
+  have hsurj : Function.Surjective (semidirectToAutBoxGθ d θ) := by
+    intro e
+    have hker : e * (liftHomθ d θ e.base)⁻¹ ∈ (Φθ d θ).ker := by
+      rw [MonoidHom.mem_ker, map_mul, map_inv]
+      simp
+    rw [ker_Φθ_eq_range_Λθ, MonoidHom.mem_range] at hker
+    obtain ⟨g, hg⟩ := hker
+    refine ⟨SemidirectProduct.inl g * SemidirectProduct.inr e.base, ?_⟩
+    rw [map_mul, semidirectToAutBoxGθ_inl, semidirectToAutBoxGθ_inr, hg, inv_mul_cancel_right]
+  exact (MulEquiv.ofBijective (semidirectToAutBoxGθ d θ) ⟨hinj, hsurj⟩).symm
+
+/-- Non-vacuity of the semidirect packaging:  applied to the §8 nontrivial-twist witness it gives
+    `Aut□^θ_G(O/pLab) ≃* G ⋊[θSingleObj] Aut(SingleObj G)` — a genuine (nontrivial-`θ`) semidirect
+    product, the abstract shape of `ℝ⁴ ⋊ O(1,3)`. -/
+noncomputable example (G : Type*) [Group G] :
+    AutBoxGθ (labData G G) (θSingleObj G)
+      ≃* SemidirectProduct G (StrictAut (SingleObj G)) (θSingleObj G) :=
+  autBoxGθMulEquivSemidirect (labData G G) (θSingleObj G)
 

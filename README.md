@@ -34,13 +34,15 @@ the **theorem-level core of §§4–5**:
   `θ`-twisted equivariance `F(x·g) = F x·(θ_A g)` yields the twisted exact sequence
   `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1`, together with the semidirect conjugation relation
   `Λ_comp_liftθ : Ã ∘ Λ_g ∘ Ã⁻¹ = Λ_{θ_A g}` (`strict_liftθ`, `rigidityθ`, `Φθ_surjective`,
-  `ΛHomθ_injective`, `ker_Φθ_eq_range_Λθ`). These are the formal ingredients of the
-  semidirect-product interpretation `G ⋊_θ Aut(S)`. This is the form needed for genuine physical
-  symmetry groups such as the Poincaré group `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`; setting `θ = 1` recovers
-  the strict theorem. A non-vacuous **nontrivial-twist** witness (Lean file §8) uses `labData K Q`,
-  a `Q`-labelled codiscrete groupoid with object set `K` and projection to `SingleObj Q`; the final
-  nontrivial witness specializes to `Q = K` and uses `θSingleObj K`, together with
-  `θSingleObj_ne_one`, to show §5 is used beyond `θ = 1`.
+  `ΛHomθ_injective`, `ker_Φθ_eq_range_Λθ`). This is packaged (Lean file §9) as an **explicit group
+  isomorphism** `Aut□^θ_G(O/p) ≃* G ⋊[θ] Aut(S)` (`autBoxGθMulEquivSemidirect`, via mathlib's
+  `SemidirectProduct.lift` and `MulEquiv.ofBijective`), so `G ⋊_θ Aut(S)` is a literal formalized
+  identification. This is the form needed for genuine physical symmetry groups such as the Poincaré
+  group `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`; setting `θ = 1` recovers the strict theorem. A non-vacuous
+  **nontrivial-twist** witness (Lean file §8) uses `labData K Q`, a `Q`-labelled codiscrete groupoid
+  with object set `K` and projection to `SingleObj Q`; the final nontrivial witness specializes to
+  `Q = K` and uses `θSingleObj K`, together with `θSingleObj_ne_one`, to show §5 is used beyond
+  `θ = 1` — and the §9 isomorphism then exhibits `Aut□^θ_G ≃* G ⋊[θSingleObj] Aut(SingleObj G)`.
 
 The **literal** physical specializations (Wigner–Uhlhorn, a literal `ℝ⁴ ⋊ O(1,3)` frame bundle,
 the qubit phase model), the symmetry-breaking and observables sections, and the philosophical
@@ -92,6 +94,7 @@ The build is clean (no `sorry`, no `admit`). `#print axioms` on the main declara
 'Φθ_surjective'       depends on axioms: [propext, Classical.choice, Quot.sound]
 'ker_Φθ_eq_range_Λθ'  depends on axioms: [propext, Classical.choice, Quot.sound]
 'θSingleObj_ne_one'   depends on axioms: [propext, Classical.choice, Quot.sound]
+'autBoxGθMulEquivSemidirect' depends on axioms: [propext, Classical.choice, Quot.sound]
 'labData'             depends on axioms: [propext]
 ```
 
