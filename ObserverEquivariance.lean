@@ -1,39 +1,43 @@
 /-
   Observer Equivariance as a Condition for Shared Physical Law
   ----------------------------------------------------------------
-  Lean 4 / mathlib formalization of the strict classification theorem (§4) of
-  G. Ullman, *Observer Equivariance as a Condition for Shared Physical Law*:
+  Lean 4 / mathlib formalization of the strict classification theorem (paper §4) of
+  G. Ullman, *Observer Equivariance as a Condition for Shared Physical Law* — the short
+  exact sequence
 
       1 → G → Aut□_G(O/p) → Aut(S) → 1.
+
+  In this header, references marked "paper §" refer to the article; unmarked §-numbers
+  refer to section headings inside this Lean file.
 
   STATUS: builds cleanly, no `sorry`.  `#print axioms` reports only standard mathlib axioms
   ([propext, Classical.choice, Quot.sound]) on the main theorem-level results (no `sorryAx`).
   Proven:
-    • `strict_lift` (§4.1): every base autoequivalence lifts to a `G`-equivariant,
+    • `strict_lift` (paper §4.1; file §4): every base autoequivalence lifts to a `G`-equivariant,
       cleavage-preserving bundle autoequivalence covering it (⇒ Φ surjective);
-    • `rigidity`  (§4.2): two such lifts of one base symmetry differ by a unique `Λ d g`;
-    • `exact_sequence` (§4.3, elementary `∀/∃/↔` form): Φ surjective; ker = {Λ d g}.
-    • GROUP form of §4.3:  `Φ : AutBoxG d →* StrictAut S` and `Λ : G →* AutBoxG d` are
+    • `rigidity`  (paper §4.2; file §4): two such lifts of one base symmetry differ by a unique `Λ d g`;
+    • `exact_sequence` (paper §4.3; file §4, elementary `∀/∃/↔` form): Φ surjective; ker = {Λ d g}.
+    • GROUP form of paper §4.3 / file §6:  `Φ : AutBoxG d →* StrictAut S` and `Λ : G →* AutBoxG d` are
       genuine group homomorphisms (`MonoidHom`), with `Φ_surjective`, `ΛHom_injective`
       (needs `Nonempty S`) and `ker_Φ_eq_range_Λ : (Φ d).ker = (ΛHom d).range`.  This is the
       short exact sequence  1 → G → Aut□_G(O/p) → Aut(S) → 1.
     • `witness` / `witness₂`: a concrete `OEData` for any group `G` (e.g. |G| = 2), so the
       theorem is non-vacuous and `p_faithful` is consistent with nontrivial `G`.
-    • TWISTED generalization (§7): the strict SES above realizes only the DIRECT product
+    • TWISTED generalization (paper §5; file §7): the strict SES above realizes only the DIRECT product
       `G × Aut(S)`.  For a functorial twist `θ : Aut(S) →* MulAut G` (base symmetries acting on
       the structure group), `θ`-twisted equivariance `F(x·g) = F x·(θ_A g)` gives the exact
       sequence `1 → G → Aut□^θ_G(O/p) → Aut(S) → 1` whose conjugation on the kernel is `θ`
       (`Λ_comp_liftθ`) (`strict_liftθ`, `rigidityθ`, `Φθ_surjective`, `ΛHomθ_injective`,
       `ker_Φθ_eq_range_Λθ`).  This is the home of the Poincaré model `ℝ⁴ ⋊ O(1,3) = ISO(1,3)`
-      (Ex. 2, corrected: `G = ℝ⁴` translations, `Aut(S) = O(1,3)` Lorentz acting by `a ↦ Λ a`).
-      Setting `θ = 1` recovers §§1–6.
-    • NON-VACUOUS twist witness (§8): `labData G Q : OEData G (pLab G Q)` — the `Q`-labelled
+      (Ex. 2, corrected: `G = ℝ⁴` translations, with base symmetries `H = O(1,3) ≤ Aut(S)` acting by `a ↦ Λ a`).
+      Setting `θ = 1` recovers file §§1–6.
+    • NON-VACUOUS twist witness (file §8): `labData G Q : OEData G (pLab G Q)` — the `Q`-labelled
       codiscrete groupoid on `G` over `S = SingleObj Q` — together with the NONTRIVIAL twist
       `θSingleObj G : StrictAut (SingleObj G) →* MulAut G` (`θSingleObj_surjective`,
-      `θSingleObj_ne_one`).  So §7 is genuinely instantiated for `θ ≠ 1` (e.g.
+      `θSingleObj_ne_one`).  So file §7 is genuinely instantiated for `θ ≠ 1` (e.g.
       `Multiplicative (ZMod 3)`).  A literal `ℝ⁴ ⋊ O(1,3)` instance is deferred — mathlib has no
       Lorentz group `O(1,3)` yet.
-    • SEMIDIRECT iso (§9): the §7 sequence packaged as an explicit group isomorphism
+    • SEMIDIRECT iso (file §9): the file §7 sequence packaged as an explicit group isomorphism
       `Aut□^θ_G(O/p) ≃* G ⋊[θ] Aut(S)` (`autBoxGθMulEquivSemidirect`, via `SemidirectProduct.lift`
       of `Λθ`/`liftHomθ` and `MulEquiv.ofBijective`); so `G ⋊_θ Aut(S)` is now a literal
       formalized identification, not only the exact-sequence data.
@@ -41,7 +45,8 @@
   GROUP PACKAGING NOTE.  `Aut(S)` and `Aut□_G(O/p)` are the groups of STRICT (on-the-nose)
   automorphisms (`StrictAut S` / `AutBoxG d`), not `CategoryTheory.Equivalence` (`≌`): an
   equivalence has no strict inverse (`F ⋙ F⁻¹ ≅ 𝟭`, not `= 𝟭`), and `Λ_g ≅ 𝟭` would collapse
-  the kernel.  This matches the paper's `Aut(S)` = "chosen strict representatives".  The
+  the kernel.  This matches the paper's `Aut(S)` = the group of strict automorphisms
+  (functors with a strict two-sided inverse), not a chosen set of representatives.  The
   elementary `exact_sequence` (quantified over `A : S ≌ S`) is retained as a bridge.
 
   MODEL (chosen with the author — the *non-discrete* model):
@@ -69,43 +74,43 @@ universe v u w
 variable {S O G : Type*} [Category S] [Groupoid O] [Group G]
 variable {p : O ⥤ S}
 
-/-! ## 1. The bundle structure (Definition 3.x + normalization of §4) -/
+/-! ## 1. The bundle structure (paper §3: split principal G-fibration + normalization) -/
 
 /-- All data and axioms of a split principal `G`-fibration in groupoids
     `p : O ⥤ S`, together with a normalized transport-compatible basepoint
     section. The `□` of the paper (cleavage preservation) lives downstream in
     the predicates on automorphisms, not here. -/
 structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
-  -- Right `G`-action on objects of `O`. (Def. 3.x (i)–(ii), object part.)
+  -- Right `G`-action on objects of `O`. (paper §3, split principal `G`-fibration: right action, object part.)
   act       : O → G → O
   act_one   : ∀ x, act x 1 = x
   act_mul   : ∀ x g h, act (act x g) h = act x (g * h)
-  -- Action preserves the projection on objects. (Def. 3.x (iii).)
+  -- Action preserves the projection on objects. (paper §3, split principal `G`-fibration (ii), object part.)
   p_act     : ∀ x g, p.obj (act x g) = p.obj x
-  -- Freeness of the action on objects within a fiber.
+  -- Freeness of the action on objects within a fiber. (paper §3, split principal `G`-fibration (i): fiber a right `G`-torsor.)
   act_free  : ∀ x g h, act x g = act x h → g = h
   -- Right `G`-action on morphisms, with functoriality in the morphism slot.
   actHom    : ∀ {x y : O}, (x ⟶ y) → (g : G) → (act x g ⟶ act y g)
   actHom_id : ∀ (x : O) (g : G), actHom (𝟙 x) g = 𝟙 (act x g)
   actHom_comp : ∀ {x y z : O} (f : x ⟶ y) (h : y ⟶ z) (g : G),
       actHom (f ≫ h) g = actHom f g ≫ actHom h g
-  -- Compatibility of `actHom` with `p`. (Def. 3.x (iii), morphism part.)
+  -- Compatibility of `actHom` with `p`. (paper §3, split principal `G`-fibration (ii), morphism part.)
   p_actHom  : ∀ {x y : O} (f : x ⟶ y) (g : G),
       p.map (actHom f g)
         = eqToHom (p_act x g) ≫ p.map f ≫ eqToHom (p_act y g).symm
-  -- (`actHom` records the morphism part of the right `G`-action from Def. 3.x(ii); it is part
+  -- (`actHom` records the morphism part of the right `G`-action (paper §3, split principal `G`-fibration); it is part
   --  of the bundle datum.  The §4 results below act on in-fiber morphisms via `ltrans` and
   --  `p`-faithfulness, so they do not consume the cross-`g` coherence of `actHom` directly.)
 
-  -- Normalized, transport-compatible basepoint section `b : Ob S → Ob O`.
+  -- Normalized, transport-compatible basepoint section `b : Ob S → Ob O`. (paper §3, normalized datum (N1).)
   base       : S → O
   p_base     : ∀ s, p.obj (base s) = s
-  -- Coordinate of an object relative to its basepoint:  x = base (p.obj x) · coord x.
+  -- Coordinate of an object relative to its basepoint:  x = base (p.obj x) · coord x. (paper §3, normalized datum (N2).)
   coord      : O → G
   base_coord : ∀ x, act (base (p.obj x)) (coord x) = x
   coord_base : ∀ s g, coord (act (base s) g) = g
 
-  -- Chosen split cleavage: reindexed object `u*y` and the chosen cartesian lift
+  -- Chosen split cleavage (paper §3, split Grothendieck fibration): reindexed object `u*y` and the chosen cartesian lift
   -- `χ_{u,y} : u*y → y`, defined for `y` in the fiber over `t`.
   reind   : ∀ {s t : S}, (s ⟶ t) → (y : O) → p.obj y = t → O
   p_reind : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t),
@@ -121,13 +126,13 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
   -- `G`-stability of reindexing on objects  (transport compatibility).
   reind_act  : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) (g : G),
       reind u (act y g) ((p_act y g).trans hy) = act (reind u y hy) g
-  -- `G`-stability of the chosen cartesian lifts  (Def. 3.x (iv):  χ_{u,y·g} = χ_{u,y}·g).
+  -- `G`-stability of the chosen cartesian lifts  (paper §3, split principal `G`-fibration (iii):  χ_{u,y·g} = χ_{u,y}·g).
   chi_act    : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) (g : G),
       chi u (act y g) ((p_act y g).trans hy)
         = eqToHom (reind_act u y hy g) ≫ actHom (chi u y hy) g
 
-  -- Normalized fiber translation, morphism level (the principal/normalized datum
-  -- the author chose: "icke-diskret" model).  `ltrans g x : x ⟶ b_{p x}·(g·coord x)`
+  -- Normalized fiber translation, morphism level (paper §3, normalized datum (N3): the chosen
+  -- vertical translation isos — the author's "icke-diskret" model).  `ltrans g x : x ⟶ b_{p x}·(g·coord x)`
   -- is the chosen vertical iso realizing left-translation by `g` in the fiber.  It
   -- is what lets `Λ_g` act on in-fiber (vertical) morphisms via the `G`-action,
   -- not only on cartesian arrows — repairing the discrete-fiber degeneracy.
@@ -137,7 +142,7 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
       p.map (ltrans g x)
         = eqToHom (((p_act (base (p.obj x)) (g * coord x)).trans (p_base (p.obj x))).symm)
 
-  -- Splitness of the cleavage (Def. 3.x: chosen lifts compatible with id and ∘).
+  -- Splitness of the cleavage (paper §3, split Grothendieck fibration: chosen lifts compatible with id and ∘).
   reind_id : ∀ {s : S} (y : O) (hy : p.obj y = s), reind (𝟙 s) y hy = y
   chi_id   : ∀ {s : S} (y : O) (hy : p.obj y = s),
       chi (𝟙 s) y hy = eqToHom (reind_id y hy)
@@ -147,7 +152,7 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
       chi (u ≫ v) z hz
         = eqToHom (reind_comp u v z hz) ≫ chi u (reind v z hz) (p_reind v z hz) ≫ chi v z hz
 
-  -- Faithfulness of `p`:  fibers are "thin" — at most one morphism between two objects
+  -- Faithfulness of `p` (paper §3, normalized datum (N4)):  fibers are "thin" — at most one morphism between two objects
   -- over each base morphism (the torsor-groupoid content of the "non-discrete" model).
   -- This is a GENUINE extra assumption, NOT derivable from the fields above: nothing here
   -- forbids extra morphisms with the same projection (`chi` is data with a projection law
@@ -757,7 +762,7 @@ theorem ker_Φ_eq_range_Λ (d : OEData G p) [IsConnected S] : (Φ d).ker = (ΛHo
   `liftFunctor A ⋙ Λ d g ⋙ (liftFunctor A)⁻¹ = Λ d g` is trivial, because strict
   `G`-equivariance commutes on the nose with the right action.  Genuine semidirect symmetry
   groups — notably the Poincaré group `ISO(1,3) = ℝ⁴ ⋊ O(1,3)` with structure group
-  `G = ℝ⁴` (translations) and base symmetries `Aut(S) = O(1,3)` acting by `a ↦ Λ a` — require
+  `G = ℝ⁴` (translations) and base symmetries `H = O(1,3) ≤ Aut(S)` acting by `a ↦ Λ a` — require
   *twisted* equivariance: the lift `F` of a base symmetry `A` acts on the fiber through a
   group automorphism `θ ∈ MulAut G`,
 

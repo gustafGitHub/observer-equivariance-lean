@@ -4,7 +4,7 @@ A Lean 4 + [mathlib](https://github.com/leanprover-community/mathlib4) formaliza
 strict and twisted classification theorems (Sections 4–5) of
 
 > G. Ullman, *Observer Equivariance as a Condition for Shared Physical Law*.
-> Zenodo — concept DOI: `10.5281/zenodo.17077437`; version DOI: `10.5281/zenodo.20589116`.
+> Zenodo — concept DOI: `10.5281/zenodo.17077437`; version DOI: `10.5281/zenodo.20643747`.
 
 Everything lives in a single file: [`ObserverEquivariance.lean`](ObserverEquivariance.lean).
 
@@ -52,8 +52,8 @@ mathlib does not yet provide. Those parts of the paper are out of scope for this
 
 ## Assumptions
 
-Beyond the data and axioms of `OEData` (the split principal `G`-fibration of Definition 3.x
-plus the normalized basepoint section of §4), the results use exactly two extra hypotheses:
+Beyond the data and axioms of `OEData` (the split principal `G`-fibration plus the normalized
+basepoint section, both from §3), the results use exactly two extra hypotheses:
 
 - **`p_faithful : p.Faithful`** — the fibration is *thin*: at most one morphism between two
   objects over each base morphism (a torsor-groupoid fibration). This is the precise content
@@ -73,9 +73,9 @@ Modelling choices worth flagging:
   predicate `PreservesCleavage`. Morphism-level `G`-equivariance is **derived** from
   `p_faithful`, not assumed.
 - `Aut(S)` and `Aut□_G(O/p)` are the groups of **strict** (on-the-nose) automorphisms
-  (`StrictAut S` / `AutBoxG d`), matching the paper's "chosen strict representatives of
-  autoequivalences". Equivalences (`≌`) cannot form the group: they have no strict inverse,
-  and `Λ_g ≅ 𝟭` would collapse the kernel.
+  (`StrictAut S` / `AutBoxG d`), matching the paper's `Aut(S)` = the group of strict
+  automorphisms (functors with a strict two-sided inverse). Equivalences (`≌`) cannot form
+  the group: they have no strict inverse, and `Λ_g ≅ 𝟭` would collapse the kernel.
 
 ## Sorry-free
 
