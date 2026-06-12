@@ -1,17 +1,26 @@
 /-
-  Observer Equivariance as a Condition for Shared Physical Law
+  The Mathematical Structure of Shared Physical Law
   ----------------------------------------------------------------
-  Lean 4 / mathlib formalization of the strict classification theorem (paper §4) of
-  G. Ullman, *Observer Equivariance as a Condition for Shared Physical Law* — the short
-  exact sequence
+  Lean 4 / mathlib formalization of the strict normal-form classification theorem
+  (paper §4) of G. Ullman, *The Mathematical Structure of Shared Physical Law:
+  A Lean-Verified Normal Form for Observer Equivariance*.
+  In this header, references marked "paper §" refer to the article; unmarked §-numbers
+  refer to section headings inside this Lean file:
 
       1 → G → Aut□_G(O/p) → Aut(S) → 1.
 
-  In this header, references marked "paper §" refer to the article; unmarked §-numbers
-  refer to section headings inside this Lean file.
+
+  SCOPE NOTE.  The paper now phrases the result explicitly as a normal-form
+  classification theorem: given normalized `OEData`, lifts of strict base symmetries
+  exist and are classified by the exact sequence below.  This file does not prove
+  that the informal requirement of shared physical law by itself forces all fields
+  of `OEData`; the role of each assumption is discussed in the paper's assumption
+  audit.
 
   STATUS: builds cleanly, no `sorry`.  `#print axioms` reports only standard mathlib axioms
   ([propext, Classical.choice, Quot.sound]) on the main theorem-level results (no `sorryAx`).
+  BUILD SNAPSHOT: lean-toolchain = `leanprover/lean4:v4.31.0-rc1`; mathlib rev =
+  `8834d3761934044a64c98afb757c1673fad03521` in lake-manifest.json.
   Proven:
     • `strict_lift` (paper §4.1; file §4): every base autoequivalence lifts to a `G`-equivariant,
       cleavage-preserving bundle autoequivalence covering it (⇒ Φ surjective);
@@ -74,43 +83,43 @@ universe v u w
 variable {S O G : Type*} [Category S] [Groupoid O] [Group G]
 variable {p : O ⥤ S}
 
-/-! ## 1. The bundle structure (paper §3: split principal G-fibration + normalization) -/
+/-! ## 1. The bundle structure (paper Definitions `splitprincipal`/`oedata`) -/
 
 /-- All data and axioms of a split principal `G`-fibration in groupoids
     `p : O ⥤ S`, together with a normalized transport-compatible basepoint
     section. The `□` of the paper (cleavage preservation) lives downstream in
     the predicates on automorphisms, not here. -/
 structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
-  -- Right `G`-action on objects of `O`. (paper §3, split principal `G`-fibration: right action, object part.)
+  -- Right `G`-action on objects of `O`. (paper Definition `splitprincipal`, action part.)
   act       : O → G → O
   act_one   : ∀ x, act x 1 = x
   act_mul   : ∀ x g h, act (act x g) h = act x (g * h)
-  -- Action preserves the projection on objects. (paper §3, split principal `G`-fibration (ii), object part.)
+  -- Action preserves the projection on objects. (paper Definition `splitprincipal` (ii), object part.)
   p_act     : ∀ x g, p.obj (act x g) = p.obj x
-  -- Freeness of the action on objects within a fiber. (paper §3, split principal `G`-fibration (i): fiber a right `G`-torsor.)
+  -- Freeness of the action on objects within a fiber.
   act_free  : ∀ x g h, act x g = act x h → g = h
   -- Right `G`-action on morphisms, with functoriality in the morphism slot.
   actHom    : ∀ {x y : O}, (x ⟶ y) → (g : G) → (act x g ⟶ act y g)
   actHom_id : ∀ (x : O) (g : G), actHom (𝟙 x) g = 𝟙 (act x g)
   actHom_comp : ∀ {x y z : O} (f : x ⟶ y) (h : y ⟶ z) (g : G),
       actHom (f ≫ h) g = actHom f g ≫ actHom h g
-  -- Compatibility of `actHom` with `p`. (paper §3, split principal `G`-fibration (ii), morphism part.)
+  -- Compatibility of `actHom` with `p`. (paper Definition `splitprincipal` (ii), morphism part.)
   p_actHom  : ∀ {x y : O} (f : x ⟶ y) (g : G),
       p.map (actHom f g)
         = eqToHom (p_act x g) ≫ p.map f ≫ eqToHom (p_act y g).symm
-  -- (`actHom` records the morphism part of the right `G`-action (paper §3, split principal `G`-fibration); it is part
+  -- (`actHom` records the morphism part of the right `G`-action from paper Definition `splitprincipal`; it is part
   --  of the bundle datum.  The §4 results below act on in-fiber morphisms via `ltrans` and
   --  `p`-faithfulness, so they do not consume the cross-`g` coherence of `actHom` directly.)
 
-  -- Normalized, transport-compatible basepoint section `b : Ob S → Ob O`. (paper §3, normalized datum (N1).)
+  -- Normalized, transport-compatible basepoint section `b : Ob S → Ob O`.
   base       : S → O
   p_base     : ∀ s, p.obj (base s) = s
-  -- Coordinate of an object relative to its basepoint:  x = base (p.obj x) · coord x. (paper §3, normalized datum (N2).)
+  -- Coordinate of an object relative to its basepoint:  x = base (p.obj x) · coord x.
   coord      : O → G
   base_coord : ∀ x, act (base (p.obj x)) (coord x) = x
   coord_base : ∀ s g, coord (act (base s) g) = g
 
-  -- Chosen split cleavage (paper §3, split Grothendieck fibration): reindexed object `u*y` and the chosen cartesian lift
+  -- Chosen split cleavage: reindexed object `u*y` and the chosen cartesian lift
   -- `χ_{u,y} : u*y → y`, defined for `y` in the fiber over `t`.
   reind   : ∀ {s t : S}, (s ⟶ t) → (y : O) → p.obj y = t → O
   p_reind : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t),
@@ -126,13 +135,13 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
   -- `G`-stability of reindexing on objects  (transport compatibility).
   reind_act  : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) (g : G),
       reind u (act y g) ((p_act y g).trans hy) = act (reind u y hy) g
-  -- `G`-stability of the chosen cartesian lifts  (paper §3, split principal `G`-fibration (iii):  χ_{u,y·g} = χ_{u,y}·g).
+  -- `G`-stability of the chosen cartesian lifts (paper Definition `splitprincipal` (iii): χ_{u,y·g} = χ_{u,y}·g).
   chi_act    : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) (g : G),
       chi u (act y g) ((p_act y g).trans hy)
         = eqToHom (reind_act u y hy g) ≫ actHom (chi u y hy) g
 
-  -- Normalized fiber translation, morphism level (paper §3, normalized datum (N3): the chosen
-  -- vertical translation isos — the author's "icke-diskret" model).  `ltrans g x : x ⟶ b_{p x}·(g·coord x)`
+  -- Normalized fiber translation, morphism level (the principal/normalized datum
+  -- the author chose: "icke-diskret" model).  `ltrans g x : x ⟶ b_{p x}·(g·coord x)`
   -- is the chosen vertical iso realizing left-translation by `g` in the fiber.  It
   -- is what lets `Λ_g` act on in-fiber (vertical) morphisms via the `G`-action,
   -- not only on cartesian arrows — repairing the discrete-fiber degeneracy.
@@ -142,7 +151,7 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
       p.map (ltrans g x)
         = eqToHom (((p_act (base (p.obj x)) (g * coord x)).trans (p_base (p.obj x))).symm)
 
-  -- Splitness of the cleavage (paper §3, split Grothendieck fibration: chosen lifts compatible with id and ∘).
+  -- Splitness of the cleavage (paper Definition `Split Grothendieck fibration`: chosen lifts compatible with id and ∘).
   reind_id : ∀ {s : S} (y : O) (hy : p.obj y = s), reind (𝟙 s) y hy = y
   chi_id   : ∀ {s : S} (y : O) (hy : p.obj y = s),
       chi (𝟙 s) y hy = eqToHom (reind_id y hy)
@@ -152,7 +161,7 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
       chi (u ≫ v) z hz
         = eqToHom (reind_comp u v z hz) ≫ chi u (reind v z hz) (p_reind v z hz) ≫ chi v z hz
 
-  -- Faithfulness of `p` (paper §3, normalized datum (N4)):  fibers are "thin" — at most one morphism between two objects
+  -- Faithfulness of `p`:  fibers are "thin" — at most one morphism between two objects
   -- over each base morphism (the torsor-groupoid content of the "non-discrete" model).
   -- This is a GENUINE extra assumption, NOT derivable from the fields above: nothing here
   -- forbids extra morphisms with the same projection (`chi` is data with a projection law
@@ -504,8 +513,8 @@ example (G : Type*) [Group G] [Nontrivial G] :
   We package the result as genuine group theory.  The base symmetries `Aut(S)` and the
   bundle automorphisms `Aut□_G(O/p)` must be STRICT (on-the-nose) automorphisms: with
   `CategoryTheory.Equivalence` (`≌`, up-to-iso) there is no strict inverse, and `Λ_g ≅ 𝟭`
-  would collapse the kernel.  This matches the paper's `Aut(S)` = "chosen strict
-  representatives of autoequivalences".  No new `OEData` assumption is used. -/
+  would collapse the kernel.  This matches the paper's `Aut(S)` = the group of strict
+  automorphisms (functors with a strict two-sided inverse).  No new `OEData` assumption is used. -/
 
 /-- A strict automorphism of a category `C`: a functor with a strict two-sided inverse
     (an isomorphism in `Cat`).  These form the group `Aut(C)` of strict autoequivalences. -/
