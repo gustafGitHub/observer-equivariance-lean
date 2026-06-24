@@ -103,13 +103,25 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
   actHom_id : ∀ (x : O) (g : G), actHom (𝟙 x) g = 𝟙 (act x g)
   actHom_comp : ∀ {x y z : O} (f : x ⟶ y) (h : y ⟶ z) (g : G),
       actHom (f ≫ h) g = actHom f g ≫ actHom h g
+  -- Action by the identity group element is the identity functor on morphisms,
+  -- up to the object equalities `act_one`.
+  actHom_one : ∀ {x y : O} (f : x ⟶ y),
+      actHom f (1 : G)
+        = eqToHom (act_one x) ≫ f ≫ eqToHom (act_one y).symm
+  -- Compatibility of the morphism action with the right group law.
+  -- The left side acts first by `g`, then by `h`; the right side acts by `g*h`,
+  -- with endpoint casts supplied by `act_mul`.
+  actHom_mul : ∀ {x y : O} (f : x ⟶ y) (g h : G),
+      actHom (actHom f g) h
+        = eqToHom (act_mul x g h) ≫ actHom f (g * h) ≫ eqToHom (act_mul y g h).symm
   -- Compatibility of `actHom` with `p`. (paper Definition `splitprincipal` (ii), morphism part.)
   p_actHom  : ∀ {x y : O} (f : x ⟶ y) (g : G),
       p.map (actHom f g)
         = eqToHom (p_act x g) ≫ p.map f ≫ eqToHom (p_act y g).symm
-  -- (`actHom` records the morphism part of the right `G`-action from paper Definition `splitprincipal`; it is part
-  --  of the bundle datum.  The §4 results below act on in-fiber morphisms via `ltrans` and
-  --  `p`-faithfulness, so they do not consume the cross-`g` coherence of `actHom` directly.)
+  -- `actHom` records the morphism part of the right `G`-action from paper Definition
+  -- `splitprincipal`. The exact-sequence proofs use mainly endpoint/projection data
+  -- and `p`-faithfulness, but `actHom_one` and `actHom_mul` are included so the
+  -- action can be read as an action by functor automorphisms.
 
   -- Normalized, transport-compatible basepoint section `b : Ob S → Ob O`.
   base       : S → O
@@ -151,7 +163,7 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
       p.map (ltrans g x)
         = eqToHom (((p_act (base (p.obj x)) (g * coord x)).trans (p_base (p.obj x))).symm)
 
-  -- Splitness of the cleavage (paper Definition `Split Grothendieck fibration`: chosen lifts compatible with id and ∘).
+  -- Splitness of the cleavage (theorem-level split-cleavage presentation: chosen lifts compatible with id and ∘).
   reind_id : ∀ {s : S} (y : O) (hy : p.obj y = s), reind (𝟙 s) y hy = y
   chi_id   : ∀ {s : S} (y : O) (hy : p.obj y = s),
       chi (𝟙 s) y hy = eqToHom (reind_id y hy)
@@ -232,6 +244,29 @@ theorem isFull (d : OEData G p) : p.Full where
     · conv_rhs => rw [← d.base_coord (d.reind w y rfl), d.p_reind]
       rw [mul_assoc, inv_mul_cancel, mul_one]
     · simp [d.p_ltrans, d.p_chi, eqToHom_map]
+
+/-- The right `G`-action by `g`, packaged as a genuine endofunctor of `O` using the
+    coherence fields `actHom_id` / `actHom_comp`.  Together with `actFunctor_one` and
+    `actFunctor_mul` this exhibits the action as one by functor automorphisms. -/
+noncomputable def actFunctor (d : OEData G p) (g : G) : O ⥤ O where
+  obj x := d.act x g
+  map f := d.actHom f g
+  map_id x := d.actHom_id x g
+  map_comp f h := d.actHom_comp f h g
+
+/-- The identity element acts as the identity functor (uses `actHom_one`). -/
+theorem actFunctor_one (d : OEData G p) : d.actFunctor (1 : G) = 𝟭 O := by
+  fapply CategoryTheory.Functor.ext
+  · intro x; exact d.act_one x
+  · intro X Y f; exact d.actHom_one f
+
+/-- The morphism action is multiplicative:  `actFunctor g ⋙ actFunctor h = actFunctor (g*h)`
+    (uses `actHom_mul`).  `⋙` is "first `g`, then `h`", matching `act_mul`. -/
+theorem actFunctor_mul (d : OEData G p) (g h : G) :
+    d.actFunctor g ⋙ d.actFunctor h = d.actFunctor (g * h) := by
+  fapply CategoryTheory.Functor.ext
+  · intro x; exact d.act_mul x g h
+  · intro X Y f; exact d.actHom_mul f g h
 
 end OEData
 
@@ -472,6 +507,8 @@ def witness (G : Type*) [Group G] : OEData G (pWit G) where
   actHom _ _ := ⟨⟩
   actHom_id _ _ := rfl
   actHom_comp _ _ _ := rfl
+  actHom_one _ := rfl
+  actHom_mul _ _ _ := rfl
   p_actHom _ _ := rfl
   base _ := ⟨1⟩
   p_base _ := rfl
@@ -1184,6 +1221,14 @@ def labData (G Q : Type*) [Group G] [Group Q] : OEData G (pLab G Q) where
   actHom f _ := f
   actHom_id _ _ := rfl
   actHom_comp _ _ _ := rfl
+  actHom_one f := by
+    have e : ∀ {a b : Lab G Q} (hh : a = b), (eqToHom hh : a ⟶ b) = (1 : Q) := by
+      rintro a b rfl; rfl
+    rw [e, e]; simp [CategoryStruct.comp]
+  actHom_mul f g h := by
+    have e : ∀ {a b : Lab G Q} (hh : a = b), (eqToHom hh : a ⟶ b) = (1 : Q) := by
+      rintro a b rfl; rfl
+    rw [e, e]; simp [CategoryStruct.comp]
   p_actHom _ _ := by simp [pLab]
   base _ := ⟨1⟩
   p_base _ := rfl
