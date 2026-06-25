@@ -1,9 +1,9 @@
 /-
-  The Mathematical Structure of Shared Physical Law
+  A Strict Normal Form for Shared Physical Law
   ----------------------------------------------------------------
   Lean 4 / mathlib formalization of the strict normal-form classification theorem
-  (paper §4) of G. Ullman, *The Mathematical Structure of Shared Physical Law:
-  A Lean-Verified Normal Form for Observer Equivariance*.
+  (paper §4) of G. Ullman, *A Strict Normal Form for Shared Physical Law:
+  A Lean-Verified Classification Theorem for Observer Equivariance*.
   In this header, references marked "paper §" refer to the article; unmarked §-numbers
   refer to section headings inside this Lean file:
 
@@ -90,11 +90,11 @@ variable {p : O ⥤ S}
     section. The `□` of the paper (cleavage preservation) lives downstream in
     the predicates on automorphisms, not here. -/
 structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
-  -- Right `G`-action on objects of `O`. (paper Definition `splitprincipal`, action part.)
+  -- Right `G`-action on objects of `O`. (paper Definition `splitprincipal` (i), action part.)
   act       : O → G → O
   act_one   : ∀ x, act x 1 = x
   act_mul   : ∀ x g h, act (act x g) h = act x (g * h)
-  -- Action preserves the projection on objects. (paper Definition `splitprincipal` (ii), object part.)
+  -- Action preserves the projection on objects. (paper Definition `splitprincipal` (iv), object part.)
   p_act     : ∀ x g, p.obj (act x g) = p.obj x
   -- Freeness of the action on objects within a fiber.
   act_free  : ∀ x g h, act x g = act x h → g = h
@@ -114,12 +114,12 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
   actHom_mul : ∀ {x y : O} (f : x ⟶ y) (g h : G),
       actHom (actHom f g) h
         = eqToHom (act_mul x g h) ≫ actHom f (g * h) ≫ eqToHom (act_mul y g h).symm
-  -- Compatibility of `actHom` with `p`. (paper Definition `splitprincipal` (ii), morphism part.)
+  -- Compatibility of `actHom` with `p`. (paper Definition `splitprincipal` (iv), morphism part.)
   p_actHom  : ∀ {x y : O} (f : x ⟶ y) (g : G),
       p.map (actHom f g)
         = eqToHom (p_act x g) ≫ p.map f ≫ eqToHom (p_act y g).symm
   -- `actHom` records the morphism part of the right `G`-action from paper Definition
-  -- `splitprincipal`. The exact-sequence proofs use mainly endpoint/projection data
+  -- `splitprincipal` (i). The exact-sequence proofs use mainly endpoint/projection data
   -- and `p`-faithfulness, but `actHom_one` and `actHom_mul` are included so the
   -- action can be read as an action by functor automorphisms.
 
@@ -147,7 +147,7 @@ structure OEData (G : Type*) [Group G] (p : O ⥤ S) where
   -- `G`-stability of reindexing on objects  (transport compatibility).
   reind_act  : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) (g : G),
       reind u (act y g) ((p_act y g).trans hy) = act (reind u y hy) g
-  -- `G`-stability of the chosen cartesian lifts (paper Definition `splitprincipal` (iii): χ_{u,y·g} = χ_{u,y}·g).
+  -- `G`-stability of the chosen cartesian lifts (paper Definition `splitprincipal` (iv): χ_{u,y·g} = χ_{u,y}·g).
   chi_act    : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) (g : G),
       chi u (act y g) ((p_act y g).trans hy)
         = eqToHom (reind_act u y hy g) ≫ actHom (chi u y hy) g

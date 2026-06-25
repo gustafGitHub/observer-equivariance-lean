@@ -3,9 +3,9 @@
 A Lean 4 + [mathlib](https://github.com/leanprover-community/mathlib4) formalization of the
 strict and twisted classification theorems (Sections 4–5) of
 
-> G. Ullman, *The Mathematical Structure of Shared Physical Law: A Lean-Verified Normal
-> Form for Observer Equivariance*.
-> Zenodo — concept DOI: `10.5281/zenodo.17077437`; version DOI: `10.5281/zenodo.20661665`.
+> G. Ullman, *A Strict Normal Form for Shared Physical Law: A Lean-Verified Classification
+> Theorem for Observer Equivariance*.
+> Zenodo — concept DOI: `10.5281/zenodo.17077437`; version DOI: `10.5281/zenodo.20840461`.
 
 Everything lives in a single file: [`ObserverEquivariance.lean`](ObserverEquivariance.lean).
 
