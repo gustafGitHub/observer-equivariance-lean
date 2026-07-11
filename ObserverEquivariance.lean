@@ -208,6 +208,33 @@ theorem Λ_comp_p (d : OEData G p) (g : G) : Λ d g ⋙ p = p := by
   simp only [p.map_comp, Groupoid.inv_eq_inv, p.map_inv, d.p_ltrans, inv_eqToHom]
   rfl
 
+/-! ## 2a. Every strict fiber translation is naturally isomorphic to the identity -/
+
+/-- Each strict fiber translation `Λ d g` is NATURALLY ISOMORPHIC to `𝟭 O`, via the chosen
+    vertical translations `ltrans` (whose conjugation defines `Λ.map`).  So `Λ_g` is a
+    nontrivial element of the STRICT presentation group `AutBoxG` — `ΛHom` is injective — even
+    though it is `≅ 𝟭` as an autoequivalence; that is the difference between strict presentation
+    data and autoequivalences modulo natural isomorphism, not a contradiction. -/
+noncomputable def idIsoΛ (d : OEData G p) (g : G) : 𝟭 O ≅ Λ d g :=
+  NatIso.ofComponents
+    (fun x => ⟨d.ltrans g x, Groupoid.inv (d.ltrans g x), by simp, by simp⟩)
+    (fun f => by simp [Λ])
+
+/-- The reverse natural isomorphism `Λ d g ≅ 𝟭 O`. -/
+noncomputable def ΛIsoId (d : OEData G p) (g : G) : Λ d g ≅ 𝟭 O :=
+  (idIsoΛ d g).symm
+
+/-! ## 2b. Derived cartesianness of the cleavage (paper §3, `prop:cartesian`) -/
+
+/-- Strong (Grothendieck) cartesianness of `f` over `p`:  every arrow `g : z ⟶ y` whose
+    projection factors through `p.map f` via a base arrow `h` lifts to a UNIQUE `k : z ⟶ x`
+    with `p.map k = h` and `k ≫ f = g`.  This is the article's formal contract, stated
+    directly (existence *and* uniqueness) rather than via mathlib's fibration API. -/
+def IsCartesianOver (p : O ⥤ S) {x y : O} (f : x ⟶ y) : Prop :=
+  ∀ {z : O} (g : z ⟶ y) (h : p.obj z ⟶ p.obj x),
+    h ≫ p.map f = p.map g →
+      ∃! k : z ⟶ x, p.map k = h ∧ k ≫ f = g
+
 namespace OEData
 
 /-- `coord` shifts on the right under the action:  `coord (x · g) = coord x * g`. -/
@@ -267,6 +294,26 @@ theorem actFunctor_mul (d : OEData G p) (g h : G) :
   fapply CategoryTheory.Functor.ext
   · intro x; exact d.act_mul x g h
   · intro X Y f; exact d.actHom_mul f g h
+
+/-- Every arrow of `O` is `p`-cartesian, from DERIVED fullness (`isFull`) plus the assumed
+    faithfulness (`p_faithful`).  This is the strong universal property `IsCartesianOver`,
+    not merely a weak lift.  (Paper §3, `prop:cartesian`.) -/
+theorem isCartesian_of_fullyFaithful (d : OEData G p) {x y : O} (f : x ⟶ y) :
+    IsCartesianOver p f := by
+  haveI := d.isFull
+  haveI := d.p_faithful
+  intro z g h hgh
+  refine ⟨p.preimage h, ⟨p.map_preimage h, ?_⟩, ?_⟩
+  · apply p.map_injective
+    rw [p.map_comp, p.map_preimage]; exact hgh
+  · rintro k ⟨hk1, _⟩
+    apply p.map_injective
+    rw [hk1, p.map_preimage]
+
+/-- The chosen cleavage arrows `χ_{u,y}` are `p`-cartesian in the strict normal-form regime. -/
+theorem chi_isCartesian (d : OEData G p) {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) :
+    IsCartesianOver p (d.chi u y hy) :=
+  d.isCartesian_of_fullyFaithful _
 
 end OEData
 
@@ -490,6 +537,9 @@ instance (X : Type*) : Groupoid (Codisc X) where
   inv _ := ⟨⟩
   inv_comp _ := rfl
   comp_inv _ := rfl
+
+instance Codisc.homSubsingleton {X : Type*} (a b : Codisc X) : Subsingleton (a ⟶ b) :=
+  ⟨fun _ _ => rfl⟩
 
 /-- Witness projection: forget everything down to the one-object base `Codisc PUnit`. -/
 def pWit (G : Type*) : Codisc G ⥤ Codisc PUnit where
@@ -760,16 +810,56 @@ noncomputable def ΛHom (d : OEData G p) : G →* AutBoxG d where
     · show Λ d (g * h)⁻¹ = Λ d g⁻¹ ⋙ Λ d h⁻¹; rw [Λ_comp, mul_inv_rev]
     · rfl
 
-/-- `Φ` is surjective:  every strict base automorphism is covered by a bundle automorphism
-    (the strict lift).  (`⇒` surjectivity of the exact sequence.) -/
-theorem Φ_surjective (d : OEData G p) : Function.Surjective (Φ d) := fun A =>
-  ⟨{ hom := liftFunctor d A.hom
-     inv := liftFunctor d A.inv
-     hom_inv_id := by rw [lift_comp, A.hom_inv_id, lift_id]
-     inv_hom_id := by rw [lift_comp, A.inv_hom_id, lift_id]
-     base := A
-     equiv := lift_isGEquivariant d A.hom
-     pres := lift_preservesCleavage d A.hom }, rfl⟩
+@[simp] theorem ΛHom_base (d : OEData G p) (g : G) : (ΛHom d g).base = 1 := rfl
+
+/-- The canonical strict lift of a base automorphism, bundled as an element of `AutBoxG`
+    (paper §4, `lem:canonical-lift`).  `hom`/`inv` are `liftFunctor` of `A.hom`/`A.inv`. -/
+noncomputable def liftAut (d : OEData G p) (A : StrictAut S) : AutBoxG d where
+  hom := liftFunctor d A.hom
+  inv := liftFunctor d A.inv
+  hom_inv_id := by rw [lift_comp, A.hom_inv_id, lift_id]
+  inv_hom_id := by rw [lift_comp, A.inv_hom_id, lift_id]
+  base := A
+  equiv := lift_isGEquivariant d A.hom
+  pres := lift_preservesCleavage d A.hom
+
+@[simp] theorem liftAut_hom (d : OEData G p) (A : StrictAut S) :
+    (liftAut d A).hom = liftFunctor d A.hom := rfl
+@[simp] theorem liftAut_inv (d : OEData G p) (A : StrictAut S) :
+    (liftAut d A).inv = liftFunctor d A.inv := rfl
+@[simp] theorem liftAut_base (d : OEData G p) (A : StrictAut S) :
+    (liftAut d A).base = A := rfl
+
+@[simp] theorem Φ_liftAut (d : OEData G p) (A : StrictAut S) :
+    Φ d (liftAut d A) = A := rfl
+
+/-- The canonical section homomorphism `StrictAut S →* AutBoxG d`, `A ↦ liftAut d A`.
+    A genuine group hom because `liftFunctor` respects composition (`lift_comp`) and identity
+    (`lift_id`). -/
+noncomputable def liftHom (d : OEData G p) : StrictAut S →* AutBoxG d where
+  toFun := liftAut d
+  map_one' := by
+    refine AutBoxG.ext ?_ ?_ ?_
+    · show liftFunctor d (1 : StrictAut S).hom = 𝟭 O
+      rw [StrictAut.one_hom]; exact lift_id d
+    · show liftFunctor d (1 : StrictAut S).inv = 𝟭 O
+      rw [StrictAut.one_inv]; exact lift_id d
+    · rfl
+  map_mul' A B := by
+    refine AutBoxG.ext ?_ ?_ ?_
+    · show liftFunctor d (A * B).hom = liftFunctor d B.hom ⋙ liftFunctor d A.hom
+      rw [StrictAut.mul_hom, lift_comp]
+    · show liftFunctor d (A.inv ⋙ B.inv) = liftFunctor d A.inv ⋙ liftFunctor d B.inv
+      exact (lift_comp d A.inv B.inv).symm
+    · rfl
+
+theorem liftHom_apply (d : OEData G p) (A : StrictAut S) :
+    liftHom d A = liftAut d A := rfl
+
+/-- `Φ` is surjective:  every strict base automorphism is covered by the canonical lift
+    (`⇒` surjectivity of the exact sequence). -/
+theorem Φ_surjective (d : OEData G p) : Function.Surjective (Φ d) :=
+  fun A => ⟨liftAut d A, rfl⟩
 
 /-- `Λ` is injective (needs a basepoint; freeness of the action does the rest). -/
 theorem ΛHom_injective (d : OEData G p) [Nonempty S] : Function.Injective (ΛHom d) := by
@@ -1446,3 +1536,182 @@ noncomputable example (G : Type*) [Group G] :
       ≃* SemidirectProduct G (StrictAut (SingleObj G)) (θSingleObj G) :=
   autBoxGθMulEquivSemidirect (labData G G) (θSingleObj G)
 
+/-! ## 10. The untwisted classification as an explicit DIRECT product  (paper §4, `thm:strict-classification`)
+
+  For the whole ambient group `StrictAut S` (and, in §11, any subgroup `H`) the strict theorem
+  realizes a genuine DIRECT product `AutBoxG d ≃* G × StrictAut S`.  The commutation is at the
+  level of the CANONICAL normalized section `liftHom` (an arbitrary lift may carry a left
+  translation `Λ h` and then conjugate `Λ` nontrivially when `G` is nonabelian). -/
+
+/-- The canonical normalized lifts commute with `Λ` at the group level (from `Λ_comp_lift_one`).
+    Only the canonical section `liftHom` centralizes the kernel — not an arbitrary lift. -/
+theorem ΛHom_comm_liftHom (d : OEData G p) (g : G) (A : StrictAut S) :
+    ΛHom d g * liftHom d A = liftHom d A * ΛHom d g := by
+  refine AutBoxG.ext ?_ ?_ ?_
+  · show liftFunctor d A.hom ⋙ Λ d g = Λ d g ⋙ liftFunctor d A.hom
+    exact (Λ_comp_lift_one d A.hom g).symm
+  · show Λ d g⁻¹ ⋙ liftFunctor d A.inv = liftFunctor d A.inv ⋙ Λ d g⁻¹
+    exact Λ_comp_lift_one d A.inv g⁻¹
+  · simp
+
+/-- The direct-product embedding `G × StrictAut S →* AutBoxG d`, `(g, A) ↦ Λ_g · liftAut A`.
+    A homomorphism because canonical lifts commute with `Λ` (`ΛHom_comm_liftHom`). -/
+noncomputable def prodToAutBoxG (d : OEData G p) : G × StrictAut S →* AutBoxG d where
+  toFun := fun x => ΛHom d x.1 * liftHom d x.2
+  map_one' := by
+    show ΛHom d (1 : G) * liftHom d (1 : StrictAut S) = 1
+    simp
+  map_mul' x y := by
+    obtain ⟨g₁, A₁⟩ := x
+    obtain ⟨g₂, A₂⟩ := y
+    show ΛHom d (g₁ * g₂) * liftHom d (A₁ * A₂)
+       = (ΛHom d g₁ * liftHom d A₁) * (ΛHom d g₂ * liftHom d A₂)
+    rw [map_mul, map_mul]
+    simp only [mul_assoc]
+    rw [← mul_assoc (ΛHom d g₂), ΛHom_comm_liftHom, mul_assoc]
+
+@[simp] theorem prodToAutBoxG_apply (d : OEData G p) (g : G) (A : StrictAut S) :
+    prodToAutBoxG d (g, A) = ΛHom d g * liftHom d A := rfl
+
+/-- The strict classification as an explicit group isomorphism
+    `AutBoxG d ≃* G × StrictAut S`  (needs `[IsConnected S]`).  This is the untwisted
+    counterpart of `autBoxGθMulEquivSemidirect`. -/
+noncomputable def autBoxGMulEquivProd (d : OEData G p) [IsConnected S] :
+    AutBoxG d ≃* G × StrictAut S := by
+  have hinj : Function.Injective (prodToAutBoxG d) := by
+    rw [injective_iff_map_eq_one]
+    intro x hx
+    obtain ⟨g, A⟩ := x
+    rw [prodToAutBoxG_apply] at hx
+    have hA : A = 1 := by
+      have h2 := congrArg (Φ d) hx
+      rw [map_mul, map_one] at h2
+      rwa [show Φ d (ΛHom d g) = 1 from rfl, show Φ d (liftHom d A) = A from rfl,
+        one_mul] at h2
+    rw [hA, map_one, mul_one] at hx
+    have hg : g = 1 := ΛHom_injective d (by rw [hx, map_one])
+    exact Prod.ext hg hA
+  have hsurj : Function.Surjective (prodToAutBoxG d) := by
+    intro e
+    have hker : e * (liftHom d e.base)⁻¹ ∈ (Φ d).ker := by
+      rw [MonoidHom.mem_ker, map_mul, map_inv,
+        show Φ d (liftHom d e.base) = e.base from rfl,
+        show Φ d e = e.base from rfl, mul_inv_cancel]
+    rw [ker_Φ_eq_range_Λ, MonoidHom.mem_range] at hker
+    obtain ⟨g, hg⟩ := hker
+    exact ⟨(g, e.base), by rw [prodToAutBoxG_apply, hg, inv_mul_cancel_right]⟩
+  exact (MulEquiv.ofBijective (prodToAutBoxG d) ⟨hinj, hsurj⟩).symm
+
+
+/-! ## 12. The product normal form  `O ≌ S × Codisc G`  (paper §3, `thm:productnormalform`)
+
+  The normalization data trivialize the presentation on the nose: the comparison functor
+  `x ↦ (p x, ⟨coord x⟩)` is fully faithful (from `isFull` + `p_faithful`) and essentially
+  surjective, hence an equivalence.  Since `Codisc G` is codiscrete, `p` itself is an
+  equivalence, and the nontrivial `G`-kernel lives only in the chosen strict presentation. -/
+
+/-- The comparison functor `O ⥤ S × Codisc G`,  `x ↦ (p x, ⟨coord x⟩)`,  `f ↦ (p f, ⟨⟩)`. -/
+noncomputable def normalFormTo (d : OEData G p) : O ⥤ S × Codisc G where
+  obj x := (p.obj x, ⟨d.coord x⟩)
+  map f := (p.map f, ⟨⟩)
+  map_id x := Prod.ext (p.map_id x) (Subsingleton.elim _ _)
+  map_comp f g := Prod.ext (p.map_comp f g) (Subsingleton.elim _ _)
+
+@[simp] theorem normalFormTo_obj (d : OEData G p) (x : O) :
+    (normalFormTo d).obj x = (p.obj x, ⟨d.coord x⟩) := rfl
+
+@[simp] theorem normalFormTo_map (d : OEData G p) {x y : O} (f : x ⟶ y) :
+    (normalFormTo d).map f = (p.map f, ⟨⟩) := rfl
+
+/-- The first product projection recovers `p`:  `normalFormTo d ⋙ fst = p`. -/
+theorem normalFormTo_fst (d : OEData G p) :
+    normalFormTo d ⋙ CategoryTheory.Prod.fst S (Codisc G) = p := rfl
+
+/-- On objects the comparison intertwines the right `G`-action with right multiplication in
+    the `Codisc G` coordinate. -/
+theorem normalForm_coord_act (d : OEData G p) (x : O) (g : G) :
+    (normalFormTo d).obj (d.act x g) = (p.obj x, ⟨d.coord x * g⟩) := by
+  simp only [normalFormTo_obj, d.p_act, d.coord_act]
+
+/-- The basepoint section goes to the unit coordinate:  `base s ↦ (s, ⟨1⟩)`. -/
+theorem normalForm_base (d : OEData G p) (s : S) :
+    (normalFormTo d).obj (d.base s) = (s, (⟨1⟩ : Codisc G)) := by
+  have hc : d.coord (d.base s) = 1 := by have := d.coord_base s 1; rwa [d.act_one] at this
+  show (p.obj (d.base s), (⟨d.coord (d.base s)⟩ : Codisc G)) = (s, ⟨1⟩)
+  rw [d.p_base, hc]
+
+/-- Reindexing preserves the `Codisc G` coordinate:  `u*y ↦ (s, ⟨coord y⟩)`. -/
+theorem normalForm_reind (d : OEData G p) {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t) :
+    (normalFormTo d).obj (d.reind u y hy) = (s, (⟨d.coord y⟩ : Codisc G)) := by
+  show (p.obj (d.reind u y hy), (⟨d.coord (d.reind u y hy)⟩ : Codisc G)) = (s, ⟨d.coord y⟩)
+  rw [d.p_reind, d.coord_reind]
+
+/-- The product normal form:  `O ≌ S × Codisc G`, with comparison functor `normalFormTo d`.
+    Fully faithful from `isFull` + `p_faithful`; essentially surjective since `(s, ⟨g⟩)` is
+    hit on the nose by `base s · g`. -/
+noncomputable def productNormalForm (d : OEData G p) : O ≌ S × Codisc G := by
+  haveI : (normalFormTo d).Faithful := by
+    haveI := d.p_faithful
+    exact ⟨fun {x y} {f g} h => p.map_injective (congrArg Prod.fst h)⟩
+  haveI : (normalFormTo d).Full := by
+    haveI := d.isFull
+    exact ⟨fun {x y} fg =>
+      ⟨p.preimage fg.1, Prod.ext (p.map_preimage fg.1) (Subsingleton.elim _ _)⟩⟩
+  haveI : (normalFormTo d).EssSurj := by
+    refine ⟨fun Y => ?_⟩
+    obtain ⟨s, gc⟩ := Y
+    obtain ⟨g⟩ := gc
+    refine ⟨d.act (d.base s) g, ⟨eqToIso ?_⟩⟩
+    show (p.obj (d.act (d.base s) g), (⟨d.coord (d.act (d.base s) g)⟩ : Codisc G)) = (s, ⟨g⟩)
+    rw [d.p_act, d.p_base, d.coord_base]
+  haveI : (normalFormTo d).IsEquivalence := {}
+  exact (normalFormTo d).asEquivalence
+
+@[simp] theorem productNormalForm_functor (d : OEData G p) :
+    (productNormalForm d).functor = normalFormTo d := rfl
+
+/-- Since `Codisc G` is categorically contractible, the projection `p` is itself an
+    equivalence `O ≌ S`.  The nontrivial `G`-kernel therefore belongs to the chosen strict
+    presentation, not to `S`. -/
+noncomputable def projectionEquivalence (d : OEData G p) : O ≌ S := by
+  haveI := d.isFull
+  haveI := d.p_faithful
+  haveI : p.EssSurj := ⟨fun s => ⟨d.base s, ⟨eqToIso (d.p_base s)⟩⟩⟩
+  haveI : p.IsEquivalence := {}
+  exact p.asEquivalence
+
+@[simp] theorem projectionEquivalence_functor (d : OEData G p) :
+    (projectionEquivalence d).functor = p := rfl
+
+/-- The right `G`-action transported to the normal form:  `(s, ⟨h⟩) ↦ (s, ⟨h * g⟩)`, identity
+    on the base component.  This is the product-side action intertwined by `normalFormTo`. -/
+def normalFormProductAction (g : G) : S × Codisc G ⥤ S × Codisc G where
+  obj x := (x.1, ⟨x.2.pt * g⟩)
+  map f := (f.1, ⟨⟩)
+  map_id x := Prod.ext (by simp) (Subsingleton.elim _ _)
+  map_comp f h := Prod.ext (by simp) (Subsingleton.elim _ _)
+
+/-- Functorial `G`-equivariance of the comparison functor:  the upstairs action `actFunctor g`
+    intertwines with the product action `normalFormProductAction g` through `normalFormTo`.
+    Uses `p_actHom` (the morphism part of the right `G`-action). -/
+theorem normalForm_equivariant (d : OEData G p) (g : G) :
+    d.actFunctor g ⋙ normalFormTo d = normalFormTo d ⋙ normalFormProductAction g := by
+  have hfst : ∀ {a b : S × Codisc G} (m : a ⟶ b),
+      m.1 = (CategoryTheory.Prod.fst S (Codisc G)).map m := fun _ => rfl
+  refine CategoryTheory.Functor.ext
+    (fun x => Prod.ext (d.p_act x g) (congrArg (fun c => (⟨c⟩ : Codisc G)) (d.coord_act x g)))
+    (fun x y f => ?_)
+  refine Prod.ext ?_ (Subsingleton.elim _ _)
+  show p.map (d.actHom f g) = _
+  rw [d.p_actHom, hfst, Functor.map_comp, Functor.map_comp, eqToHom_map, eqToHom_map]
+  rfl
+
+/-- Every base morphism `u : s ⟶ t` in `S` is invertible:  lift by `isFull`, invert in the
+    groupoid `O`, and reflect the iso back along the fully faithful projection.  (Paper §3,
+    `cor:basegroupoid`.)  Stated as a theorem, not a global `Groupoid S` instance. -/
+theorem OEData.base_hom_isIso (d : OEData G p) {s t : S} (u : s ⟶ t) : IsIso u := by
+  haveI := d.isFull
+  haveI := d.p_faithful
+  haveI : p.EssSurj := ⟨fun s => ⟨d.base s, ⟨eqToIso (d.p_base s)⟩⟩⟩
+  haveI : p.IsEquivalence := {}
+  exact isIso_of_reflects_iso u p.inv
