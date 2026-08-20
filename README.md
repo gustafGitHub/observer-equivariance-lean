@@ -187,7 +187,9 @@ the pinned environment it reports:
 `propext`, `Classical.choice` and `Quot.sound` are mathlib's three standard axioms; there is no
 `sorryAx`. These are diagnostic commands: a successful build alone does not assert that the
 output has a predetermined value, so the claim refers to the inspected output in the pinned
-environment.
+environment. That output is recorded verbatim in [`BUILD_LOG.txt`](BUILD_LOG.txt), together
+with the toolchain, the mathlib revision and the git blob SHA-1 of the exact source file it
+was produced from.
 
 ## Building
 
