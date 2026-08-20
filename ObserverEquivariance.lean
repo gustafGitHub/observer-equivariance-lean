@@ -1785,7 +1785,8 @@ theorem OEData.base_hom_isIso (d : OEData G p) {s t : S} (u : s ⟶ t) : IsIso u
   exact isIso_of_reflects_iso u p.inv
 
 
-/-! ## 13. Restriction to a chosen symmetry subgroup (spec §7)
+/-! ## 13. Restriction to a chosen symmetry subgroup (paper §4, `thm:strict-classification`,
+       which is stated for a selected `H ≤ Aut(S)`; §6, `def:law-symmetry` / `cor:law`)
 
   The strict classification `AutBoxG d ≃* G × StrictAut S` restricts to any subgroup
   `H ≤ StrictAut S` of "admissible" base symmetries: the bundle automorphisms covering an
@@ -1794,7 +1795,7 @@ theorem OEData.base_hom_isIso (d : OEData G p) {s t : S} (u : s ⟶ t) : IsIso u
   `H = strictLawStabilizer L`, the strict automorphisms fixing a chosen "law" functor
   `L : S ⥤ C` on the nose:  not every strict category automorphism is a physical symmetry —
   only those preserving the law.  (Everything here is `θ = 1`; the twisted subgroup version is
-  spec §8 below.) -/
+  file §14 below.) -/
 
 /-- The strict stabilizer of a "law" `L : S ⥤ C`:  the subgroup of `StrictAut S` whose
     underlying functor fixes `L` on the nose, `A.hom ⋙ L = L`.  Preservation only *up to*
@@ -1931,7 +1932,7 @@ noncomputable def lawPreservingAutBoxMulEquiv (d : OEData G p) {C : Type*} [Cate
   autBoxGOverMulEquivProd d (strictLawStabilizer L)
 
 
-/-! ## 14. Twist defined only on the chosen subgroup (spec §8)
+/-! ## 14. Twist defined only on the chosen subgroup (paper §5, `thm:theta-classification`)
 
   The Poincaré / Lorentz template uses a twist that is naturally defined only on the relevant
   base-symmetry subgroup `H` (e.g. `O(1,3) ≤ Aut(S)`), not on all of `StrictAut S`.  We thus
@@ -2173,7 +2174,7 @@ noncomputable def autBoxGθOverMulEquivSemidirect (d : OEData G p) (H : Subgroup
   exact (MulEquiv.ofBijective (semidirectToAutBoxGθOver d H θ) ⟨hinj, hsurj⟩).symm
 
 
-/-! ## 15. A fully closed concrete nontrivial twist:  `G = Multiplicative (ZMod 3)` (spec §9)
+/-! ## 15. A fully closed concrete nontrivial twist:  `G = Multiplicative (ZMod 3)`
 
   The general `θSingleObj_ne_one` is conditional on `[Nontrivial (MulAut G)]`.  Here we discharge
   that hypothesis with a fully closed witness:  inversion on `Multiplicative (ZMod 3)` (i.e.
@@ -2226,14 +2227,16 @@ noncomputable def zmod3SemidirectWitness :
   autBoxGθMulEquivSemidirect (labData G3 G3) (θSingleObj G3)
 
 
-/-! ## 11'. Additional helper lemmas the article uses (spec §2/§11)
+/-! ## 11'. Additional helper lemmas the article uses
 
   A strict autoequivalence is determined by its `hom` functor (`StrictAut.ext_hom`); the
   packaging of `θSingleObj` as a genuine `MulEquiv` (`θSingleObjEquiv`); the full MORPHISM
   forms of the object-level predicates (`PreservesCleavage.map_chi`,
-  `isGEquivariant_map_actHom` — spec §2 and §11 item 1); and base-symmetry uniqueness
-  (`OEData.base_unique`) with the resulting `hom`-only extensionality (`AutBoxG.ext_hom` —
-  spec §11 items 3/4).
+  `isGEquivariant_map_actHom`); and base-symmetry uniqueness (`OEData.base_unique`) with the
+  resulting `hom`-only extensionality (`AutBoxG.ext_hom`).  The last three formalize the
+  reasoning the paper's `def:autbox` states in prose: because `p` is faithful, the object-level
+  equations force the corresponding morphism-level ones, and the covered base symmetry is
+  determined strictly by the total functor.
 
   PROOF TECHNIQUE NOTE.  The `eqToHom` casts produced by `Functor.congr_hom`/`congr_obj` on
   composite functors carry `(F ⋙ p).obj`-shaped endpoints that are only *definitionally* equal
@@ -2268,7 +2271,7 @@ noncomputable def θSingleObjEquiv (G : Type*) [Group G] :
 @[simp] theorem θSingleObjEquiv_apply (G : Type*) [Group G] (A : StrictAut (SingleObj G)) :
     θSingleObjEquiv G A = θSingleObj G A := rfl
 
-/-- The full MORPHISM form of cleavage preservation (spec §2; the article's `def:autbox` remark):
+/-- The full MORPHISM form of cleavage preservation (the article's `def:autbox` remark):
     `pc.src`, the covering equation and `p_faithful` force the morphism equality
     `F(χ_{u,y}) = χ_{A u, F y}` up to the `eqToHom` cast supplied by `pc.src`.  So the
     object-level `PreservesCleavage` really is the full "chosen cartesian arrows to chosen
@@ -2294,7 +2297,7 @@ theorem PreservesCleavage.map_chi (d : OEData G p) {F : O ⥤ O} {A : S ⥤ S}
   simp only [Functor.map_comp, eqToHom_map, Category.assoc, eqToHom_trans,
     eqToHom_trans_assoc]
 
-/-- Morphism-level `G`-equivariance is DERIVED (spec §11 item 1; the article's `def:autbox`
+/-- Morphism-level `G`-equivariance is DERIVED (the article's `def:autbox`
     remark):  an object-equivariant `F` covering a base functor is automatically equivariant on
     morphisms, up to the `eqToHom` casts supplied by object equivariance. -/
 theorem isGEquivariant_map_actHom (d : OEData G p) {F : O ⥤ O} {A : S ⥤ S}
@@ -2317,7 +2320,8 @@ theorem isGEquivariant_map_actHom (d : OEData G p) {F : O ⥤ O} {A : S ⥤ S}
   simp only [Functor.map_comp, eqToHom_map, Category.assoc, eqToHom_trans,
     eqToHom_trans_assoc]
 
-/-- Uniqueness of the covered base functor (spec §11 item 3):  since every base object is
+/-- Uniqueness of the covered base functor (the article's `def:autbox`: "the covering equation
+    therefore determines `A` strictly from `F`"):  since every base object is
     `p.obj (base s)` and every base arrow lifts through derived fullness, precomposition with
     `p` is injective on functors:  `p ⋙ A = p ⋙ B → A = B`.  Hence the `base` field of a
     bundle automorphism is determined by its `hom` field. -/
@@ -2347,7 +2351,7 @@ theorem OEData.base_unique (d : OEData G p) {A B : S ⥤ S} (hAB : p ⋙ A = p �
   simpa only [Category.assoc, eqToHom_trans, eqToHom_trans_assoc, eqToHom_refl,
     Category.id_comp, Category.comp_id] using key
 
-/-- `AutBoxG` extensionality by `hom` alone (spec §11 item 4):  equal `hom` functors force
+/-- `AutBoxG` extensionality by `hom` alone:  equal `hom` functors force
     equal `base` (`base_unique` + `StrictAut.ext_hom`) and equal `inv` (a strict inverse is
     unique), so the same total functor cannot cover two different base symmetries. -/
 theorem AutBoxG.ext_hom (d : OEData G p) {e₁ e₂ : AutBoxG d} (h : e₁.hom = e₂.hom) :
@@ -2362,7 +2366,7 @@ theorem AutBoxG.ext_hom (d : OEData G p) {e₁ e₂ : AutBoxG d} (h : e₁.hom =
       _ = e₂.inv := by rw [e₁.inv_hom_id, Functor.id_comp]
   exact AutBoxG.ext h hinv hbase
 
-/-! ## 16. Axiom audit (spec §13)
+/-! ## 16. Axiom audit
 
   The main declarations depend only on the standard mathlib axioms `propext`,
   `Classical.choice`, `Quot.sound` — never on `sorryAx` or a project-specific axiom. -/
