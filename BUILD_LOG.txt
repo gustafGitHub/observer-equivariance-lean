@@ -1,76 +1,156 @@
-Build and axiom-audit log for ObserverEquivariance.lean
-=======================================================
+Build and axiom-audit log — revision for
+"Symmetry Between Perspectives: Normal Forms, Descent, Calibration, and Lifts"
+==============================================================================
 
-This log records the inspected output of the `#print axioms` block at the end of
-ObserverEquivariance.lean, in the pinned environment. It exists because those are
-DIAGNOSTIC commands: a successful build alone does not assert that their output has
-a predetermined value, so the axiom claim made in the README and in the accompanying
-article refers to the output reproduced below.
+This log records the build and the axiom audit of THIS revision (the module layout under
+ObserverEquivariance/, generalized from groupoids to categories). The previous contents of this
+file — the audit of the archived single-file groupoid development of 2026-08-20 — are preserved in
+git history at commit f3f9182 and are NOT reproduced here; that run certifies nothing in this
+revision, and this run certifies nothing about it.
 
-Artifact
---------
-  file                 ObserverEquivariance.lean (2394 lines)
-  git blob SHA-1       dfd5aaf34ef03142fcb8563bb17c659937903df2
+Reference paper: doc/perspectives_invariance_calibration_2026-09-05_r2.tex
+                 (revision r2, 5 September 2026).
+Coverage matrix: LEAN_COVERAGE.md.  Change description: CHANGES.md.
 
 Environment
 -----------
-  date                 2026-08-20 10:54 UTC
-  platform             Darwin 25.3.0 arm64
+  date                 2026-09-17 11:20 UTC (supersedes the 2026-09-16 12:02 UTC run: since then only
+                       comments changed, in Core.lean and in the entry-file header)
+  platform             Darwin arm64
   lean-toolchain       leanprover/lean4:v4.31.0-rc1
-  lean                 Lean (version 4.31.0-rc1, arm64-apple-darwin24.6.0, commit fd009949156901e6cf15b6d9bf1122294b8e697a, Release)
+  lean                 Lean (version 4.31.0-rc1, arm64-apple-darwin24.6.0,
+                       commit fd009949156901e6cf15b6d9bf1122294b8e697a, Release)
   lake                 Lake version 5.0.0-src+fd00994 (Lean version 4.31.0-rc1)
-  mathlib rev          8834d3761934044a64c98afb757c1673fad03521
+  mathlib rev          8834d3761934044a64c98afb757c1673fad03521  (lake-manifest.json)
 
-Source check
-------------
-  grep -nE '\bsorry\b|\badmit\b|^\s*axiom\b|^\s*unsafe\b|native_decide'
-    -> no occurrence in code. The only matches anywhere in the file are the words
-       "sorry"/"sorryAx"/"project-specific axiom" inside explanatory comments, and
-       the word "admits" in prose. `by decide` is used once (zmod3NegMulAut_ne_one)
-       and is kernel-checked; `native_decide` is not used.
+The pins are unchanged from the pre-revision snapshot: no toolchain or mathlib upgrade was made.
 
-Command
--------
+Exact commands
+--------------
+  scripts/audit.sh                 # writes the raw log to BUILD_LOG_RAW.txt and exits non-zero
+                                   # if the build fails, if a forbidden construct occurs in Lean
+                                   # code, or if the module-wide axiom audit did not run
+  # equivalently, by hand:
+  lake build
+  # the audit itself is the last command of ObserverEquivariance.lean:
+  #   #assert_standard_axioms_in_modules ObserverEquivariance
+
+  # from a fresh clone (no .lake/):
+  lake exe cache get
   lake build
 
-Output
-------
-  ℹ [8496/8497] Built ObserverEquivariance (31s)
-  info: ObserverEquivariance.lean:2374:0: 'OEData.chi_isCartesian' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2375:0: 'productNormalForm' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2376:0: 'normalForm_equivariant' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2377:0: 'normalForm_base' depends on axioms: [propext]
-  info: ObserverEquivariance.lean:2378:0: 'normalForm_reind' depends on axioms: [propext]
-  info: ObserverEquivariance.lean:2379:0: 'projectionEquivalence' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2380:0: 'OEData.base_hom_isIso' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2381:0: 'idIsoΛ' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2382:0: 'liftAut' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2383:0: 'autBoxGMulEquivProd' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2384:0: 'autBoxGOverMulEquivProd' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2385:0: 'lawPreservingAutBoxMulEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2386:0: 'autBoxGθOverMulEquivSemidirect' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2387:0: 'θSingleObj_zmod3_ne_one' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2388:0: 'zmod3SemidirectWitness' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2392:0: 'twisted_lift_exists' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2393:0: 'rigidityθ' depends on axioms: [propext, Classical.choice, Quot.sound]
-  info: ObserverEquivariance.lean:2394:0: 'normalFormTo_fst' depends on axioms: [propext, Classical.choice, Quot.sound]
-  Build completed successfully (8497 jobs).
+Artifact (git blob SHA-1 of each source file, as built)
+-------------------------------------------------------
+  ObserverEquivariance.lean                              290 lines  ff48fa08ddffda04ab997b76a6da76498bb06fe2
+  ObserverEquivariance/AxiomAudit.lean                    79 lines  1b5e2cdfc2b356eb741d77ce8da55611331980e9
+  ObserverEquivariance/BaseChange.lean                   767 lines  b27bcc4f26da52f57bb7d3119fc0bec90441c51e
+  ObserverEquivariance/BaseChangeCocycle.lean            122 lines  b127d174f547a93f2af44b550025397a64c2801d
+  ObserverEquivariance/Calibration.lean                  374 lines  b4aec368973308bd82573b068157e210c224c4d2
+  ObserverEquivariance/Cocycles.lean                     510 lines  8ff50369711eb1572d055f5acbc510d7a2ad3dae
+  ObserverEquivariance/Components.lean                   887 lines  a7c6d2d4f82454156f710380a433530973e3d24a
+  ObserverEquivariance/Core.lean                        2661 lines  ba10f2fa446b8b0b6ad376718bdd0fc352c6df90
+  ObserverEquivariance/Descent.lean                      516 lines  b6754acefa9207c82eaa0df59c903995126732f5
+  ObserverEquivariance/LocalLifts.lean                   706 lines  28a3dfdfd1b1bbb968cf19b691d3b44140cc38a9
+  ObserverEquivariance/MinSpec.lean                      357 lines  525871c3dfba3032ecfaa6fc974c4fd9d505aa06
+  ObserverEquivariance/MinSpecCorrespondence.lean        313 lines  bdff8b7455aa9a6ede7073b0cbb582bd719f5fb0
+  ObserverEquivariance/NormalForm.lean                   671 lines  a9bd3f8ea19dfe8eb658f7fed3a32aeb1fe98bf7
+  ObserverEquivariance/ProductModel.lean                 126 lines  5d84fb403d47d6826b109b6cfef6f7a5641be76d
+  ObserverEquivariance/Residual.lean                    1043 lines  23d57eedd831576bfecaf351078ee7851fa56b49
+  ObserverEquivariance/ResidualCategory.lean             394 lines  e177933ba4a4fb4618125c2006fed33f22ec797a
+  ObserverEquivariance/Examples/Holonomy.lean           1021 lines  5b6861b81bf13406ba749821655a6ae03154b25e
+  ObserverEquivariance/Examples/NonFaithful.lean         384 lines  eae028e29fd2a8c686a2e64ffc8ea32bfa352862
+  ObserverEquivariance/Examples/Records.lean             741 lines  44a3fbdb3aa0270c5c6f52eb9615ed59ec340870
+  ObserverEquivariance/Examples/RecordsCalibration.lean  587 lines  4442adffaa2cfe6c754e38b26853eaa265f1ed0c
+  ObserverEquivariance/Examples/Twist.lean               437 lines  36f10123c2c26f03677218c71729aed8403ee57e
+  ObserverEquivariance/Examples/TwoObject.lean           269 lines  627d37db3817ef1ce5b300af96714526af7b0b47
+  scripts/audit.sh                                        51 lines  f5542a87b6d729de81628cca1ef9a252cb9587ef
+
+  21 modules + the entry file, 13255 lines of Lean in total.
+
+Source check (comments stripped before scanning)
+------------------------------------------------
+  pattern  \bsorry\b | \badmit\b | ^\s*axiom\b | native_decide | \bunsafe\b | implemented_by
+  result   none
+
+  The scan strips /- -/ and -- comments first, so prose mentioning "sorry" or "admits" does not
+  match, and a real occurrence in code cannot hide in a comment. `decide` is used in a few concrete
+  finite-group computations and is kernel-checked; `native_decide` is not used anywhere.
 
 Result
 ------
+  lake build           Build completed successfully (8518 jobs)
   exit status          0
   errors / warnings    0
   sorryAx              0
-  audited declarations 18
 
-All eighteen audited declarations depend only on the three standard mathlib axioms
-propext, Classical.choice and Quot.sound; normalForm_base and normalForm_reind depend
-on propext alone. No declaration depends on sorryAx or on a project-specific axiom.
+Executable axiom audit (this is a CHECK, not a diagnostic)
+----------------------------------------------------------
+  ObserverEquivariance.lean:290:0:
+    all 2599 declarations in 21 modules with prefix 'ObserverEquivariance' depend only on standard
+    axioms ([ObserverEquivariance.Core, ObserverEquivariance.ProductModel,
+    ObserverEquivariance.MinSpec, ObserverEquivariance.MinSpecCorrespondence,
+    ObserverEquivariance.NormalForm, ObserverEquivariance.LocalLifts, ObserverEquivariance.Descent,
+    ObserverEquivariance.Residual, ObserverEquivariance.ResidualCategory,
+    ObserverEquivariance.Calibration, ObserverEquivariance.Components,
+    ObserverEquivariance.BaseChange, ObserverEquivariance.Cocycles,
+    ObserverEquivariance.BaseChangeCocycle, ObserverEquivariance.Examples.Twist,
+    ObserverEquivariance.Examples.TwoObject, ObserverEquivariance.Examples.NonFaithful,
+    ObserverEquivariance.Examples.Holonomy, ObserverEquivariance.Examples.Records,
+    ObserverEquivariance.Examples.RecordsCalibration, ObserverEquivariance.AxiomAudit])
 
-Reproducing this log
---------------------
-  lake exe cache get   # fetch the pinned mathlib .olean cache
-  lake build
+  "Standard axioms" means propext, Classical.choice and Quot.sound. The command
+  #assert_standard_axioms_in_modules (ObserverEquivariance/AxiomAudit.lean) collects the transitive
+  axiom dependencies of EVERY declaration of those modules — auxiliary _proof_n and match_n
+  constants included — and raises an error if any other axiom appears. An error fails `lake build`,
+  so this line is an assertion checked by the build, not a diagnostic whose output must be read.
+  It was tested against a `sorry`, a project-specific `axiom` and `native_decide`; each makes the
+  command fail.
 
-  The `Built ObserverEquivariance` line and its elapsed time are machine-dependent;
-  the eighteen `depends on axioms` lines and the final status are not.
+Retained diagnostic block (inherited from the archived snapshot)
+----------------------------------------------------------------
+The entry file still runs the older `#print axioms` commands on the declarations of the archived
+development. Their output in this environment was:
+
+  'OEData.chi_isCartesian'          depends on axioms: [propext, Classical.choice, Quot.sound]
+  'productNormalForm'               depends on axioms: [propext, Classical.choice, Quot.sound]
+  'normalForm_equivariant'          depends on axioms: [propext, Classical.choice, Quot.sound]
+  'normalForm_base'                 depends on axioms: [propext]
+  'normalForm_reind'                depends on axioms: [propext]
+  'projectionEquivalence'           depends on axioms: [propext, Classical.choice, Quot.sound]
+  'OEData.base_hom_isIso'           depends on axioms: [propext, Classical.choice, Quot.sound]
+  'idIsoΛ'                          depends on axioms: [propext, Classical.choice, Quot.sound]
+  'liftAut'                         depends on axioms: [propext, Classical.choice, Quot.sound]
+  'autBoxGMulEquivProd'             depends on axioms: [propext, Classical.choice, Quot.sound]
+  'autBoxGOverMulEquivProd'         depends on axioms: [propext, Classical.choice, Quot.sound]
+  'lawPreservingAutBoxMulEquiv'     depends on axioms: [propext, Classical.choice, Quot.sound]
+  'autBoxGθOverMulEquivSemidirect'  depends on axioms: [propext, Classical.choice, Quot.sound]
+  'θSingleObj_zmod3_ne_one'         depends on axioms: [propext, Classical.choice, Quot.sound]
+  'zmod3SemidirectWitness'          depends on axioms: [propext, Classical.choice, Quot.sound]
+  'twisted_lift_exists'             depends on axioms: [propext, Classical.choice, Quot.sound]
+  'rigidityθ'                       depends on axioms: [propext, Classical.choice, Quot.sound]
+  'normalFormTo_fst'                depends on axioms: [propext, Classical.choice, Quot.sound]
+
+These 18 lines are diagnostics: a successful build does not by itself assert that their output has
+a predetermined value. They are subsumed by the executable audit above, which covers all 2599
+declarations.
+
+Baseline run (for comparison only)
+----------------------------------
+Before the revision, the UNCHANGED pre-revision file at commit f3f9182 (single file, groupoid
+formulation, 2394 lines) was rebuilt in this same environment:
+
+  lake build           Build completed successfully (8497 jobs)
+  exit status          0
+  audited declarations 18 (the #print axioms block above), all standard, no sorryAx
+
+This baseline says only that the starting point was green in this environment. It certifies nothing
+about the revision, and the revision certifies nothing about it.
+
+What this log does and does not establish
+-----------------------------------------
+It establishes that, in the pinned environment and for the sources with the blob hashes listed
+above, the whole development compiles with no errors, contains no admitted proof or project-specific
+axiom in code, and that every one of its declarations depends only on the three standard mathlib
+axioms. It does not establish that the Lean statements say what the article says; that is the
+purpose of LEAN_COVERAGE.md, which names the actual hypotheses of each result and marks what is
+formalized only partly, only as a special case, or not at all.
