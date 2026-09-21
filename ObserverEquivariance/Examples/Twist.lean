@@ -1,4 +1,5 @@
 import ObserverEquivariance.ProductModel
+import Mathlib.GroupTheory.Perm.Cycle.Concrete
 
 /-!
 # A nontrivial twist: `C₃ ⋊ C₂ ≅ S₃` (paper `ex:twist`, instance of `thm:twisted`)

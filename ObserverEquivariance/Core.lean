@@ -1,4 +1,20 @@
-import Mathlib
+import Mathlib.CategoryTheory.ConnectedComponents
+import Mathlib.CategoryTheory.SingleObj
+import Mathlib.CategoryTheory.Products.Basic
+import Mathlib.CategoryTheory.Pi.Basic
+import Mathlib.Algebra.Category.ModuleCat.Basic
+import Mathlib.GroupTheory.SemidirectProduct
+import Mathlib.GroupTheory.SpecificGroups.Quaternion
+import Mathlib.GroupTheory.Perm.Fin
+import Mathlib.Data.ZMod.Basic
+import Mathlib.Data.Real.Basic
+import Mathlib.RingTheory.RootsOfUnity.Complex
+import Mathlib.Tactic.Group
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.TFAE
 
 /-!
 # Core development: normalized presentation data over a category
@@ -981,14 +997,16 @@ theorem ker_Φ_eq_range_Λ (d : OEData G p) [IsConnected S] : (Φ d).ker = (ΛHo
        ambient-group analogue; the paper states it for a chosen subgroup `H`, see file §14)
 
   The strict theorem of §§1–6 realizes only DIRECT products `G × Aut(S)`: the conjugation
-  `(liftFunctor A)⁻¹ ⋙ Λ d g ⋙ liftFunctor A = Λ d g` (Lean diagrammatic order, i.e. `Ã Λ_g Ã⁻¹ = Λ_g` in operator order) is trivial, because strict
+  `(liftFunctor A)⁻¹ ⋙ Λ d g ⋙ liftFunctor A = Λ d g` (Lean diagrammatic order, i.e.
+  `Ã Λ_g Ã⁻¹ = Λ_g` in operator order) is trivial, because strict
   `G`-equivariance commutes on the nose with the right action.  Genuine semidirect symmetry
   groups require *twisted* equivariance: the lift `F` of a base symmetry `A` acts on the fiber
   through a group automorphism `θ ∈ MulAut G`,
 
         `F (x · g) = F x · (θ g)`,
 
-  so that `(liftFunctorθ A θ)⁻¹ ⋙ Λ d g ⋙ liftFunctorθ A θ = Λ d (θ g)` (Lean order; operator order `Ã Λ_g Ã⁻¹ = Λ_{θ g}`; `Λ_comp_liftθ`) and the kernel `G`
+  so that `(liftFunctorθ A θ)⁻¹ ⋙ Λ d g ⋙ liftFunctorθ A θ = Λ d (θ g)` (Lean order; operator
+  order `Ã Λ_g Ã⁻¹ = Λ_{θ g}`; `Λ_comp_liftθ`) and the kernel `G`
   carries the nontrivial action — the semidirect structure on `Aut□^θ_G`, packaged in §9 as an
   explicit isomorphism `Aut□^θ_G ≃* G ⋊_θ Aut(S)` (`autBoxGθMulEquivSemidirect`).
   Setting `θ = 1` recovers §§1–6.  The paper's `sec:scope` mentions `V ⋊ O(1,3)` only as an

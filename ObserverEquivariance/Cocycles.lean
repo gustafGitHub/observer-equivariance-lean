@@ -1,4 +1,6 @@
-import Mathlib
+import Mathlib.GroupTheory.SemidirectProduct
+import Mathlib.Tactic.Group
+import Mathlib.CategoryTheory.Category.Pointed
 
 /-!
 # Nonabelian 1-cocycles, sections and complements of a fixed split extension

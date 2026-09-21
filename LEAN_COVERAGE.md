@@ -8,15 +8,23 @@ INSTR lists separately.
 
 ## 1. Scope, environment, reproduction, statuses
 
-**Paper.** G. Ullman, *Symmetry Between Perspectives: Normal Forms, Descent, Calibration, and
-Lifts*, revision r2 of 5 September 2026, file
-`doc/perspectives_invariance_calibration_2026-09-05_r2.tex`. The labels below are that file's
-LaTeX labels. INSTR was written against `perspectives_normal_forms_final.tex`. r2 is a superset
-of it: r2 adds `cor:invariant-calibration`, the "two information conditions" paragraph in
-`sec:records` and `sec:related`. The formalization targets the article's categorical and
-algebraic results in `sec:data` through `sec:boundaries`. The philosophical interpretation
-(`sec:introduction`, `sec:scope`, `sec:related`, `sec:lean`) and the cited background results are
-out of scope (see §3).
+**Paper.** G. Ullman, *Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts*,
+revision r5 of 19 September 2026, file
+`doc/perspectives_invariance_calibration_2026-09-19_r5.tex`. The labels below are that file's
+LaTeX labels. INSTR was written against `perspectives_normal_forms_final.tex`, and this matrix
+was first drafted against revision r2 (`…_2026-09-05_r2.tex`). r2 was a superset of the INSTR
+draft: it added `cor:invariant-calibration`, the "two information conditions" paragraph in
+`sec:records` and `sec:related`. Relative to r2/r3, r5 adds
+`prop:comparisons`, `prop:data-implementation`, `ex:complex-obstruction`, the subsection
+`sec:implementation` with its display `eq:implementation-intertwiner`, the table
+`tab:recovery-tasks`, and the Lean subsection `sec:lean-r5` (which replaces the earlier
+`sec:lean-r4`). All 50 labels cited in the tables below resolve in the r5 source — this was
+checked mechanically against `\label{…}` — and no statement carried over from r2/r3 was changed.
+(`sec:lean-r4` itself is named only in the sentence above, as the label r5 retired.) The
+formalization targets the
+article's categorical and algebraic results in `sec:data` through `sec:boundaries`. The
+philosophical interpretation (`sec:introduction`, `sec:scope`, `sec:related`, `sec:lean`) and the
+cited background results are out of scope (see §3).
 
 **Environment** (pinned, unchanged by this revision):
 
@@ -26,11 +34,23 @@ mathlib        : 8834d3761934044a64c98afb757c1673fad03521   (lake-manifest.json)
 ```
 
 **Layout.** The entry point is `ObserverEquivariance.lean`. It imports every module and runs the
-axiom audit. The modules are `ObserverEquivariance/{Core, ProductModel, MinSpec,
+axiom audit. The 25 modules are `ObserverEquivariance/{Core, ProductModel, MinSpec,
 MinSpecCorrespondence, NormalForm, LocalLifts, Descent, Residual, ResidualCategory, Calibration,
-Components, BaseChange, Cocycles, BaseChangeCocycle, AxiomAudit}.lean` and
-`ObserverEquivariance/Examples/{Twist, TwoObject, NonFaithful, Holonomy, Records,
-RecordsCalibration}.lean`.
+Comparisons, Implementations, Components, BaseChange, Cocycles, BaseChangeCocycle,
+AxiomAudit}.lean` and `ObserverEquivariance/Examples/{Twist, TwoObject, NonFaithful, Holonomy,
+Records, RecordsCalibration, RecordsR4, ComplexObstruction}.lean`. The four modules
+`Comparisons`, `Implementations`, `Examples/ComplexObstruction` and `Examples/RecordsR4` are the
+additions of this revision; they are covered in §2.8.
+
+**Imports.** The blanket `import Mathlib` is gone. `Core` and `Cocycles` now list the mathlib
+files they actually use (`Core`: connected components, `SingleObj`, products, `Pi`, `ModuleCat`,
+semidirect products, quaternion and permutation groups, `ZMod`, `Real`, complex roots of unity and
+six tactic files; `Cocycles`: semidirect products, the `group` tactic, pointed categories), and
+`ResidualCategory` and `Examples/Twist` add the two imports (`Functor.Currying`,
+`Perm.Cycle.Concrete`) they had previously been receiving transitively through `Core`. No
+inherited statement or proof body is affected. What does change is the reproduction footprint —
+2272 build jobs instead of 8518 — and, with it, the number of declarations the audit sees; see the
+note under the run figures below.
 
 **How to reproduce.** Run `scripts/audit.sh [logfile]` from the repository root. The default log
 is `BUILD_LOG_RAW.txt`. The script does four things:
@@ -49,14 +69,22 @@ declaration of any imported `ObserverEquivariance.*` module depends on an axiom 
 included in the check. The companion command `#assert_standard_axioms d₁ … dₙ` checks named
 declarations.
 
-**Final run for this revision** (2026-09-17; recorded in `BUILD_LOG.txt`):
+**Final run for this revision** (2026-09-21; recorded in `BUILD_LOG.txt`):
 
-- `lake build` completed successfully (8518 jobs) with no errors and no warnings.
+- `lake build` completed successfully (2272 jobs) with no errors and no warnings.
 - The scan found no forbidden constructs.
-- The audit reported that all 2599 declarations in 21 modules depend only on `propext`,
+- The audit reported that all 2766 declarations in 25 modules depend only on `propext`,
   `Classical.choice` and `Quot.sound`.
 
-`BUILD_LOG.txt` in the repository root records this revision's build and audit (environment, exact
+*What the declaration count is a property of.* The count is the number of constants the audit
+walks, including generated auxiliary constants (`_proof_n`, `match_n`, equation lemmas). It
+therefore depends on the import surface as well as on the source: the same 25-module tree built
+with the old blanket `import Mathlib` reports 2761 declarations and 8518 jobs, and the earlier
+21-module tree reported 2599. The article's `sec:lean` cites 2,766 declarations in 25 imported modules; it does not quote a job count. The figure 2766 declarations / 25 modules / 2272 jobs is the one
+the article's `sec:lean` cites and the one the archived configuration in this repository
+reproduces; it is not a portable invariant of the mathematics.
+
+`BUILD_LOG.txt` in the repository root records this revision's build and audit with per-file git blob SHA-1 hashes. (The article's `sec:lean` describes its own recorded run of 18 September 2026, with SHA-256 hashes and a Python reproduction script; that is the external contribution's layout, not this repository's.) It gives (environment, exact
 commands, per-file blob hashes, the scan, the build and the audit line). The *archived 2026-08-20
 log* of the pre-revision single-file development is preserved in git history at commit `f3f9182`;
 it certifies nothing in this revision. A baseline build of
@@ -182,7 +210,7 @@ Every declaration named below is in a module covered by that audit.
 | Discussion after the corollary: a nontrivial residual action rules out an invariant comparison with strictly shared data | `no_invariant_calibration_of_residualAction_ne_one` (Calibration); instance `recD_no_invariant_calibration` (Examples/RecordsCalibration) | `d`, `hF : d.IsInvariant F`, `hs : residualAction d F hF s ≠ 1` for some `s` | verified | The target is literally `p ⋙ L`; every strictly shared functor has this form, and the preceding row covers comparison with an arbitrary isomorphic copy. |
 | Unrestricted calibration always exists (intro, `prop:weak-descent` contrast, conclusion) | `unrestricted_calibration_exists`, `unrestrictedCalibration`, `unrestrictedCalibration_invariant_iff` (Calibration); the explicit isomorphism `OEData.weakDescentIso` (Descent) | `d`, `F : O ⥤ C`; no invariance hypothesis for the first two, `hF : d.IsInvariant F` for the third | verified | `unrestricted_calibration_exists` is the bare `∃ L, Nonempty (F ≅ p ⋙ L)`; `unrestrictedCalibration` is the named witness `F ≅ p ⋙ (d.sectionFunctor ⋙ F)`. `unrestrictedCalibration_invariant_iff` is the general form of the paper's contrast: this canonical calibration is invariant iff every `σ_s` is trivial. The review pass had this as "special case only" (records model); the general statement was added afterwards. |
 | Remark after the corollary: the residual action of `ex:invariant` is the identity homomorphism | `invariantPairFunctor_residualAction`, `invariantPairFunctor_residualAction_hom` (Residual) | `[Group G]`, `s : Pair PUnit` | verified | Stated through `Units.toAut ∘ toUnits : G →* Aut (star)` in `SingleObj G`. Because `Aut` multiplies as `f * g = g.trans f` and `SingleObj` composes as `f ≫ g = g * f`, this really is the identity homomorphism and not an anti-homomorphism. |
-| Remark: the diagonal orbit category `O/G ≅ S × BG` | none | n/a | not formalized | An unnumbered remark. No orbit-category construction exists in the development (a grep for "orbit" over `ObserverEquivariance` finds nothing). It is not an INSTR deliverable, and the two isomorphisms it summarizes are the `Q`-factorization rows above; see §3. |
+| Remark: the diagonal orbit category `O/G ≅ S × BG` | none | n/a | not formalized | An unnumbered remark. No orbit-category construction exists in the development. (Since r5 a grep for "orbit" does find `Examples/RecordsR4`, but those declarations — `SignOrbit`, `orbitClass`, `orbitFunctor`, `orbitRecovery` — are the sign-orbit *set* quotient of `tab:recovery-tasks`, §2.8, and have nothing to do with the orbit category `O/G`.) It is not an INSTR deliverable, and the two isomorphisms it summarizes are the `Q`-factorization rows above; see §3. |
 
 ### 2.5 `sec:symmetries` — classification of symmetry lifts
 
@@ -207,7 +235,7 @@ Every declaration named below is in a module covered by that audit.
 | `prop:basechange`: construction of the rebased datum | `OEData.rebase`, `rebase_act`, `rebase_actHom`, `rebase_reind`, `rebase_chi`, `rebase_base`, `rebase_coord`, `rebase_ltrans`, `rebase_one`, `rebase_rebase` (BaseChange) | `d`, `c : G`; no connectedness | verified | Action, morphism action, reindexing and cleavage are unchanged (`rfl` lemmas); only basepoints, coordinates and `ltrans` move. `rebase_ltrans` shows the forced `ltrans' = ltrans_{c a c⁻¹}` up to the cast; any other choice is excluded by `OEData.ext_of_coord`. |
 | `prop:basechange`: every other parallel family is `b · c` for a unique `c` | `parallel_family_eq_translate`, `parallel_family_eq_rebase_base` (BaseChange); the two-datum forms `parallel_basepoints_eq_rebase`, `exists_unique_eq_rebase`, `eq_rebase_of_base`, `parallel_basepoints_pointwise`, `parallel_basepoints_locally_const`, `parallel_basepoints_const_unique` | `[IsConnected S]`, `d`, and a bare family `b' : S → O` with `hp : ∀ s, p.obj (b' s) = s` and `hpar : ∀ {s t} (u : s ⟶ t), d.reind u (b' t) (hp t) = b' s`; the two-datum forms take a second `OEData` agreeing on `act` and `reind` | verified | The bare-family form quantifies exactly over what the paper does (a parallel choice of basepoints, not a second complete datum); conclusion `∃! c, ∀ s, b' s = d.act (d.base s) c`, and `parallel_family_eq_rebase_base` phrases the same as `∃! c, (d.rebase c).base = b'`. The review pass had marked this row partial because only the two-datum form existed; the bare-family form was added afterwards. |
 | `prop:basechange`: the four displayed formulas | coordinates `coord_eq_of_base`, `OEData.rebase_coord`; translations `Λ_eq_of_base`, `Λ_eq_conj_of_base`, `Λ_rebase`, `Λ_inv_eq_of_base`; untwisted lifts `liftFunctor_eq_of_base`, `liftFunctor_rebase`; twisted lifts `liftFunctorθ_eq_of_base`, `liftFunctorθ_obj_eq_of_base`, `liftFunctorθ_eq_conj_of_base`, `liftFunctorθ_rebase` (BaseChange) | `d`, `d'` agreeing on `act` (and `reind` where cleavage is involved), `hc : ∀ s, d'.base s = d.act (d.base s) c`; no connectedness — `c` is given, not produced | verified | All four are functor equalities: `g'_x = c⁻¹ g_x`, `Λ'_a = Λ_{c a c⁻¹}`, `Ã' = Ã`, `Ã'_θ = Λ_{c θ_A(c⁻¹)} Ã_θ`, together with the conjugation forms `Λ'_a = Λ_c Λ_a Λ_c⁻¹` and `Ã'_θ = Λ_c Ã_θ Λ_c⁻¹` in Lean's diagrammatic order. `θ` is an arbitrary `MulAut G`, more general than `θ_A`. |
-| `prop:basechange` at group level, and independence of the lift groups from the normalization | `isGEquivariant_iff_of_act_eq`, `isTwistedEquivariant_iff_of_act_eq`, `preservesCleavage_iff_of_reind_eq`, `autBoxGCongr`, `autBoxGOverCongr`, `autBoxGθOverCongr` with their `_hom`/`_inv`/`_base` lemmas, `Φ_autBoxGCongr`, `ΦθOver_autBoxGθOverCongr`; `ΛHom_eq_of_base`, `ΛHom_eq_conj_of_base`, `ΛHom_eq_comp_of_base`, `liftHom_eq_of_base`, `liftHom_eq_comp_of_base`, `liftHom_eq_conj_of_base`, the `Over` versions `ΛHomOver_eq_of_base`, `ΛHomOver_eq_conj_of_base`, `ΛHomOver_eq_comp_of_base`, `liftHomOver_eq_of_base`, `liftHomOver_eq_comp_of_base`, and the twisted versions `ΛHomθOver_eq_of_base`, `ΛHomθOver_eq_conj_of_base`, `ΛHomθOver_eq_comp_of_base`, `liftHomθOver_eq_of_base`, `liftHomθOver_eq_conj_of_base`, `liftHomθOver_eq_comp_of_base` (BaseChange) | `d`, `d'` with `hact`, `hreind`, `hc`; `H` and `θ` where relevant; no connectedness | verified | The congruence isomorphisms are the identity on `hom`, `inv` and `base`, so nothing is hidden by a type rewrite. Group multiplication is operator order, so `MulAut.conj (ΛHomθOver d H θ c) F` has underlying functor `Λ_{c⁻¹} ⋙ F.hom ⋙ Λ_c`, matching the paper. |
+| `prop:basechange` at group level, and independence of the lift groups from the normalization | `isGEquivariant_iff_of_act_eq`, `isTwistedEquivariant_iff_of_act_eq`, `preservesCleavage_iff_of_reind_eq`, `autBoxGCongr` and `autBoxGθOverCongr` with their `_hom`/`_inv`/`_base` lemmas, `autBoxGOverCongr` with `autBoxGOverCongr_coe` (the `Over` case is stated on the underlying element; no `_hom`/`_inv`/`_base` lemmas exist for it), `Φ_autBoxGCongr`, `ΦθOver_autBoxGθOverCongr`; `ΛHom_eq_of_base`, `ΛHom_eq_conj_of_base`, `ΛHom_eq_comp_of_base`, `liftHom_eq_of_base`, `liftHom_eq_comp_of_base`, `liftHom_eq_conj_of_base`, the `Over` versions `ΛHomOver_eq_of_base`, `ΛHomOver_eq_conj_of_base`, `ΛHomOver_eq_comp_of_base`, `liftHomOver_eq_of_base`, `liftHomOver_eq_comp_of_base`, and the twisted versions `ΛHomθOver_eq_of_base`, `ΛHomθOver_eq_conj_of_base`, `ΛHomθOver_eq_comp_of_base`, `liftHomθOver_eq_of_base`, `liftHomθOver_eq_conj_of_base`, `liftHomθOver_eq_comp_of_base` (BaseChange) | `d`, `d'` with `hact`, `hreind`, `hc`; `H` and `θ` where relevant; no connectedness | verified | The congruence isomorphisms are the identity on `hom`, `inv` and `base`, so nothing is hidden by a type rewrite. Group multiplication is operator order, so `MulAut.conj (ΛHomθOver d H θ c) F` has underlying functor `Λ_{c⁻¹} ⋙ F.hom ⋙ Λ_c`, matching the paper. |
 | Consequence: the two identifications with `G ⋊_θ H` differ by an inner automorphism | `autBoxGθOverMulEquivSemidirect_symm_eq_of_base`, `autBoxGθOverMulEquivSemidirect_conj_of_base`, `autBoxGOverMulEquivProd_symm_eq_of_base` (BaseChange) | `d`, `d'`, `hact`, `hreind`, `hc`, `[IsConnected S]`, `H`, `θ` | verified | `IsConnected` is needed only because the `MulEquiv`s themselves need it. Stated as an equality of `MulEquiv`s: the new identification is the old one composed with conjugation by `Λ_c` and the congruence isomorphism. |
 | `z_c(A) = c θ_A(c⁻¹)` is a nonabelian 1-coboundary, and the cocycle identity | `baseChange_twistFactor_mul` (BaseChange); `OECocycle.coboundary`, `coboundary_mul`, `IsCocycle`, `isCocycle_coboundary`, `isCocycle_one`, `IsCocycle.apply_one`, `Cocycle` (Cocycles); the link `baseChange_twistFactor_eq_coboundary` (BaseChangeCocycle) | arbitrary groups `G`, `H` and `θ : H →* MulAut G`, `c : G`; no commutativity | verified | `z_c(AB) = z_c(A) θ_A(z_c(B))` is proved in both files, and `baseChange_twistFactor_eq_coboundary` identifies the base-change factor with `OECocycle.coboundary` by `rfl`, so the two halves are now connected (they were separate at review time). |
 | `H^1(H,G)` classifies sections, equivalently complements, up to conjugation by `G` | `OECocycle.cocycleSection`, `cocycleSectionEquiv`, `cocycleSectionEquiv_apply`, `cocycleSectionEquiv_symm_apply`, `cocycleSectionEquiv_one`, `conj_inl_mk`, `conj_inl_section`, `SectionConj`, `sectionConj_iff_exists_ker`, `Cohomologous`, `cohomologous_iff_sectionConj`, `cohomologousSetoid`, `H1`, `H1.mk`, `H1.trivialClass`, `H1.toPointed`, `H1.mk_coboundary`, `H1.mk_eq_trivialClass_iff`, `H1EquivSectionClasses`, `H1EquivSectionClasses_mk`, `H1EquivSectionClasses_trivialClass`, `section_range_isComplement`, `KernelComplement`, `KernelComplement.existsUnique`, `complementSection`, `sectionComplementEquiv`, `ComplementConj`, `sectionConj_iff_complementConj`, `complementConjSetoid`, `H1EquivComplementClasses`, `H1EquivComplementClasses_mk`, `H1EquivComplementClasses_trivialClass` (Cocycles) | arbitrary groups `G`, `H` (nonabelian allowed) and `θ : H →* MulAut G`; the extension `G ⋊[θ] H` is fixed throughout | verified | `H1` is a local quotient definition, not mathlib group cohomology, which does not cover the nonabelian case; INSTR allows this. Sections are `MonoidHom`s `H →* G ⋊[θ] H` with `(σ A).right = A`, and the cohomology relation is exactly conjugation by `inl c`. Basepoint preservation is proved on both sides (`H1EquivSectionClasses_trivialClass`, `H1EquivComplementClasses_trivialClass`). |
@@ -262,6 +290,44 @@ Every declaration named below is in a module covered by that audit.
 | `sec:holonomy`, special case: `Γ = G = Q₈`, `ρ = id`, a nonsplit extension | `mem_Eρ_id_iff`, `EρIdEquiv`, `holQ8EρEquiv`, `Hρ_id`, `holQ8Quot`, `holQ8Quot_surjective`, `holQ8_ker_conj`, `holQ8HρEquiv`, `holQ8Center`, `holQ8Center_injective`, `holQ8_centralizer_eq`, `holQ8CentralizerEquiv`, `holQ8KerEquiv`, `holQ8_no_section`, `holQ8_orderOf_lift` (Examples/Holonomy) | concrete, with `Q₈ = QuaternionGroup 2` | verified | `E_ρ ≅ Q₈`, `H_ρ = Inn(Q₈) ≅ C₂ × C₂`, kernel `C₂`. `holQ8_no_section` quantifies over all monoid-hom sections of `E_ρ → H_ρ` (not merely over continuous or canonical ones), and `holQ8_orderOf_lift` proves the paper's reason: every lift of a nonidentity quotient element has order 4. Stated for `E_ρ → H_ρ`; the transported statement for `HolLift ρ` is not separately recorded (§3). |
 | `sec:holonomy`, closing comparison with smooth gauge theory | none | n/a | not formalized | Background from the literature (`Stab_{Gau(P)}(A) ≅ C_G(Hol_{u_0}(A))`), cited by the paper and explicitly excluded by INSTR. See §3. |
 
+### 2.8 Additions for revision r5 (`sec:lean-r5`)
+
+Four modules were added in this revision: `Comparisons`, `Implementations`,
+`Examples/ComplexObstruction` and `Examples/RecordsR4`. None of them contains `sorry`, `admit`,
+`axiom`, `native_decide`, `unsafe` or `implemented_by`, and all four are inside the module-wide
+standard-axiom audit.
+
+*Context for this subsection.* The two general modules do **not** use the default context of §1.
+Every declaration of `Comparisons` and `Implementations` lives in
+`{S C G : Type*} [Category S] [Category C] [Group G]` and speaks about
+`D : ResidualData S C G` and the product model `S × Pair G`, not about a general `p : O ⥤ S` with
+`d : OEData G p`. The bridge to the general setting is the inherited normal form and the
+residual-data correspondence of §§2.2 and 2.4; no new result is restated for an arbitrary
+normalized datum (see §3.4). The central abbreviation is
+`ResidualData.presentationFunctor D := residualQ S G ⋙ D.toFunctor : S × Pair G ⥤ C`, i.e. the
+paper's `F` reconstructed from its residual data `(E, σ)` — it is the *existing* functor of
+`prop:residual`, not a new hypothesis on the data.
+
+| Paper label / result | Lean declaration(s) | Actual hypotheses | Status | Notes |
+| --- | --- | --- | --- | --- |
+| `prop:comparisons`, setup: the presentation functor of residual data and its invariance | `ResidualData.presentationFunctor`, `presentation_map_section`, `presentation_map_vertical`, `presentationFunctor_isInvariant`, `presentationIso` (Comparisons) | `D : ResidualData S C G`; no connectedness, nonemptiness, groupoid or commutativity hypothesis anywhere in the module | verified | `presentation_map_section` is `F(u : 1 → 1) = E(u)` and `presentation_map_vertical` is `F(𝟙_s : 1 → a) = σ_s(a)`; these two are the evaluations the paper's proof uses. `presentationFunctor_isInvariant : OEData.IsInvariant (productData S G) D.presentationFunctor` is proved from the inherited `residualQ_invariant`, so invariance of the source is a theorem here, not an assumption. `presentationIso : Prod.fst S (Pair G) ⋙ D.E ≅ D.presentationFunctor` has component `σ_s(a)` and is the unrestricted comparison "from the base data". |
+| `prop:comparisons`, the bijection and the component formula `α_{(s,a)} = σ'_s(a) β_s σ_s(a⁻¹)` | `ResidualData.comparison`, `comparison_app`, `comparison_app_residual`, `restrictComparison`, `restrictComparison_comparison`, `comparison_restrictComparison`, `comparisonEquiv` (Comparisons) | `D D' : ResidualData S C G`, `β : D.E ⟶ D'.E` (resp. `α : D.presentationFunctor ⟶ D'.presentationFunctor`) | verified | `comparisonEquiv D D' : (D.presentationFunctor ⟶ D'.presentationFunctor) ≃ (D.E ⟶ D'.E)` is a full `Equiv`: both round trips are proved (`restrictComparison_comparison`, `comparison_restrictComparison`), so "correspond bijectively" is the statement and not a one-sided construction. The component is `comparison_app : (comparison β).app (s, ⟨a⟩) = (D.σ s a).inv ≫ β.app s ≫ (D'.σ s a).hom`, which in the paper's operator order reads `σ'_s(a) β_s σ_s(a)⁻¹`; `comparison_app_residual` rewrites the left factor as the literal `σ_s(a⁻¹)` of the display. Naturality of the extension (the paper's three-line computation) is discharged inside `presentationIso`/`comparison`. |
+| `prop:comparisons`, "`α` is an isomorphism exactly when `β` is" | `ResidualData.comparisonIso`, `restrictComparisonIso`, `isIso_comparison_iff` (Comparisons) | `β : D.E ⟶ D'.E` for the criterion; `β : D.E ≅ D'.E` resp. `α : D.presentationFunctor ≅ D'.presentationFunctor` for the two constructions | verified | `isIso_comparison_iff : IsIso (comparison β) ↔ IsIso β` is both directions. `comparisonIso` and `restrictComparisonIso` are the iso-level transports used by the rest of the development; they are not merely `asIso` of the hom-level maps. |
+| `prop:comparisons`, "`α` is invariant exactly when `β_s σ_s(r) = σ'_s(r) β_s`" | `ResidualData.invariant_iff_constant`, `comparison_invariant_iff` (Comparisons) | `α : D.presentationFunctor ⟶ D'.presentationFunctor` resp. `β : D.E ⟶ D'.E`; invariance is the inherited `IsInvariantNatTrans (productData S G) …` | verified | Two separate statements, both `↔`. `invariant_iff_constant` is the paper's "invariance says that the components are independent of `a`": `IsInvariantNatTrans … α ↔ ∀ s a, α.app (s,⟨a⟩) = α.app (s,⟨1⟩)`. `comparison_invariant_iff` is then the intertwining criterion `∀ s r, (D.σ s r).hom ≫ β.app s = β.app s ≫ (D'.σ s r).hom`, i.e. `β_s σ_s(r) = σ'_s(r) β_s` in operator order. |
+| `prop:comparisons`, last two sentences: calibration to a prescribed target `L` | `ResidualData.trivial`, `trivial_presentationFunctor`, `prescribed_iso_iff`, `prescribed_invariant_iso_iff` (Comparisons) | `D : ResidualData S C G`, `L : S ⥤ C`; no invariance or connectedness hypothesis | verified | `prescribed_iso_iff : Nonempty (D.presentationFunctor ≅ Prod.fst S (Pair G) ⋙ L) ↔ Nonempty (D.E ≅ L)` — the unrestricted half, with the target written as the literal `p ⋙ L` of the product model. `prescribed_invariant_iso_iff` is the invariant half: an invariant isomorphism to `(trivial L).presentationFunctor` exists iff `Nonempty (D.E ≅ L) ∧ ∀ s, D.σ s = 1`, i.e. "`E ≅ L` and every `σ_s` is trivial". The two targets agree: `trivial_presentationFunctor` proves `(trivial L).presentationFunctor = Prod.fst S (Pair G) ⋙ L` on the nose. Triviality of `σ` is extracted with the inherited `Calibration.action_trivial_iff_of_intertwining`, so this row is a genuine refinement of `cor:invariant-calibration` (which quantifies over `L`) and not a restatement of it. |
+| `sec:implementation`, the definition of an invariant implementation, and the residual data of a twisted lift | `ResidualData.twisted`, `twisted_presentationFunctor`, `canonical_product_lift_eq`, `liftFunctorθ_comp_presentationFunctor`, `InvariantImplementation`, `TwistedIntertwiner` (Implementations) | `D : ResidualData S C G`, `A : S ⥤ S`, `θ : MulAut G` | verified | `D.twisted A θ` is the paper's `(EA, r ↦ σ_{A(s)}(θ_A(r)))`, and `liftFunctorθ_comp_presentationFunctor` proves the display of the proof — `F Ã_θ` has exactly those residual data — as a strict functor equality against the *inherited* canonical lift `liftFunctorθ (productData S G) A θ` of `thm:twisted`, not against a freshly defined functor. `canonical_product_lift_eq` is the bridge `liftFunctorθ (productData S G) A θ = multiplierProductFunctorθ A θ (fun _ => 1)`, including the action on arrows. `InvariantImplementation D A θ` is a subtype: an isomorphism `(D.twisted A θ).presentationFunctor ≅ D.presentationFunctor` together with a proof that its `hom` is `IsInvariantNatTrans`, which is the paper's `α_A R_h = α_A`. `A` is an arbitrary endofunctor of `S`: the Lean hypothesis is weaker than the paper's `A ∈ H ≤ Aut(S)`, so the statements are more general, not narrower. |
+| `prop:data-implementation` and `eq:implementation-intertwiner` | `ResidualData.implementationEquiv`, `invariant_implementation_iff`, `implementation_app` (Implementations) | `D : ResidualData S C G`, `A : S ⥤ S`, `θ : MulAut G`; no connectedness and no hypothesis on `F` beyond having residual data | verified | `implementationEquiv D A θ : D.InvariantImplementation A θ ≃ D.TwistedIntertwiner A θ` is the proposition's bijection, with both round trips proved. `TwistedIntertwiner` carries `β : A ⋙ D.E ≅ D.E` with `∀ s r, (D.σ (A.obj s) (θ r)).hom ≫ β.hom.app s = β.hom.app s ≫ (D.σ s r).hom`, which is `eq:implementation-intertwiner` `(β_A)_s σ_{A(s)}(θ_A(r)) = σ_s(r) (β_A)_s` in the paper's operator order. `invariant_implementation_iff` is the bare existence form. `implementation_app` is the proposition's last sentence, `(α_A)_{(s,a)} = (β_A)_s`, for every `a`. The proof is literally "apply `prop:comparisons`": it goes through `comparison_invariant_iff` and `invariant_iff_constant`. |
+| `ex:complex-obstruction`, closing sentence: "the conclusion also holds for every lift `Λ_a Ã_θ`; `C₃` is abelian" | `ResidualData.multiplier_product_lift_eq`, `translated_twisted_presentationFunctor`, `translated_lift_comp_presentationFunctor` (Implementations) | `{K : Type*} [CommGroup K]`, `D : ResidualData S C K`, `A : S ⥤ S`, `θ : MulAut K`, `a : K` for the last two; `[Group G]` and an arbitrary multiplier `k : S → G` for the first | verified | The abelian hypothesis is stated as `[CommGroup K]` and is genuinely used (`a θ(b) (a θ(c))⁻¹ = θ(b c⁻¹)` needs commutativity). `translated_lift_comp_presentationFunctor` reads `(liftFunctorθ (productData S K) A θ ⋙ Λ (productData S K) a) ⋙ D.presentationFunctor = (D.twisted A θ).presentationFunctor`, i.e. post-composing the canonical lift with a constant fibre translation leaves the residual data unchanged. This is the general lemma that makes the "any admissible lift" form of `ex:complex-obstruction` possible; `multiplier_product_lift_eq` identifies the inherited `liftByMultiplierθ` with the product formula for an arbitrary multiplier. |
+| `ex:complex-obstruction`, the model: `S = Pair({0,1})`, `G = C₃`, `C = ModuleCat ℂ`, `σ_s(r^j) = ω^j` | `ComplexObstruction.omega`, `omega_primitive`, `omega_pow_three`, `omega_ne_zero`, `omega_inv_ne`, `omegaUnit`, `omegaUnit_pow_three`, `intCharacter`, `intCharacter_three`, `character`, `character_generator`, `scalarIso`, `scalarRepresentation`, `representation`, `representation_apply`, `complexData`, `F`, `F_isInvariant`, `baseIso` (Examples/ComplexObstruction) | concrete; the base, group, subgroup and twist are the *inherited* ones of `ex:twist` (`Pair (Fin 2)`, `G3`, `swapFunctor`, `twistHSwap`, `twistθ`, `twistData`) | verified | `omega = Complex.exp (2 * π * I / 3)` is the actual primitive cube root, and `omega_primitive : IsPrimitiveRoot omega 3` is proved from mathlib's `Complex.isPrimitiveRoot_exp`; nothing is modelled by an abstract order-3 element. `character : G3 →* ℂˣ` is built through `ZMod.lift` and sends the generator `twistR` to `ω` (`character_generator`). `complexData : ResidualData (Pair (Fin 2)) (ModuleCat.{0} ℂ) G3` has `E` constant at `ModuleCat.of ℂ ℂ` with identity maps on base arrows, and `σ_s = representation`, so `F := complexData.presentationFunctor` is the paper's `F`. `baseIso : swapFunctor ⋙ complexData.E ≅ complexData.E` records `EA = E` strictly. |
+| `ex:complex-obstruction`, main claim: no invariant complex-linear implementation, for any admissible lift over the interchange | `ComplexObstruction.intertwiner_eq_zero`, `no_invariant_complex_implementation`, `no_invariant_complex_implementation_any_lift` (Examples/ComplexObstruction) | the "any lift" form quantifies over every `T : Pair (Fin 2) × Pair G3 ⥤ Pair (Fin 2) × Pair G3` with `IsTwistedEquivariant twistData (twistθ twistHSwap) T` and `PreservesCleavage twistData T swapFunctor`; `[IsConnected (Pair (Fin 2))]` is supplied by the inherited instance, not assumed by hand | verified | `intertwiner_eq_zero` is the paper's linear-algebra step, stated for an arbitrary `f : ℂ →ₗ[ℂ] ℂ` with `f(ω⁻¹ z) = ω f(z)`, with no invertibility assumed. It is proved directly from `ℂ`-linearity and `ω⁻¹ ≠ ω`, rather than through the paper's phrasing "every complex-linear endomorphism of `ℂ` is scalar multiplication". `no_invariant_complex_implementation` rules out `Nonempty (complexData.InvariantImplementation swapFunctor (twistθ twistHSwap))`. The "any lift" form is the paper's closing sentence and is genuinely general: it uses the inherited classification `exists_unique_eq_liftFunctorθ_comp_Λ` (`thm:twisted`) to write `T = Ã_θ ⋙ Λ_a`, then `translated_lift_comp_presentationFunctor` to discard `Λ_a`. It quantifies over *all* transport-preserving twisted-equivariant `T`, not over the canonical lift and its translates named in advance. |
+| `ex:complex-obstruction`, "an unrestricted complex-linear natural isomorphism does exist", with component `ω^{2j}`, and it is not invariant | `ComplexObstruction.unrestrictedImplementation`, `unrestrictedImplementation_app`, `unrestrictedImplementation_not_invariant` (Examples/ComplexObstruction) | concrete | verified | `unrestrictedImplementation := ResidualData.comparisonIso baseIso`, i.e. the paper's "`prop:comparisons` with `β_s = id`". `unrestrictedImplementation_app` evaluates the component at `(s, ⟨g⟩)` on `z : ℂ` as `(character g)^2 * z`, which is the paper's `α_{(s,r^j)}(z) = ω^{2j} z`. `unrestrictedImplementation_not_invariant` is the negative half, and it is derived from the main obstruction rather than recomputed. |
+| `ex:complex-obstruction`, the antilinear resolution: realification, conjugation, invariance and `J² = id` | `ComplexObstruction.omega_conj`, `character_conj`, `realification`, `realData`, `realData_presentationFunctor`, `conjugationIso`, `realBaseIso`, `real_intertwines`, `realImplementation`, `realImplementation_app`, `conjugation_involution`, `realImplementation_involution` (Examples/ComplexObstruction) | concrete; `character_conj` case-splits on the three elements of `G3` with `decide` (not `native_decide`) and then computes | verified | Realification is the actual functor `ModuleCat.restrictScalars (algebraMap ℝ ℂ)`, and `realData_presentationFunctor : realData.presentationFunctor = F ⋙ realification` proves that the real residual data present the same functor, so the change of comparison class is a theorem and not a redefinition. `conjugationIso` is `Complex.conjAe` as an `ℝ`-linear isomorphism. `realImplementation` is a genuine inhabitant of `realData.InvariantImplementation swapFunctor (twistθ twistHSwap)`, obtained from `real_intertwines` through `implementationEquiv`, so its invariance is part of the type. `realImplementation_app` shows every component is `z ↦ conj z`, and `realImplementation_involution` is the paper's `J² = id` at the level of the implementation, not only of `J` itself (`conjugation_involution`). |
+| `sec:records` (r5 paragraph): information access does not imply compatibility — the identity and maximum procedures | `RecordsR4.Procedure`, `IsEven`, `RespectsRestrictions`, `identity_not_even`, `maxMagnitude`, `maxProcedure`, `maxProcedure_even`, `maxProcedure_not_natural` (Examples/RecordsR4) | `τ : ℝ`; `maxProcedure_not_natural` additionally takes `hτ : τ ≠ 0` | verified | `Procedure τ := ∀ I : RecDom, recordSpace τ I → recordSpace τ I` is a plain family of functions with no presentation-coordinate argument; `IsEven` is the paper's vertical equation `K_I(-y) = K_I(y)` and `RespectsRestrictions` is its restriction square `K_J(r_{IJ} y) = r_{IJ}(K_I y)`, written directly on `recordSpace` rather than as naturality of a transformation of functors. The equivalence of the two readings for the functor-level statement is the inherited `recInfo_vertical_naturality_iff_even` (§2.6). `identity_not_even` is "`K_I(y) = y` fails the vertical equation". `maxProcedure` is the paper's maximum-magnitude procedure, `maxMagnitude τ I y • recordOne τ I`, proved even, and `maxProcedure_not_natural` is the paper's concrete counterexample: the index record `recIdxRecord τ hτ RecDom.full` (entries `(0,1,2)`) restricted to `{0}` gives `2` one way and `0` the other. |
+| `tab:recovery-tasks` (all three rows) | row 1 (raw record and polarity → signed record) `recCIso`, `recC`, `recC_hom_app` (Examples/RecordsCalibration, §2.6); row 2 (raw record alone → signed record: impossible) `recInfo_no_recovery`, `recInfo_no_recovery_at` (§2.6); row 3 (raw record alone → orbit, in `Set`) `RecordsR4.signSetoid`, `SignOrbit`, `orbitClass`, `orbitClass_eq_iff`, `orbitMap`, `orbitFunctor`, `orbitClass_sign`, `orbitRecovery`, `orbitRecovery_invariant` | `τ : ℝ` throughout; row 3 needs no positivity, no linearity and no connectedness | verified | Each row of the table corresponds to formalized statements; only row 3 is new in r5. `orbitFunctor τ : RecDom ⥤ Type` is the article's `L̄(I) = L(I)/{±1}` with `r̄_{IJ}[y] = [r_{IJ} y]` — functoriality is proved, so "the restriction maps are well defined" is a theorem. `orbitRecovery τ : recD τ ⋙ forget (ModuleCat ℝ) ⟶ recP ⋙ orbitFunctor τ` is the map `K_I(y) = [y]`, and `orbitRecovery_invariant` proves it is an `IsInvariantNatTrans` for `recData`, so "invariant natural transformation" is the statement. `orbitClass_sign` is the exactness clause `K_I(ε q) = [q]` for every sign `ε : ℤˣ`. The target category is literally `Type`, matching the article's "work now in `Set`". Not stated separately: that `K` identifies `y` and `-y` for nonzero `y` and so is not a calibration isomorphism to the signed data — it is the instance `y := -x` of `orbitClass_eq_iff` (see §3.4). |
+| `sec:records` (r5 paragraph): the orbit set is not the linear coinvariant quotient | `RecordsR4.signRelations`, `signRelations_eq_top`, `linear_coinvariants_zero`, `linear_coinvariants_subsingleton` (Examples/RecordsR4) | any `V : Type*` with `[AddCommGroup V] [Module ℝ V]`; no finiteness and no relation to `recordSpace` | verified | `signRelations V := Submodule.span ℝ (Set.range fun y => -y - y)` is the submodule generated by the relations the article displays, and `signRelations_eq_top` proves it is everything — the witness is `(-1/2) • x`, which needs division by 2 and hence a real (not merely abelian) module. `linear_coinvariants_zero` and `linear_coinvariants_subsingleton` then give the article's "that quotient zero". Stated for an arbitrary real vector space, which is more general than the record spaces; it is not instantiated at `recordSpace τ I` by a named lemma. |
+| `sec:records` (r5 paragraph): a nonzero reference observation restores signed recovery | `RecordsR4.reference_determines_sign`, `reference_recovers_value` (Examples/RecordsR4) | `ε : ℤˣ`, `qref : ℝ` with `hq : qref ≠ 0`, `q : ℝ` | partial | The two statements are the article's algebra: `(ε qref)/qref = ε` and `((ε qref)/qref) · (ε q) = q`. They are scalar identities in `ℝ` under the stated nonvanishing hypothesis. They are *not* lifted to the record functors: there is no natural transformation, no `IsInvariantNatTrans` statement and no connection to `recD`/`recC` expressing "and the original calibration applies". See §3.3. |
+| `sec:records`: time reflection on trajectory parameters, its fixed points, and the link to the inherited implementation | `RecordsR4.reflectTrajectory`, `reflectTrajectory_involution`, `reflectTrajectory_fixed_iff`, `trajectoryRecord`, `recα_trajectory` (Examples/RecordsR4) | `τ : ℝ`; no positivity | verified | `reflectTrajectory τ (q,v) = (q + 2τv, -v)` is the article's action on trajectory parameters, `reflectTrajectory_involution` its `α_I α_{ρ(I)} = id` counterpart on parameters, and `reflectTrajectory_fixed_iff : reflectTrajectory τ qv = qv ↔ qv.2 = 0` is "its fixed trajectories have `v = 0`". The link the article asks for is `recα_trajectory`, which evaluates the *inherited* natural isomorphism `recα τ` (§2.6) on the parametrized record `trajectoryRecord τ I.rev q v` and returns `trajectoryRecord τ I (q + 2τv) (-v)`: the parameter formula is therefore proved to be the parameter shadow of the record-space transformation, not an independent calculation. |
+
 ## 3. Not formalized, special cases, and open points
 
 This section is meant to be exhaustive about what the development does *not* contain. It covers
@@ -274,8 +340,9 @@ reader might assume.
 - `sec:introduction`, `sec:scope` and `sec:related`: interpretation, motivation and comparison
   with other categorical approaches. No mathematical claim of the article's own is stated there
   that is not also stated in `sec:data`–`sec:boundaries`.
-- `sec:lean` and `tab:lean`: the article's own description of the formalization. This matrix is
-  the counterpart of that description, not a formalization target.
+- `sec:lean`, `sec:lean-r5` and `tab:lean`: the article's own description of the formalization.
+  This matrix is the counterpart of that description, not a formalization target. The claims
+  `sec:lean-r5` makes about the four new modules are checked against the sources in §2.8.
 - The cited background result at the end of `sec:holonomy`
   (`Stab_{Gau(P)}(A) ≅ C_G(Hol_{u_0}(A))` for a smooth connection, with its two references). It
   is external literature, and INSTR states explicitly that it need not be formalized. The
@@ -300,18 +367,37 @@ reader might assume.
 - **The paragraph after `ex:nonfaithful`**: appending an extra `BK` factor to `S × Pair(G)`
   without changing the object fibers. Not formalized; only the single-factor example itself is.
 - **`sec:records`, informal aside**: convention-independent statistics such as the absolute values
-  of the recorded numbers remain available. Not formalized (the impossibility half,
-  `recInfo_no_recovery`, is).
+  of the recorded numbers remain available. Partly closed in r5. One such statistic is now
+  formalized and analysed — `RecordsR4.maxProcedure` (`max_{j∈I}|y_j| · 1_I`), proved even
+  (`maxProcedure_even`) and proved *not* compatible with restriction (`maxProcedure_not_natural`),
+  which is the article's r5 point that availability does not imply compatibility. What is still
+  not formalized is the general aside itself: there is no statement that the family of
+  absolute-value (or other even) statistics is available, and no construction packaging any of
+  them as a natural transformation. The impossibility half, `recInfo_no_recovery`, is formalized,
+  as before.
 - **`tab:assumptions`**: no declaration of its own, by nature. Its checkable content — that no
   normal-form, section, descent, residual or calibration statement carries a connectedness
   hypothesis — is visible in the hypothesis columns of §§2.2–2.4 and is recorded as a row in §2.1.
 
 ### 3.3 Rows marked `partial`, with their precise deficit
 
-- **Coherent covariant implementations** (paragraph after `def:law`): the general notion
-  `α_A : LA ⇒ R_A L` with composition coherence is not defined. What exists is the paper's own
-  instance in `sec:records` (`recα`, `recα_involution`, `recαℓ`, `recαℓ_involution`) and the type
-  level distinction between an action on the target and the presentation twist `θ`.
+- **Coherent covariant implementations** (paragraph after `def:law`): partly closed in r5, but
+  still partial. The *single-transformation* notion is now defined and classified:
+  `ResidualData.InvariantImplementation D A θ` and `TwistedIntertwiner D A θ`, with the bijection
+  `implementationEquiv` (`prop:data-implementation`, §2.8). What is still missing is coherence: no
+  definition quantifies over a group-indexed family `{α_A}_{A ∈ H}`, and nothing relates the
+  implementations of `A₁`, `A₂` and `A₁ ⋙ A₂` (§3.4). The paper's own instance in `sec:records`
+  (`recα`, `recα_involution`, `recαℓ`, `recαℓ_involution`) remains the only family with a proved
+  coherence law, and it is an involution rather than a general composition law. The type-level
+  distinction between an action on the target and the presentation twist `θ` is unchanged.
+- **Reference recovery (`sec:records`, r5 paragraph)**: `RecordsR4.reference_determines_sign` and
+  `reference_recovers_value` prove the two scalar identities `(ε q_ref)/q_ref = ε` and
+  `((ε q_ref)/q_ref)(ε q) = q` for `q_ref ≠ 0`. The article's sentence continues "and the original
+  calibration applies": that half is not formalized. There is no statement at the level of the
+  functors — no transformation `recD τ ⟹ recP ⋙ L₀ τ` built from a reference observation, and
+  therefore no statement that the extra information restores exactly the recovery that
+  `recInfo_no_recovery` rules out without it. Closing this would mean enlarging the raw functor to
+  carry the reference value, which the development does not do.
 - **`sec:holonomy`, trivial `ρ`**: `holLiftEquivTrivial : HolLift 1 ≃* G × MulAut Γ` is proved
   abstractly, but it is not connected to `productData (SingleObj Γ) G` and
   `autBoxGOverMulEquivProd`, and its compatibility with the projection to `Aut(BΓ)` is not stated.
@@ -319,6 +405,49 @@ reader might assume.
   matched in content but not by a lemma identifying the two classifications.
 
 ### 3.4 Statements that are narrower than the surrounding prose
+
+New in r5 (the four added modules):
+
+- **The new general results live only in the strict product normal form.** Every declaration of
+  `Comparisons` and `Implementations` is about `D : ResidualData S C G` and the product model
+  `S × Pair G`, via `D.presentationFunctor = residualQ S G ⋙ D.toFunctor`. `prop:comparisons`,
+  `prop:data-implementation` and their corollaries are *not* restated for an arbitrary
+  `d : OEData G p` and an arbitrary invariant `F : O ⥤ C`. The inherited normal form
+  (`thm:normalform`, §2.2) and the residual-data correspondence (`prop:residual`, §2.4) supply the
+  passage, but no lemma performs it, so a reader who wants the general-datum form has to transport
+  it by hand. The article states this limitation in `sec:lean-r5`.
+- **The implementation criterion covers one base transformation, not a family.**
+  `implementationEquiv`, `invariant_implementation_iff` and `implementation_app` are indexed by a
+  single `A : S ⥤ S` and a single `θ : MulAut G`. Nothing in the module asserts or constructs
+  coherence of a family `{α_A}` under composition, and there is no statement relating
+  `implementationEquiv` for `A₁ ⋙ A₂` to the ones for `A₁` and `A₂`. The article says so
+  explicitly after `prop:data-implementation`; it is recorded here because the word
+  "implementation" invites the stronger reading. (In the other direction the Lean statement is
+  *wider* than the paper's: `A` is an arbitrary endofunctor of `S`, not required to lie in
+  `H ≤ Aut(S)` or even to be invertible.)
+- **The `Pair G` hom universe is pinned to `0` in the new statements.**
+  `ResidualData.presentationFunctor` is defined with `residualQ.{_, _, _, 0} S G`, so every
+  statement of `Comparisons` and `Implementations` is about `productData.{_, _, _, 0} S G`,
+  whereas `productData` itself leaves that universe free. Nothing mathematical is lost — the
+  groupoid `Pair G` has `PUnit` hom-sets in every universe — but unlike the inherited modules
+  (§4, "Universes"), here the pinning *is* visible in the statements, so the new results do not
+  literally apply to a `Pair G` instance taken at another hom universe without re-elaboration.
+- **Orbit recovery: the negative half is not a named lemma.** `RecordsR4.orbitRecovery` is proved
+  invariant and natural and to satisfy `K_I(ε q) = [q]`. The article's next sentence — that for
+  nonzero `y` it identifies `y` and `-y` and is therefore not a calibration isomorphism to the
+  signed data — has no declaration. It is the instance `y := -x` of `orbitClass_eq_iff`, but no
+  statement of the form "`orbitRecovery` is not injective / not an isomorphism" exists.
+- **Linear coinvariants are stated abstractly.** `signRelations`, `signRelations_eq_top` and
+  `linear_coinvariants_subsingleton` quantify over an arbitrary real vector space. They are never
+  instantiated at `recordSpace τ I`, so the sentence "for these record spaces the coinvariant
+  quotient is zero" is a one-line instantiation that the sources do not carry out.
+- **`ex:complex-obstruction` is pinned to universe 0.** `complexData` and `realData` are stated for
+  `ModuleCat.{0} ℂ` and `ModuleCat.{0} ℝ`, and the obstruction is proved at the base object
+  `⟨0⟩ : Pair (Fin 2)`. Neither restricts the content (a non-existence statement needs only one
+  object, and the target category is fixed by the example), but the statements are not universe
+  polymorphic.
+
+Inherited:
 
 - **`prop:cartesian`, "split Grothendieck fibration"**: `OEData.chi_split_cartesian` proves the
   content (each `χ` is `IsCartesianOver`, plus the four splitting laws) as an explicit
@@ -371,14 +500,33 @@ object-level kernel statements in `Examples/NonFaithful`; `recEcal_residualData_
 `recEcal_residualData_σ_hom`; `recαℓ_involution`; the unlabeled `recA_comp_L₀_ne`; and
 `H1EquivComplementClasses_trivialClass`.
 
+**Closed by the r5 additions.** Two further gaps of the earlier revisions are now declarations,
+recorded in §2.8. (i) *Calibration to a prescribed target.* Up to r3 the development proved that
+an unrestricted calibration always exists (`unrestricted_calibration_exists`) and that
+`cor:invariant-calibration` holds with the target `L` existentially quantified; it said nothing
+about a target fixed in advance. `ResidualData.prescribed_iso_iff` and
+`prescribed_invariant_iso_iff` now answer that question in both the unrestricted and the invariant
+form. (ii) *All comparisons, not only the canonical one.*
+`unrestrictedCalibration_invariant_iff` characterized invariance of one distinguished calibration;
+`comparisonEquiv` together with `isIso_comparison_iff` and `comparison_invariant_iff` now
+classifies *every* natural transformation between two invariant functors in product coordinates,
+with the invertibility and invariance criteria separated.
+
 ### 3.6 Documentation debt in the sources
 
+- The four modules adopted from the external contribution still date themselves to the article's **r4**
+  in their own docstrings (`Comparisons.lean:5`, `Implementations.lean:5` and `:80`,
+  `Examples/ComplexObstruction.lean:8`, `Examples/RecordsR4.lean:5`), as does the module name
+  `RecordsR4`. What they prove are the r5 statements; only the version label in the prose lags.
+
 - The header comment of the entry file `ObserverEquivariance.lean` was rewritten for r2 after this
-  matrix was drafted: it now carries the r2 title and source file, the `sec:data`–`sec:boundaries`
-  label scheme, a scope note, the carriers of `[IsConnected S]` / `[Nonempty S]`, a module map for
-  all 21 modules and a declaration directory per paper label, and it states `rem:groupoid` with the
-  explicit groupoid hypothesis that `OEData.base_hom_isIso` carries. The stale labels and the
-  unconditional-invertibility sentence of the earlier draft are gone.
+  matrix was drafted, and again for r5: it carries the r5 title and source file
+  (`doc/perspectives_invariance_calibration_2026-09-19_r5.tex`), the `sec:data`–`sec:boundaries`
+  label scheme extended with `sec:implementation` and `sec:lean-r5`, a scope note, the carriers of
+  `[IsConnected S]` / `[Nonempty S]`, a module map for all 25 modules and a declaration directory
+  per paper label, and it states `rem:groupoid` with the explicit groupoid hypothesis that
+  `OEData.base_hom_isIso` carries. The stale labels and the unconditional-invertibility sentence of
+  the earlier draft are gone, and the four r5 modules are marked as additions in the module map.
 - The older `#print axioms` block below that header is retained from the archived groupoid
   snapshot and is marked as such; the executable `#assert_standard_axioms_in_modules` command after
   it is the authoritative check for this revision.
@@ -468,7 +616,9 @@ was weakened to accommodate this; the workarounds are inside proofs. In `Example
 functors are pinned to `Functor.{0,0}` and `ModuleCat.{0} ℝ`, which is forced by `RecDom` being a
 `SmallCategory`; `recD_not_factors` quantifies over that universe only, and nothing is lost,
 because the target category is fixed by the example. `ResidualCategory` pins the hom universe of
-`Pair G` to `0` inside its constructions, but the pinning does not appear in the statements.
+`Pair G` to `0` inside its constructions, and there the pinning does not appear in the statements.
+In the r5 modules `Comparisons` and `Implementations` it does appear in the statements, because
+`ResidualData.presentationFunctor` is defined with `residualQ.{_, _, _, 0}`; see §3.4.
 
 **Composition and multiplication order.** Recorded in §1: Lean writes `f ≫ g` and `F ⋙ G`
 diagrammatically, while the groups here multiply in operator order. Every row above that mentions

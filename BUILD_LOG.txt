@@ -1,21 +1,21 @@
 Build and axiom-audit log — revision for
-"Symmetry Between Perspectives: Normal Forms, Descent, Calibration, and Lifts"
-==============================================================================
+"Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts"
+==========================================================================
 
-This log records the build and the axiom audit of THIS revision (the module layout under
-ObserverEquivariance/, generalized from groupoids to categories). The previous contents of this
-file — the audit of the archived single-file groupoid development of 2026-08-20 — are preserved in
-git history at commit f3f9182 and are NOT reproduced here; that run certifies nothing in this
-revision, and this run certifies nothing about it.
+This log records the build and the axiom audit of THIS revision: the modular development under
+ObserverEquivariance/, generalized from groupoids to categories, together with the four modules
+adopted for article revision r5 (Comparisons, Implementations, Examples/ComplexObstruction,
+Examples/RecordsR4). The audit of the archived single-file groupoid development of 2026-08-20 is
+preserved in git history at commit f3f9182 and is NOT reproduced here; that run certifies nothing
+in this revision, and this run certifies nothing about it.
 
-Reference paper: doc/perspectives_invariance_calibration_2026-09-05_r2.tex
-                 (revision r2, 5 September 2026).
+Reference paper: doc/perspectives_invariance_calibration_2026-09-19_r5.tex
+                 (revision r5, 19 September 2026).
 Coverage matrix: LEAN_COVERAGE.md.  Change description: CHANGES.md.
 
 Environment
 -----------
-  date                 2026-09-17 11:20 UTC (supersedes the 2026-09-16 12:02 UTC run: since then only
-                       comments changed, in Core.lean and in the entry-file header)
+  date                 2026-09-21 12:13 UTC
   platform             Darwin arm64
   lean-toolchain       leanprover/lean4:v4.31.0-rc1
   lean                 Lean (version 4.31.0-rc1, arm64-apple-darwin24.6.0,
@@ -41,31 +41,46 @@ Exact commands
 
 Artifact (git blob SHA-1 of each source file, as built)
 -------------------------------------------------------
-  ObserverEquivariance.lean                              290 lines  ff48fa08ddffda04ab997b76a6da76498bb06fe2
-  ObserverEquivariance/AxiomAudit.lean                    79 lines  1b5e2cdfc2b356eb741d77ce8da55611331980e9
-  ObserverEquivariance/BaseChange.lean                   767 lines  b27bcc4f26da52f57bb7d3119fc0bec90441c51e
-  ObserverEquivariance/BaseChangeCocycle.lean            122 lines  b127d174f547a93f2af44b550025397a64c2801d
-  ObserverEquivariance/Calibration.lean                  374 lines  b4aec368973308bd82573b068157e210c224c4d2
-  ObserverEquivariance/Cocycles.lean                     510 lines  8ff50369711eb1572d055f5acbc510d7a2ad3dae
-  ObserverEquivariance/Components.lean                   887 lines  a7c6d2d4f82454156f710380a433530973e3d24a
-  ObserverEquivariance/Core.lean                        2661 lines  ba10f2fa446b8b0b6ad376718bdd0fc352c6df90
-  ObserverEquivariance/Descent.lean                      516 lines  b6754acefa9207c82eaa0df59c903995126732f5
-  ObserverEquivariance/LocalLifts.lean                   706 lines  28a3dfdfd1b1bbb968cf19b691d3b44140cc38a9
-  ObserverEquivariance/MinSpec.lean                      357 lines  525871c3dfba3032ecfaa6fc974c4fd9d505aa06
-  ObserverEquivariance/MinSpecCorrespondence.lean        313 lines  bdff8b7455aa9a6ede7073b0cbb582bd719f5fb0
-  ObserverEquivariance/NormalForm.lean                   671 lines  a9bd3f8ea19dfe8eb658f7fed3a32aeb1fe98bf7
-  ObserverEquivariance/ProductModel.lean                 126 lines  5d84fb403d47d6826b109b6cfef6f7a5641be76d
-  ObserverEquivariance/Residual.lean                    1043 lines  23d57eedd831576bfecaf351078ee7851fa56b49
-  ObserverEquivariance/ResidualCategory.lean             394 lines  e177933ba4a4fb4618125c2006fed33f22ec797a
-  ObserverEquivariance/Examples/Holonomy.lean           1021 lines  5b6861b81bf13406ba749821655a6ae03154b25e
-  ObserverEquivariance/Examples/NonFaithful.lean         384 lines  eae028e29fd2a8c686a2e64ffc8ea32bfa352862
-  ObserverEquivariance/Examples/Records.lean             741 lines  44a3fbdb3aa0270c5c6f52eb9615ed59ec340870
-  ObserverEquivariance/Examples/RecordsCalibration.lean  587 lines  4442adffaa2cfe6c754e38b26853eaa265f1ed0c
-  ObserverEquivariance/Examples/Twist.lean               437 lines  36f10123c2c26f03677218c71729aed8403ee57e
-  ObserverEquivariance/Examples/TwoObject.lean           269 lines  627d37db3817ef1ce5b300af96714526af7b0b47
-  scripts/audit.sh                                        51 lines  f5542a87b6d729de81628cca1ef9a252cb9587ef
+  ObserverEquivariance.lean                                   359 lines  59f53d7396e6d6bdbf25d09164871f8d17f882f8
+  ObserverEquivariance/AxiomAudit.lean                         79 lines  1b5e2cdfc2b356eb741d77ce8da55611331980e9
+  ObserverEquivariance/BaseChange.lean                        767 lines  b27bcc4f26da52f57bb7d3119fc0bec90441c51e
+  ObserverEquivariance/BaseChangeCocycle.lean                 122 lines  b127d174f547a93f2af44b550025397a64c2801d
+  ObserverEquivariance/Calibration.lean                       374 lines  b4aec368973308bd82573b068157e210c224c4d2
+  ObserverEquivariance/Cocycles.lean                          512 lines  4a3897e9e80aed507f4ef68b8948f75ead3687e0
+  ObserverEquivariance/Comparisons.lean                       212 lines  743f63068b3c4301c68bc36ab053d0fb93cbcf84
+  ObserverEquivariance/Components.lean                        887 lines  a7c6d2d4f82454156f710380a433530973e3d24a
+  ObserverEquivariance/Core.lean                             2679 lines  14ddc110a32b3b28c1a3983ab1a45bbe35cde9df
+  ObserverEquivariance/Descent.lean                           516 lines  b6754acefa9207c82eaa0df59c903995126732f5
+  ObserverEquivariance/Examples/ComplexObstruction.lean       283 lines  559240794d6c49b80058faf4ad71cdb833027b79
+  ObserverEquivariance/Examples/Holonomy.lean                1021 lines  5b6861b81bf13406ba749821655a6ae03154b25e
+  ObserverEquivariance/Examples/NonFaithful.lean              384 lines  eae028e29fd2a8c686a2e64ffc8ea32bfa352862
+  ObserverEquivariance/Examples/Records.lean                  741 lines  44a3fbdb3aa0270c5c6f52eb9615ed59ec340870
+  ObserverEquivariance/Examples/RecordsCalibration.lean       587 lines  4442adffaa2cfe6c754e38b26853eaa265f1ed0c
+  ObserverEquivariance/Examples/RecordsR4.lean                218 lines  09023920f722aca5bc31b2c6c53580b6d2af26bb
+  ObserverEquivariance/Examples/Twist.lean                    438 lines  dac63a0708e975d2a4a0e62095d6cff4db896b95
+  ObserverEquivariance/Examples/TwoObject.lean                269 lines  627d37db3817ef1ce5b300af96714526af7b0b47
+  ObserverEquivariance/Implementations.lean                   130 lines  1001100229d910a31d03d3f3a4d42321b806d277
+  ObserverEquivariance/LocalLifts.lean                        706 lines  28a3dfdfd1b1bbb968cf19b691d3b44140cc38a9
+  ObserverEquivariance/MinSpec.lean                           357 lines  525871c3dfba3032ecfaa6fc974c4fd9d505aa06
+  ObserverEquivariance/MinSpecCorrespondence.lean             313 lines  bdff8b7455aa9a6ede7073b0cbb582bd719f5fb0
+  ObserverEquivariance/NormalForm.lean                        671 lines  a9bd3f8ea19dfe8eb658f7fed3a32aeb1fe98bf7
+  ObserverEquivariance/ProductModel.lean                      126 lines  5d84fb403d47d6826b109b6cfef6f7a5641be76d
+  ObserverEquivariance/Residual.lean                         1043 lines  23d57eedd831576bfecaf351078ee7851fa56b49
+  ObserverEquivariance/ResidualCategory.lean                  395 lines  98c66f0788cff5a741896f625fa7ba39495f9c17
+  scripts/audit.sh                                             51 lines  f5542a87b6d729de81628cca1ef9a252cb9587ef
 
-  21 modules + the entry file, 13255 lines of Lean in total.
+  25 modules + the entry file, 14189 lines of Lean in total.
+
+Import surface
+--------------
+Core.lean, Cocycles.lean, ResidualCategory.lean and Examples/Twist.lean import the specific mathlib
+modules they use instead of the blanket `import Mathlib`. This is why `lake build` reports 2272
+jobs; with the blanket import the same tree required 8518. It changes no statement and no proof
+body. It does shift the DECLARATION COUNT below, because that count includes generated auxiliary
+constants (_proof_n, match_n) and which of those are generated depends on the instances and simp
+lemmas in scope: the same tree reports 2766 declarations with the narrowed imports and 2761 with
+the blanket import. The count is therefore a property of this pinned configuration, not of the
+mathematics.
 
 Source check (comments stripped before scanning)
 ------------------------------------------------
@@ -78,25 +93,40 @@ Source check (comments stripped before scanning)
 
 Result
 ------
-  lake build           Build completed successfully (8518 jobs)
+  lake build           Build completed successfully (2272 jobs)
   exit status          0
   errors / warnings    0
   sorryAx              0
 
 Executable axiom audit (this is a CHECK, not a diagnostic)
 ----------------------------------------------------------
-  ObserverEquivariance.lean:290:0:
-    all 2599 declarations in 21 modules with prefix 'ObserverEquivariance' depend only on standard
-    axioms ([ObserverEquivariance.Core, ObserverEquivariance.ProductModel,
-    ObserverEquivariance.MinSpec, ObserverEquivariance.MinSpecCorrespondence,
-    ObserverEquivariance.NormalForm, ObserverEquivariance.LocalLifts, ObserverEquivariance.Descent,
-    ObserverEquivariance.Residual, ObserverEquivariance.ResidualCategory,
-    ObserverEquivariance.Calibration, ObserverEquivariance.Components,
-    ObserverEquivariance.BaseChange, ObserverEquivariance.Cocycles,
-    ObserverEquivariance.BaseChangeCocycle, ObserverEquivariance.Examples.Twist,
-    ObserverEquivariance.Examples.TwoObject, ObserverEquivariance.Examples.NonFaithful,
-    ObserverEquivariance.Examples.Holonomy, ObserverEquivariance.Examples.Records,
-    ObserverEquivariance.Examples.RecordsCalibration, ObserverEquivariance.AxiomAudit])
+  ObserverEquivariance.lean:359:0: all 2766 declarations in 25 modules with prefix 'ObserverEquivariance' depend only on standard axioms ([ObserverEquivariance.Core,
+  ObserverEquivariance.ProductModel,
+  ObserverEquivariance.MinSpec,
+  ObserverEquivariance.MinSpecCorrespondence,
+  ObserverEquivariance.NormalForm,
+  ObserverEquivariance.LocalLifts,
+  ObserverEquivariance.Descent,
+  ObserverEquivariance.Residual,
+  ObserverEquivariance.ResidualCategory,
+  ObserverEquivariance.Calibration,
+  ObserverEquivariance.Comparisons,
+  ObserverEquivariance.Implementations,
+  ObserverEquivariance.Components,
+  ObserverEquivariance.BaseChange,
+  ObserverEquivariance.Cocycles,
+  ObserverEquivariance.BaseChangeCocycle,
+  ObserverEquivariance.Examples.Twist,
+  ObserverEquivariance.Examples.TwoObject,
+  ObserverEquivariance.Examples.NonFaithful,
+  ObserverEquivariance.Examples.Holonomy,
+  ObserverEquivariance.Examples.Records,
+  ObserverEquivariance.Examples.RecordsCalibration,
+  ObserverEquivariance.Examples.RecordsR4,
+  ObserverEquivariance.Examples.ComplexObstruction,
+  ObserverEquivariance.AxiomAudit])
+  ObserverEquivariance.lean:359:0: all 2766 declarations in 25 modules with prefix 'ObserverEquivariance' depend only on standard axioms ([ObserverEquivariance.Core,
+  passing #assert_standard_axioms lines: 2
 
   "Standard axioms" means propext, Classical.choice and Quot.sound. The command
   #assert_standard_axioms_in_modules (ObserverEquivariance/AxiomAudit.lean) collects the transitive
@@ -111,27 +141,27 @@ Retained diagnostic block (inherited from the archived snapshot)
 The entry file still runs the older `#print axioms` commands on the declarations of the archived
 development. Their output in this environment was:
 
-  'OEData.chi_isCartesian'          depends on axioms: [propext, Classical.choice, Quot.sound]
-  'productNormalForm'               depends on axioms: [propext, Classical.choice, Quot.sound]
-  'normalForm_equivariant'          depends on axioms: [propext, Classical.choice, Quot.sound]
-  'normalForm_base'                 depends on axioms: [propext]
-  'normalForm_reind'                depends on axioms: [propext]
-  'projectionEquivalence'           depends on axioms: [propext, Classical.choice, Quot.sound]
-  'OEData.base_hom_isIso'           depends on axioms: [propext, Classical.choice, Quot.sound]
-  'idIsoΛ'                          depends on axioms: [propext, Classical.choice, Quot.sound]
-  'liftAut'                         depends on axioms: [propext, Classical.choice, Quot.sound]
-  'autBoxGMulEquivProd'             depends on axioms: [propext, Classical.choice, Quot.sound]
-  'autBoxGOverMulEquivProd'         depends on axioms: [propext, Classical.choice, Quot.sound]
-  'lawPreservingAutBoxMulEquiv'     depends on axioms: [propext, Classical.choice, Quot.sound]
-  'autBoxGθOverMulEquivSemidirect'  depends on axioms: [propext, Classical.choice, Quot.sound]
-  'θSingleObj_zmod3_ne_one'         depends on axioms: [propext, Classical.choice, Quot.sound]
-  'zmod3SemidirectWitness'          depends on axioms: [propext, Classical.choice, Quot.sound]
-  'twisted_lift_exists'             depends on axioms: [propext, Classical.choice, Quot.sound]
-  'rigidityθ'                       depends on axioms: [propext, Classical.choice, Quot.sound]
-  'normalFormTo_fst'                depends on axioms: [propext, Classical.choice, Quot.sound]
+    'OEData.chi_isCartesian'         depends on axioms: [propext, Classical.choice, Quot.sound]
+    'productNormalForm'              depends on axioms: [propext, Classical.choice, Quot.sound]
+    'normalForm_equivariant'         depends on axioms: [propext, Classical.choice, Quot.sound]
+    'normalForm_base'                depends on axioms: [propext]
+    'normalForm_reind'               depends on axioms: [propext]
+    'projectionEquivalence'          depends on axioms: [propext, Classical.choice, Quot.sound]
+    'OEData.base_hom_isIso'          depends on axioms: [propext, Classical.choice, Quot.sound]
+    'idIsoΛ'                        depends on axioms: [propext, Classical.choice, Quot.sound]
+    'liftAut'                        depends on axioms: [propext, Classical.choice, Quot.sound]
+    'autBoxGMulEquivProd'            depends on axioms: [propext, Classical.choice, Quot.sound]
+    'autBoxGOverMulEquivProd'        depends on axioms: [propext, Classical.choice, Quot.sound]
+    'lawPreservingAutBoxMulEquiv'    depends on axioms: [propext, Classical.choice, Quot.sound]
+    'autBoxGθOverMulEquivSemidirect' depends on axioms: [propext, Classical.choice, Quot.sound]
+    'θSingleObj_zmod3_ne_one'       depends on axioms: [propext, Classical.choice, Quot.sound]
+    'zmod3SemidirectWitness'         depends on axioms: [propext, Classical.choice, Quot.sound]
+    'twisted_lift_exists'            depends on axioms: [propext, Classical.choice, Quot.sound]
+    'rigidityθ'                     depends on axioms: [propext, Classical.choice, Quot.sound]
+    'normalFormTo_fst'               depends on axioms: [propext, Classical.choice, Quot.sound]
 
 These 18 lines are diagnostics: a successful build does not by itself assert that their output has
-a predetermined value. They are subsumed by the executable audit above, which covers all 2599
+a predetermined value. They are subsumed by the executable audit above, which covers all 2766
 declarations.
 
 Baseline run (for comparison only)

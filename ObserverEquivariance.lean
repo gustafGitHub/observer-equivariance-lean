@@ -1,27 +1,35 @@
 /-
-  Symmetry Between Perspectives: Normal Forms, Descent, Calibration, and Lifts
-  ===========================================================================
+  Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts
+  =======================================================================
 
   A Lean 4 / mathlib formalization of the categorical and algebraic results of
 
-      G. Ullman, *Symmetry Between Perspectives: Normal Forms, Descent, Calibration,
-      and Lifts*, revised manuscript of 5 September 2026 (revision r2), source
-      `doc/perspectives_invariance_calibration_2026-09-05_r2.tex`.
+      G. Ullman, *Symmetry Between Perspectives: Invariant Calibration and Symmetry
+      Lifts*, revised manuscript of 19 September 2026 (revision r5), source
+      `doc/perspectives_invariance_calibration_2026-09-19_r5.tex`.
 
   Every reference below of the form `def:data`, `thm:strict`, `cor:invariant-calibration` is a
   LaTeX label of that file.  Its sections are §2 `sec:data` (normalized categorical data),
   §3 `sec:normalform` (fullness, cartesianness, normal form), §4 `sec:descent` (strict
-  presentation independence), §5 `sec:symmetries` (classification of symmetry lifts, with
-  `sec:normalization` and `sec:disconnected`), §6 `sec:law` (law data and a worked measurement
-  model, with `sec:records`) and §7 `sec:boundaries` (with `sec:holonomy`).  This file is the
-  entry point: it imports every module and runs the axiom audit.
+  presentation independence, with `prop:comparisons`), §5 `sec:symmetries` (classification of
+  symmetry lifts, with `sec:normalization`, `sec:disconnected` and `sec:implementation`),
+  §6 `sec:law` (law data and a worked measurement model, with `sec:records`) and
+  §7 `sec:boundaries` (with `sec:holonomy`).  This file is the entry point: it imports every
+  module and runs the axiom audit.
 
   SCOPE
   -----
   Formalized: the categorical and algebraic content of §§2–7, including the new examples —
   `ex:twist`, the two-object example after `prop:nocleavage`, `ex:nonfaithful`, the
   `sec:holonomy` model with its `S₃` and `Q₈` special cases, and the `sec:records` measurement
-  model.  `sec:records` is formalized exactly as the finite algebraic model the paper defines:
+  model.  Revision r5 adds four modules, listed as such in `sec:lean-r5`: the comparison
+  bijection of `prop:comparisons` (Comparisons), the implementation criterion of
+  `sec:implementation` / `prop:data-implementation` (Implementations), the complex counterexample
+  `ex:complex-obstruction` (Examples/ComplexObstruction) and the further `sec:records`
+  calculations behind `tab:recovery-tasks` (Examples/RecordsR4).  Their general statements are
+  proved in the strict product normal form `S × Pair G` for arbitrary base and target categories,
+  as the paper states them, and are not separately restated for an abstract `OEData`.
+  `sec:records` is formalized exactly as the finite algebraic model the paper defines:
   a base of nonempty observation domains inside `{0,1,2}`, the real record spaces `L(I)` cut out
   by the free-particle relation, the sign group `G = ℤˣ`, and the sensor-polarity presentation
   `O = S × Pair(ℤˣ)`.  It is a model of a measurement convention, not physics.
@@ -31,8 +39,9 @@
   principal bundles, algebraic quantum field theory, Zeeman- and Wigner-type theorems,
   Noether's theorem.  Nothing here yields conservation laws, infinitesimal generators, smooth
   actions or a Lorentz group; none of those notions occurs in the source at all.  §9 `sec:lean`
-  of revision r3 describes this modular development and its audit (its r2 version described
-  only the earlier archived groupoid development; see AXIOM AUDIT).
+  of revision r5 describes this modular development and its audit, with the four additions of
+  r5 listed in its subsection `sec:lean-r5` (the r2 version of §9 described only the earlier
+  archived groupoid development; see AXIOM AUDIT).
 
   CONTEXT AND HYPOTHESES
   ----------------------
@@ -87,6 +96,9 @@
     Residual               `prop:residual` and the paragraph after it
     ResidualCategory       the display after `prop:residual`
     Calibration            `cor:invariant-calibration` and its surrounding discussion
+    Comparisons            `prop:comparisons` (added in r5)
+    Implementations        `sec:implementation`, `prop:data-implementation`,
+                           `eq:implementation-intertwiner` (added in r5)
     LocalLifts             `lem:local`; the proofs of `thm:strict` and `thm:twisted`
     Components             `prop:components` (`sec:disconnected`), `prop:nocleavage`
     BaseChange             `prop:basechange`, `sec:normalization`
@@ -95,6 +107,11 @@
     Examples/Twist  `ex:twist`;  Examples/TwoObject  the example after `prop:nocleavage`
     Examples/NonFaithful  `ex:nonfaithful`;  Examples/Holonomy  `sec:holonomy`, `prop:holonomy`
     Examples/Records, Examples/RecordsCalibration  `sec:records` (two halves), `def:law`
+    Examples/ComplexObstruction  `ex:complex-obstruction` (added in r5)
+    Examples/RecordsR4     the additional `sec:records` calculations — the procedure
+                           counterexamples, the sign-orbit row of `tab:recovery-tasks`, the
+                           linear-coinvariant and reference-recovery remarks, and the fixed
+                           trajectories of the time reflection (added in r5)
     AxiomAudit             no paper content: the executable audit commands
 
   DECLARATION DIRECTORY  (paper label → principal declarations)
@@ -138,6 +155,17 @@
       `calibration_i_iff_iii`, `invariant_calibration_tfae`, `invariant_calibration_list_tfae`,
       `Calibration.residualAction_intertwines`, `Calibration.invariantNatTransOfResidual`,
       `unrestricted_calibration_exists`, `unrestrictedCalibration`.
+  `prop:comparisons`  in namespace `ResidualData`: `presentationFunctor` (the existing
+      `residualQ S G ⋙ D.toFunctor`, not new data), `presentationIso`,
+      `presentationFunctor_isInvariant`; the bijection `comparisonEquiv` between
+      `D.presentationFunctor ⟶ D'.presentationFunctor` and `D.E ⟶ D'.E`, built from
+      `comparison` / `restrictComparison` with the round trips `restrictComparison_comparison`
+      and `comparison_restrictComparison`; the component formula `comparison_app`,
+      `comparison_app_residual`; the isomorphism versions `comparisonIso`,
+      `restrictComparisonIso`, `isIso_comparison_iff`; the invariance criteria
+      `invariant_iff_constant` and `comparison_invariant_iff`; prescribed targets
+      `ResidualData.trivial`, `trivial_presentationFunctor`, `prescribed_iso_iff`,
+      `prescribed_invariant_iso_iff`.
   `def:lifts`  `IsGEquivariant`, `PreservesCleavage`, `IsTwistedEquivariant`, and the lift
       groups `AutBoxG`, `AutBoxGOver`, `AutBoxGθ`, `AutBoxGθOver` (the paper's `Sym_H(p)`).
   `lem:local`  `liftMultiplier`, `lift_obj_eq`, `multiplier_unique`, `lift_map_eq_liftOver`,
@@ -155,6 +183,15 @@
       `θ : H →* MulAut G`: `ΦθOver`, `ΛHomθOver`, `liftHomθOver`,
       `ker_ΦθOver_eq_range_ΛθOver`, `autBoxGθOverMulEquivSemidirect`, and
       `autBoxGθOverOneMulEquiv` (trivial twist gives the untwisted theorem).
+  `sec:implementation`, `prop:data-implementation`  in namespace `ResidualData`: `twisted`
+      (the residual data `A ⋙ E` with `r ↦ σ_{A s}(θ r)`), `twisted_presentationFunctor`,
+      `canonical_product_lift_eq` and `liftFunctorθ_comp_presentationFunctor` (the twisted data
+      are those of the existing canonical lift `liftFunctorθ`); `InvariantImplementation`,
+      `TwistedIntertwiner` — whose defining equation is `eq:implementation-intertwiner` — the
+      bijection `implementationEquiv` with `invariant_implementation_iff` and the component
+      formula `implementation_app`; `multiplier_product_lift_eq`,
+      `translated_twisted_presentationFunctor` and `translated_lift_comp_presentationFunctor`
+      (constant fibre translations, stated for a `CommGroup` presentation group).
   `prop:basechange`  `OEData.rebase`, `parallel_family_eq_translate`,
       `exists_unique_eq_rebase`, `coord_eq_of_base`, `Λ_eq_conj_of_base`,
       `liftFunctorθ_eq_conj_of_base`, `autBoxGCongr`, `autBoxGOverCongr`, `autBoxGθOverCongr`.
@@ -175,6 +212,19 @@
   `ex:twist`  `twistData`, `twistθ`, `twistθ_ne_one`, `twistSym`, `twistSymPerm`,
       `c3c2MulEquivS3`, `twist_conj`.  Core's older one-object witnesses are `witness`,
       `witness₂`, `labData`, `θSingleObj_zmod3_ne_one`, `zmod3SemidirectWitness`.
+  `ex:complex-obstruction`  in namespace `ComplexObstruction`, on the `ex:twist` datum: the
+      character `omega` (= `exp (2πi/3)`), `omega_primitive`, `omega_inv_ne`, `omegaUnit`,
+      `character`, `character_generator`, `scalarRepresentation`, `representation`, the data
+      `complexData` and its functor `F` with `F_isInvariant`.  The obstruction is
+      `intertwiner_eq_zero`, `no_invariant_complex_implementation` and — for EVERY transport-preserving
+      lift over `swapFunctor` that is TWISTED-equivariant for the inversion twist, via
+      `exists_unique_eq_liftFunctorθ_comp_Λ` —
+      `no_invariant_complex_implementation_any_lift`.  The unrestricted comparison is
+      `unrestrictedImplementation` with `unrestrictedImplementation_app` and
+      `unrestrictedImplementation_not_invariant`.  Realification (restriction of scalars):
+      `realification`, `realData`, `realData_presentationFunctor`, `conjugationIso`,
+      `realBaseIso`, `real_intertwines`, `realImplementation`, `realImplementation_app`,
+      `realImplementation_involution`, using `omega_conj` and `character_conj`.
   `ex:nonfaithful`  `nonfaithfulProj`, `nonfaithfulPreDatum`, `nonfaithful_isEmpty_OEData`,
       `nonfaithfulLiftKernelEquiv`, `nonfaithful_kernel_not_presentationGroup`.
   `prop:holonomy`  `HolTotal`, `holReind_holBase_iff`, `holonomy_not_OEData`, `HolLift`,
@@ -183,7 +233,16 @@
       `recH`, `recSym`, `recα`, `recA_comp_L₀_ne`, `recA_comp_Lℓ_ne`; calibration half: `recD`,
       `recD_isInvariant`, `recEcal`, `recD_residualAction_hom`, `recC`, `recC_not_invariant`,
       `recD_no_invariant_iso`, `recD_no_invariant_calibration`, `recInfo_even`,
-      `recInfo_no_recovery`.
+      `recInfo_no_recovery`.  The r5 additions live in namespace `RecordsR4`: the procedure
+      counterexamples `Procedure`, `IsEven`, `RespectsRestrictions`, `identity_not_even`,
+      `maxProcedure`, `maxProcedure_even`, `maxProcedure_not_natural`; the `Set`-valued
+      sign-orbit row of `tab:recovery-tasks` — `SignOrbit`, `orbitFunctor`, `orbitClass_sign`,
+      `orbitRecovery`, `orbitRecovery_invariant`; the vanishing LINEAR coinvariants
+      `signRelations_eq_top`, `linear_coinvariants_zero`, `linear_coinvariants_subsingleton`;
+      the reference-observation recovery `reference_determines_sign`,
+      `reference_recovers_value`; and the time reflection on trajectories
+      `reflectTrajectory_involution`, `reflectTrajectory_fixed_iff`, `trajectoryRecord`,
+      `recα_trajectory` (which ties the parameter calculation to the inherited `recα`).
 
   READING THE STATEMENTS
   ----------------------
@@ -212,9 +271,15 @@
   `_proof_n` / `match_n` constants included — depends on an axiom other than `propext`,
   `Classical.choice`, `Quot.sound`.  In the pinned environment (`lean-toolchain` =
   `leanprover/lean4:v4.31.0-rc1`; mathlib rev `8834d3761934044a64c98afb757c1673fad03521` in
-  `lake-manifest.json`) the run of 2026-09-17 reported all 2599 declarations in 21 modules
-  clean, with `lake build` green (8518 jobs, no errors, no warnings) and no forbidden construct
+  `lake-manifest.json`) the run of 2026-09-21 reported all 2766 declarations in 25 modules
+  clean, with `lake build` green (2272 jobs, no errors, no warnings) and no forbidden construct
   in Lean code.  `scripts/audit.sh` reruns build, scan and audit, and exits non-zero on failure.
+  The job count fell from the 8518 of the 2026-09-17 run because the blanket `import Mathlib` of
+  Core, Cocycles, ResidualCategory and Examples/Twist has been replaced by explicit mathlib
+  imports; the four r5 modules were added at the same time.  The declaration count is likewise
+  sensitive to the import surface — it counts the auxiliary `_proof_n` / `match_n` constants of
+  the imported `ObserverEquivariance.*` modules, so it is not a count of theorems and is
+  comparable only between runs of the same import configuration.
   `BUILD_LOG.txt` in the repository root is the log of THIS revision's run (environment, exact
   commands, per-file blob hashes, scan, build and audit line).  The archived 2026-08-20 log of
   the earlier single-file groupoid development (18 audited declarations) is preserved in git
@@ -237,6 +302,8 @@ import ObserverEquivariance.Descent
 import ObserverEquivariance.Residual
 import ObserverEquivariance.ResidualCategory
 import ObserverEquivariance.Calibration
+import ObserverEquivariance.Comparisons
+import ObserverEquivariance.Implementations
 import ObserverEquivariance.Components
 import ObserverEquivariance.BaseChange
 import ObserverEquivariance.Cocycles
@@ -247,6 +314,8 @@ import ObserverEquivariance.Examples.NonFaithful
 import ObserverEquivariance.Examples.Holonomy
 import ObserverEquivariance.Examples.Records
 import ObserverEquivariance.Examples.RecordsCalibration
+import ObserverEquivariance.Examples.RecordsR4
+import ObserverEquivariance.Examples.ComplexObstruction
 import ObserverEquivariance.AxiomAudit
 
 /-! ## Diagnostic `#print axioms` block (retained from the archived snapshot)

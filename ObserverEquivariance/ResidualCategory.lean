@@ -1,4 +1,5 @@
 import ObserverEquivariance.Residual
+import Mathlib.CategoryTheory.Functor.Currying
 
 /-!
 # The category of invariant functors (display after paper `prop:residual`)

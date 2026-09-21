@@ -11,6 +11,10 @@ certify anything in this revision.
 
 ## Verification of this revision
 
+> These figures are those of the September 2026 modular revision as first completed. They were
+> superseded by the r4/r5 adoption at the end of this file: the current tree builds in 2272 jobs
+> and audits 2766 declarations in 25 modules. The environment pins are unchanged throughout.
+
 - Environment unchanged: `lean-toolchain` = `leanprover/lean4:v4.31.0-rc1`, mathlib rev
   `8834d3761934044a64c98afb757c1673fad03521`.
 - `lake build` of the whole project succeeds (8518 jobs, no errors, no warnings).
@@ -175,6 +179,8 @@ All of these were added after the review. They are additions only; no existing s
 ## New modules
 
 Each module's docstring lists the paper labels it covers and the declarations that formalize them.
+The four modules adopted later (see "Adoption of the r4/r5 additions") carry shorter docstrings:
+they name the label but not the declarations, and `Examples/RecordsR4.lean` names no label at all.
 The paragraphs below name the principal ones.
 
 **`ProductModel`** (`thm:normalform`, product side). `productData S G : OEData G (Prod.fst S (Pair G))`,
@@ -592,8 +598,10 @@ with care before it is taken as a statement about the paper.
 
 ## Deliverables
 
-- **`ObserverEquivariance.lean`** — the entry point: it imports the 21 modules and runs
-  `#assert_standard_axioms_in_modules ObserverEquivariance`. Its header comment was rewritten for
+- **`ObserverEquivariance.lean`** — the entry point: it imports every module and runs
+  `#assert_standard_axioms_in_modules ObserverEquivariance`. (It imported the 21 modules of this
+  revision; it now imports 25 — see "Adoption of the r4/r5 additions".) Its header comment was
+  rewritten for
   this revision (INSTR §7): the r2 title and source file, the `sec:data`–`sec:boundaries` label
   scheme, a scope note, the context and the exact carriers of `[IsConnected S]` / `[Nonempty S]`,
   a module map for all 21 modules, and a declaration directory per paper label replacing the old
@@ -605,6 +613,8 @@ with care before it is taken as a statement about the paper.
   `MinSpecCorrespondence`, `NormalForm`, `Descent`, `Residual`, `ResidualCategory`, `Calibration`,
   `LocalLifts`, `BaseChange`, `Cocycles`, `BaseChangeCocycle`, `Components`, `AxiomAudit`, and
   `Examples/{Twist, TwoObject, NonFaithful, Holonomy, Records, RecordsCalibration}`.
+  Four more were added later, bringing the total to **25**: `Comparisons`, `Implementations`,
+  `Examples/ComplexObstruction` and `Examples/RecordsR4` — see "Adoption of the r4/r5 additions".
 - **`LEAN_COVERAGE.md`** — the coverage matrix required by INSTR §7, complete: §1 (scope,
   environment, reproduction, status legend, conventions), §2.1–§2.7 (one row per item of
   `sec:data` through `sec:boundaries`, including the claims INSTR lists separately), §3 (out of
@@ -615,14 +625,226 @@ with care before it is taken as a statement about the paper.
   `sorry` / `admit` / `axiom` / `native_decide` / `unsafe` / `implemented_by`, runs `lake build`,
   writes the raw log (default `BUILD_LOG_RAW.txt`), and exits non-zero if the build fails, if a
   forbidden construct occurs in Lean code, or if the module-wide axiom audit did not run.
-- **`BUILD_LOG.txt`** — the build and audit log of **this** revision (2026-09-17): environment,
+- **`BUILD_LOG.txt`** — the build and audit log of the current tree (2026-09-21): environment,
   exact commands, the git blob SHA-1 and line count of every source file as built, the
-  forbidden-construct scan, `lake build` (8518 jobs, exit 0) and the executable audit line for all
-  2599 declarations, plus the retained 18 `#print axioms` diagnostics and, separately, the baseline
+  forbidden-construct scan, `lake build` (2272 jobs, exit 0) and the executable audit line for all
+  2766 declarations in 25 modules, plus the retained 18 `#print axioms` diagnostics and, separately, the baseline
   run of the pre-revision file. The archived 20 August 2026 log of the single-file development is
   preserved in git history at commit `f3f9182`; the two runs certify nothing about each other.
-  `scripts/audit.sh` regenerates the raw log (`BUILD_LOG_RAW.txt`) on demand.
+  `scripts/audit.sh` regenerates the raw log (`BUILD_LOG_RAW.txt`) on demand. The 8518-job /
+  2599-declaration figures are those of **this** revision; the current tree builds in 2272 jobs and
+  audits 2766 declarations in 25 modules — see "Adoption of the r4/r5 additions" for why the
+  declaration count moves with the import surface.
 - **The reproducible project files** — `lakefile.lean`, `lean-toolchain`
   (`leanprover/lean4:v4.31.0-rc1`) and `lake-manifest.json` (mathlib
   `8834d3761934044a64c98afb757c1673fad03521`), unchanged by this revision, together with the
-  reference paper `doc/perspectives_invariance_calibration_2026-09-05_r2.tex`.
+  reference paper `doc/perspectives_invariance_calibration_2026-09-05_r2.tex`. The pins are still
+  unchanged; the current reference paper is
+  `doc/perspectives_invariance_calibration_2026-09-19_r5.tex`.
+
+## Adoption of the r4/r5 additions (21 September 2026)
+
+Everything above documents the r2 revision and still describes it. This section records a later,
+separate event: the adoption of an **external contribution** into this repository, and the figures
+that the article's revision r5 cites.
+
+Reference paper from here on: `doc/perspectives_invariance_calibration_2026-09-19_r5.tex`
+(r5, 19 September 2026, *Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts*).
+Relative to r3 it adds the labels `prop:comparisons`, `prop:data-implementation`,
+`ex:complex-obstruction`, `sec:implementation`, `eq:implementation-intertwiner`,
+`tab:recovery-tasks`, and `sec:lean-r5` (replacing `sec:lean-r4`). Every pre-existing statement and
+label is unchanged from r2/r3, so nothing above is invalidated by the new revision.
+
+### Provenance
+
+The additions arrived as `doc/ObserverEquivariance_r4.zip`, produced by an outside agent that had
+been given this repository's 22 Lean files but not the repository itself. It is an **extension** of
+this development, not a rewrite. Comparing the archive's Lean sources with this repository as it
+stood before the adoption (commit `30ba4fd`), over the 22 pre-existing Lean files:
+
+- **17 of the 21 pre-existing modules are byte-identical**;
+- four modules are new (`Comparisons`, `Implementations`, `Examples/ComplexObstruction`,
+  `Examples/RecordsR4`);
+- four modules differ **only in their `import` lines** — `Core`, `Cocycles`, `ResidualCategory`,
+  `Examples/Twist` — plus one comment in `Core.lean` (see below);
+- the entry file `ObserverEquivariance.lean` differs in its imports *and* carries a rewritten r4
+  header in the archive. Only the four added import lines were taken; the header is being
+  rewritten separately against r5, not copied from the archive.
+
+No pre-existing statement, proof body, docstring or declaration name was changed by the archive.
+None of the four new modules contains `sorry`, `admit`, `axiom` or `native_decide`.
+
+### What was adopted
+
+**1. Four new modules, copied in verbatim.**
+
+| module | lines | principal paper label |
+| --- | --- | --- |
+| `ObserverEquivariance/Comparisons.lean` | 212 | `prop:comparisons` |
+| `ObserverEquivariance/Implementations.lean` | 130 | `prop:data-implementation`, `sec:implementation`, `eq:implementation-intertwiner` |
+| `ObserverEquivariance/Examples/ComplexObstruction.lean` | 283 | `ex:complex-obstruction` |
+| `ObserverEquivariance/Examples/RecordsR4.lean` | 218 | `sec:records` additions, `tab:recovery-tasks` |
+
+Import positions: `Calibration` + `ProductModel` → `Comparisons` → `Implementations`
+(also importing `LocalLifts`); `Implementations` + `Examples/Twist` →
+`Examples/ComplexObstruction`; `Examples/RecordsCalibration` → `Examples/RecordsR4`.
+
+**2. The narrowed imports** of `Core`, `Cocycles`, `ResidualCategory` and `Examples/Twist`
+(see "Import narrowing" below).
+
+**3. Nothing else.** See "What was not adopted".
+
+### The four new modules
+
+All declarations of `Comparisons` and `Implementations` live in namespace `ResidualData`, so they
+are reached by dot notation on the existing `ResidualData S C G` of `Residual`. The two general
+modules are stated **in the strict product normal form** (base `S × Pair G`, datum
+`productData S G`), for an arbitrary base category `S` and an arbitrary target `C`; they are not
+separately restated for an arbitrary normalized datum, the passage being the inherited normal-form
+and residual-data theorems.
+
+**`Comparisons`** (`prop:comparisons`). The presentation functor of base data is the abbreviation
+`ResidualData.presentationFunctor D = residualQ S G ⋙ D.toFunctor` — the existing functor, not a
+new hypothesis — with `presentation_map_section`, `presentation_map_vertical` and
+`presentationFunctor_isInvariant`. `presentationIso` exhibits the unrestricted comparison
+`Prod.fst S (Pair G) ⋙ D.E ≅ D.presentationFunctor` with components `σ_s(a)`. The extension and
+restriction maps are `comparison` (from a base transformation `β : D.E ⟶ D'.E`, with no
+intertwining assumption) and `restrictComparison` (evaluation at the chosen section `(s, 1)`,
+`comparison_app_residual` giving the component formula); they are mutually inverse, packaged as the
+bijection `comparisonEquiv D D' : (D.presentationFunctor ⟶ D'.presentationFunctor) ≃ (D.E ⟶ D'.E)`,
+with the isomorphism versions `comparisonIso` and `restrictComparisonIso`. Invertibility is
+detected on the section (`isIso_comparison_iff`). Invariance is exactly independence of the
+presentation coordinate (`invariant_iff_constant`), and under the bijection it is exactly the
+intertwining condition (`comparison_invariant_iff`). Prescribed targets use the trivial data
+`ResidualData.trivial L` (`trivial_presentationFunctor`): `prescribed_iso_iff` says unrestricted
+calibration to `p ⋙ L` holds iff `D.E ≅ L`, and `prescribed_invariant_iso_iff` says the invariant
+version holds iff additionally every `D.σ s = 1`.
+
+**`Implementations`** (`prop:data-implementation`, `sec:implementation`,
+`eq:implementation-intertwiner`). `ResidualData.twisted D A θ` pulls residual data back along a
+base functor `A` and a fibre automorphism `θ`. `canonical_product_lift_eq` identifies the existing
+canonical twisted lift with the product formula
+(`liftFunctorθ (productData S G) A θ = multiplierProductFunctorθ A θ (fun _ => 1)`), including its
+action on arrows, and `twisted_presentationFunctor` /
+`liftFunctorθ_comp_presentationFunctor` compute the residual data after that lift. The two sides of
+the criterion are `InvariantImplementation D A θ` (an invariant natural isomorphism
+`(D.twisted A θ).presentationFunctor ≅ D.presentationFunctor`) and `TwistedIntertwiner D A θ` (an
+iso `A ⋙ D.E ≅ D.E` satisfying the twisted intertwining equations, i.e.
+`eq:implementation-intertwiner`); `implementationEquiv` is the bijection between them,
+`implementation_app` records that an invariant implementation has coordinate-independent
+components, and `invariant_implementation_iff` is the existence form. The criterion concerns **one**
+selected base transformation and asserts no automatic coherence for a group-indexed family. Finally
+`multiplier_product_lift_eq` and, for an abelian presentation group,
+`translated_twisted_presentationFunctor` / `translated_lift_comp_presentationFunctor` show that
+constant fibre translations leave the residual data unchanged.
+
+**`Examples/ComplexObstruction`** (`ex:complex-obstruction`, namespace `ComplexObstruction`). Built
+on the existing `C₃`, base interchange and inversion twist of `Examples/Twist`, with the actual
+character generated by `e^{2πi/3}`: `omega`, `omega_primitive`, `omega_pow_three`, `omega_inv_ne`,
+the unit `omegaUnit`, `intCharacter` and `character : G3 →* ℂˣ`, then `scalarRepresentation` and
+`representation : G3 →* Aut (ModuleCat.of ℂ ℂ)`. The data are `complexData` with presentation
+functor `F` and `F_isInvariant`. The obstruction is `no_invariant_complex_implementation` (the
+canonical inversion-twisted lift admits no invariant complex-linear implementation, via
+`intertwiner_eq_zero`: a complex-linear intertwiner between the inverse character and the original
+is zero), strengthened to **every** transport-preserving inversion-twisted lift over the
+interchange by `no_invariant_complex_implementation_any_lift`, which takes
+`IsTwistedEquivariant twistData (twistθ twistHSwap) T` and `PreservesCleavage twistData T
+swapFunctor` and uses the existing classification. The unrestricted comparison exists
+(`unrestrictedImplementation`, `unrestrictedImplementation_app`: components `χ(g)² · z`) and is not
+invariant (`unrestrictedImplementation_not_invariant`). Realification is restriction of scalars
+(`realification`, `realData`, `realData_presentationFunctor`); there the conjugation
+`conjugationIso` becomes admissible (`omega_conj`, `character_conj`, `real_intertwines`), giving the
+invariant `realImplementation` with `realImplementation_app` (componentwise `starRingEnd ℂ`) and the
+involution equations `conjugation_involution`, `realImplementation_involution`.
+
+**`Examples/RecordsR4`** (additional measurement calculations for `sec:records`;
+`tab:recovery-tasks`; namespace `RecordsR4`). Procedures are `Procedure τ` with the two separate
+conditions `IsEven` and `RespectsRestrictions`. Counterexamples: `identity_not_even`, and
+`maxProcedure` (`max |y_j| · 1`), which is even (`maxProcedure_even`) but does not commute with
+restriction (`maxProcedure_not_natural`, needing `τ ≠ 0`). The set-valued sign-orbit target is
+`signSetoid` / `SignOrbit` / `orbitClass` (`orbitClass_eq_iff`), `orbitMap` and the functor
+`orbitFunctor τ : RecDom ⥤ Type`, with `orbitClass_sign`; recovery from raw records is the natural
+transformation `orbitRecovery τ : recD τ ⋙ forget (ModuleCat ℝ) ⟶ recP ⋙ orbitFunctor τ`, and it
+**is** invariant (`orbitRecovery_invariant`) — the contrast to the linear case. Linear coinvariants
+of the sign action vanish: `signRelations`, `signRelations_eq_top`, `linear_coinvariants_zero`,
+`linear_coinvariants_subsingleton`. A nonzero reference observation recovers the sign and the value
+exactly, as scalar identities in `ℝ` (`reference_determines_sign`, `reference_recovers_value`);
+nothing is stated at the level of the record functors. Time reflection on trajectory
+parameters is `reflectTrajectory` with `reflectTrajectory_involution` and the fixed-point criterion
+`reflectTrajectory_fixed_iff` (`v = 0`); `trajectoryRecord` and `recα_trajectory` link the parameter
+calculation explicitly to the inherited natural time-reversal map `recα` of `Examples/Records`.
+
+### Import narrowing
+
+The blanket `import Mathlib` is gone from the project: `grep -rn '^import Mathlib$'` over
+`ObserverEquivariance.lean` and `ObserverEquivariance/` now returns nothing. Four modules changed,
+and **only their import lines** (plus the `Core` comment treated in the next subsection):
+
+- **`Core`** — `import Mathlib` replaced by 17 explicit imports:
+  `Mathlib.CategoryTheory.{ConnectedComponents, SingleObj, Products.Basic, Pi.Basic}`,
+  `Mathlib.Algebra.Category.ModuleCat.Basic`,
+  `Mathlib.GroupTheory.{SemidirectProduct, SpecificGroups.Quaternion, Perm.Fin}`,
+  `Mathlib.Data.{ZMod.Basic, Real.Basic}`, `Mathlib.RingTheory.RootsOfUnity.Complex`, and
+  `Mathlib.Tactic.{Group, FinCases, NormNum, LinearCombination, Linarith, TFAE}`.
+- **`Cocycles`** — `import Mathlib` replaced by `Mathlib.GroupTheory.SemidirectProduct`,
+  `Mathlib.Tactic.Group`, `Mathlib.CategoryTheory.Category.Pointed`.
+- **`ResidualCategory`** — one import *added*, `Mathlib.CategoryTheory.Functor.Currying`.
+- **`Examples/Twist`** — one import *added*, `Mathlib.GroupTheory.Perm.Cycle.Concrete`.
+
+The last two never carried a blanket import themselves; they had been receiving all of mathlib
+transitively through `Core`, and needed one named file each once `Core` stopped supplying it. Every
+other module's import line is unchanged. No statement, proof body, docstring or declaration name was
+touched: this was verified by diffing the repository against the archive file by file. After the
+adoption, all 25 modules are byte-identical to the archive except `Core.lean`, which differs only
+in the comment treated below.
+
+**Effect.** `lake build` is now **2272 jobs** instead of 8518 — a much smaller reproduction
+footprint for anyone rebuilding the development from the pinned mathlib.
+
+### The twisted-conjugation comment
+
+The archive's `Core.lean` had **reverted** an earlier correction of this repository's: the §14
+comment on twisted equivariance, which states the conjugation identities in Lean's diagrammatic
+order (`(liftFunctor A)⁻¹ ⋙ Λ d g ⋙ liftFunctor A = Λ d g`, i.e. `Ã Λ_g Ã⁻¹ = Λ_g` in operator
+order; and `(liftFunctorθ A θ)⁻¹ ⋙ Λ d g ⋙ liftFunctorθ A θ = Λ d (θ g)`, operator order
+`Ã Λ_g Ã⁻¹ = Λ_{θ g}`, `Λ_comp_liftθ`). The correction was **re-applied on top of** the narrowed
+imports, so `Core.lean` now carries both changes. The comment is correct in the repository; it is
+only the archive copy that is stale.
+
+### New figures
+
+Verified by `scripts/audit.sh` (exit 0) on 21 September 2026, environment pins unchanged
+(`lean-toolchain` = `leanprover/lean4:v4.31.0-rc1`, mathlib
+`8834d3761934044a64c98afb757c1673fad03521`):
+
+- `lake build` green, **2272 jobs**, no errors and no warnings;
+- the source scan finds no `sorry`, `admit`, `axiom`, `native_decide`, `unsafe` or `implemented_by`
+  in Lean code;
+- `#assert_standard_axioms_in_modules ObserverEquivariance` reports that all **2766 declarations in
+  25 modules** depend only on `propext`, `Classical.choice` and `Quot.sound`.
+
+**On the declaration count.** It is not a stable invariant of the mathematics. The same source tree
+with the old blanket imports reported **2761** declarations in 8518 jobs; with the narrowed imports
+it reports 2766. The command counts every declaration of every imported `ObserverEquivariance.*`
+module, auxiliary `_proof_n` / `match_n` constants included, and which auxiliary constants are
+generated depends on the instances and simp lemmas in scope — that is, on the import surface. The
+difference is an artefact of elaboration, not of added or removed content. **2766 declarations in
+25 modules** is what article revision r5 cites (`sec:lean`); the **2272 jobs** are this
+repository's own figure, which the article does not quote. Both are what this repository now
+produces.
+
+### What was not adopted
+
+The archive also carried its own project scaffolding, describing its own layout rather than this
+one. None of it was taken:
+
+- `lakefile.toml` — this repository keeps `lakefile.lean`;
+- `scripts/audit.py` and `scripts/fetch_cache.py` — this repository keeps the bash
+  `scripts/audit.sh`, which is what produced the figures above;
+- the archive's `README.md`, `CHANGES.md`, `LEAN_COVERAGE.md` and `BUILD_LOG.txt` — this repository
+  keeps its own, which are longer and more precise and whose counts describe this layout;
+- the archive's rewritten header for `ObserverEquivariance.lean`, which is written against r4 and
+  cites the archive's own layout and figures. Only its four new `import` lines were taken.
+
+The archive's documents were read as a starting point only. Every claim in this section was checked
+against the actual source in this repository.
