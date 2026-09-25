@@ -4,22 +4,28 @@ A Lean 4 + [mathlib](https://github.com/leanprover-community/mathlib4) formaliza
 normal-form, descent, calibration and lift-classification results (Sections 2–7) of
 
 > G. Ullman, *Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts*,
-> revised manuscript, 19 September 2026 (revision r5).
-> Source in this repository: [`doc/perspectives_invariance_calibration_2026-09-19_r5.tex`](doc/perspectives_invariance_calibration_2026-09-19_r5.tex).
-> Version DOI for this revision: **to be added** once minted.
+> revised manuscript, 25 September 2026 (revision r6, an editorial revision of r5 of
+> 19 September 2026 with the same mathematical statements and LaTeX labels).
+> Source: `perspectives_invariance_calibration_2026-09-25_r6.tex`, distributed with the article,
+> not with this repository.
+> Version DOI of this article revision: **to be added** once minted.
 > Zenodo concept DOI of the article series: `10.5281/zenodo.17077437` (always resolves to the
 > latest version). The article's Section 9 cites the earlier, groupoid-formulated manuscript
 > (`10.5281/zenodo.22040848`) and the archived single-file Lean development
 > (`10.5281/zenodo.22028115`); the present revision supersedes that development.
 
+Version DOI of this Lean package (repository release): **to be added** once minted.
+
 All labels below (`def:data`, `thm:strict`, `cor:invariant-calibration`, …) are LaTeX labels of
-the r5 source. The paper's sections are `sec:data` (§2), `sec:normalform` (§3), `sec:descent`
-(§4, containing `prop:comparisons`), `sec:symmetries` (§5, containing `sec:implementation` and
+the r6 source; they are identical to those of r5. The paper's sections are `sec:data` (§2),
+`sec:normalform` (§3), `sec:descent` (§4, containing `prop:comparisons`), `sec:symmetries` (§5, containing `sec:implementation` and
 `ex:complex-obstruction`), `sec:law` (§6, containing `sec:records`) and `sec:boundaries`
 (§7, containing `sec:holonomy`). All statements and labels inherited from r2/r3 are unchanged;
 r5 adds `prop:comparisons`, `prop:data-implementation`, `ex:complex-obstruction`,
 `sec:implementation`, `eq:implementation-intertwiner`, `tab:recovery-tasks` and the Lean
-subsection `sec:lean-r5`.
+subsection `sec:lean-r5`. r6 changes no statement and no label; it revises the account of the
+formalization in the abstract, the introduction, Section 9 and the conclusion, and one sentence of
+`ex:complex-obstruction` (restriction of scalars).
 
 ## Layout
 
@@ -82,8 +88,9 @@ chosen transport and vertical arrows being the *unique* lifts with the prescribe
   this with the splitting laws.
 - **Section (`cor:section`).** `StrictSection p` carries a strict `B ⋙ p = 𝟭 S` together with a
   vertical natural isomorphism `η : p ⋙ B ≅ 𝟭 O`; `OEData.strictSection` builds it with
-  `B.obj s = b_s`. The projection is *not* a strict isomorphism:
-  `MinSpec.no_strict_retraction` (for `[Nontrivial G] [Nonempty S]`).
+  `B.obj s = b_s`. Beyond what `cor:section` claims (the article asserts only that `p` is an
+  equivalence), the projection is *not* a strict isomorphism: `MinSpec.no_strict_retraction` (for
+  `[Nontrivial G] [Nonempty S]`).
 - **Groupoid remark (`rem:groupoid`).** `OEData.base_hom_isIso` takes the groupoid property of
   `O` as an **explicit hypothesis** `hO : ∀ {x y : O} (f : x ⟶ y), IsIso f`; it is not a general
   theorem, and the development never assumes that base or total arrows are invertible. The
@@ -339,9 +346,10 @@ the linear casts of `ModuleCat ℝ`, not by a failure of `rfl` or by deciding an
 carrier types. This is the informative statement, and it gives
 `recA_not_mem_strictLawStabilizer_L₀`. The **labeled** reading keeps the observation domain as
 object data, with target `Pair RecDom × ModuleCat ℝ` and law `Lℓ τ`; there `recA_comp_Lℓ_ne`
-follows from the labels alone, and in fact the strict stabilizer of any labeled functor is
-trivial (`strictLawStabilizer_Lℓ_eq_bot`), so that version carries no information about the
-free-particle law.
+follows from the labels alone, and the labels together with the thinness of the base force the
+strict stabilizer to be trivial (`strictLawStabilizer_Lℓ_eq_bot`, proved for `Lℓ τ`; the same
+argument would apply to any labeled functor of this form), so that version carries no information
+about the free-particle law.
 
 ## Not formalized
 
@@ -371,7 +379,7 @@ declaration of any imported `ObserverEquivariance.*` module — auxiliary `_proo
 constants included — depends on an axiom other than `propext`, `Classical.choice`,
 `Quot.sound`.
 
-In the pinned environment, the run of 2026-09-21 reported:
+In the pinned environment, the run of 2026-09-25 reported:
 
 - `lake build` green: 2272 jobs, no errors, no warnings;
 - all **2766 declarations in 25 modules** depend only on the three standard axioms;
@@ -393,7 +401,7 @@ failure.
 The `#print axioms` block just above the audit command is a diagnostic retained from the
 archived single-file snapshot; the executable audit below it is the authoritative check.
 [`BUILD_LOG.txt`](BUILD_LOG.txt) is the log of **this** revision's run, regenerated for the
-2026-09-21 build: environment, exact
+2026-09-25 build that accompanies article revision r6: environment, exact
 commands, the git blob SHA-1 and line count of every source file as built, the scan, the build,
 the audit line for all 2766 declarations, the retained 18 `#print axioms` diagnostics, and —
 separately — the baseline run of the pre-revision file. The archived 2026-08-20 log of the earlier

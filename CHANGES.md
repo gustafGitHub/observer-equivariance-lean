@@ -1,8 +1,15 @@
 # Changes — revision for *Symmetry Between Perspectives: Normal Forms, Descent, Calibration, and Lifts*
 
-Reference paper: `doc/perspectives_invariance_calibration_2026-09-05_r2.tex` (r2, 5 September 2026).
-All paper labels below (`def:data`, `thm:strict`, …) refer to that file. The revision instruction
-was written against an earlier draft of the same article; r2 is a superset of it (it adds
+> **Current reference paper:** revision r6 of 25 September 2026, *Symmetry Between Perspectives:
+> Invariant Calibration and Symmetry Lifts*; see "Article revision r6 and release build" at the end
+> of this file. The title above and the r2 reference below describe this revision as first
+> completed; the later sections record what changed since.
+
+Reference paper: `perspectives_invariance_calibration_2026-09-05_r2.tex` (r2, 5 September 2026;
+distributed with the article, not with this repository). All paper labels below (`def:data`,
+`thm:strict`, …) refer to that file. The revision instruction (`Instruktion_till_Claude_Code.txt`,
+"INSTR" below; an internal instruction file, not part of this repository) was written against an
+earlier draft of the same article; r2 is a superset of it (it adds
 `cor:invariant-calibration`, the information conditions in `sec:records`, and `sec:related`).
 
 Baseline: commit `f3f9182` (single file `ObserverEquivariance.lean`, groupoid formulation, 18 audited
@@ -551,8 +558,9 @@ with care before it is taken as a statement about the paper.
      literal reading of "explicitly labeled vector spaces": the label of `L(I)` is its observation
      domain. The label factor `Pair RecDom` has exactly one arrow between any two objects, so it
      adds no morphism data, and forgetting labels gives back the unlabeled law
-     (`Lℓ_comp_snd : Lℓ τ ⋙ Prod.snd = L₀ τ`, by `rfl`). At this level the inequality and the
-     triviality of the strict stabilizer follow from the labels alone — see (b) 7.
+     (`Lℓ_comp_snd : Lℓ τ ⋙ Prod.snd = L₀ τ`, by `rfl`). At this level the inequality follows
+     from the labels alone, and the triviality of the strict stabilizer from the labels together
+     with the thinness of the base — see (b) 7.
 2. **The parameter `τ`.** The membership characterization `mem_recordSpace_full_iff` needs `0 < τ`.
    The law inequality needs only `τ ≠ 0`, and is stated that way. The case `τ = 0` is not stated:
    it would require deciding an equality of carrier types, which Lean cannot do here.
@@ -625,7 +633,8 @@ with care before it is taken as a statement about the paper.
   `sorry` / `admit` / `axiom` / `native_decide` / `unsafe` / `implemented_by`, runs `lake build`,
   writes the raw log (default `BUILD_LOG_RAW.txt`), and exits non-zero if the build fails, if a
   forbidden construct occurs in Lean code, or if the module-wide axiom audit did not run.
-- **`BUILD_LOG.txt`** — the build and audit log of the current tree (2026-09-21): environment,
+- **`BUILD_LOG.txt`** — the build and audit log of the current tree (2026-09-25; see "Article
+  revision r6 and release build"): environment,
   exact commands, the git blob SHA-1 and line count of every source file as built, the
   forbidden-construct scan, `lake build` (2272 jobs, exit 0) and the executable audit line for all
   2766 declarations in 25 modules, plus the retained 18 `#print axioms` diagnostics and, separately, the baseline
@@ -637,10 +646,10 @@ with care before it is taken as a statement about the paper.
   declaration count moves with the import surface.
 - **The reproducible project files** — `lakefile.lean`, `lean-toolchain`
   (`leanprover/lean4:v4.31.0-rc1`) and `lake-manifest.json` (mathlib
-  `8834d3761934044a64c98afb757c1673fad03521`), unchanged by this revision, together with the
-  reference paper `doc/perspectives_invariance_calibration_2026-09-05_r2.tex`. The pins are still
-  unchanged; the current reference paper is
-  `doc/perspectives_invariance_calibration_2026-09-19_r5.tex`.
+  `8834d3761934044a64c98afb757c1673fad03521`), unchanged by this revision. This revision's
+  reference paper was r2 (`perspectives_invariance_calibration_2026-09-05_r2.tex`), which, like
+  every manuscript source, is kept outside this repository. The pins are still unchanged; the
+  current reference paper is revision r6 (see the last section).
 
 ## Adoption of the r4/r5 additions (21 September 2026)
 
@@ -648,8 +657,8 @@ Everything above documents the r2 revision and still describes it. This section 
 separate event: the adoption of an **external contribution** into this repository, and the figures
 that the article's revision r5 cites.
 
-Reference paper from here on: `doc/perspectives_invariance_calibration_2026-09-19_r5.tex`
-(r5, 19 September 2026, *Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts*).
+Reference paper from here on: `perspectives_invariance_calibration_2026-09-19_r5.tex`
+(kept outside this repository; r5, 19 September 2026, *Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts*).
 Relative to r3 it adds the labels `prop:comparisons`, `prop:data-implementation`,
 `ex:complex-obstruction`, `sec:implementation`, `eq:implementation-intertwiner`,
 `tab:recovery-tasks`, and `sec:lean-r5` (replacing `sec:lean-r4`). Every pre-existing statement and
@@ -657,7 +666,8 @@ label is unchanged from r2/r3, so nothing above is invalidated by the new revisi
 
 ### Provenance
 
-The additions arrived as `doc/ObserverEquivariance_r4.zip`, produced by an outside agent that had
+The additions arrived as `doc/ObserverEquivariance_r4.zip` (kept outside this repository), produced
+by an outside agent that had
 been given this repository's 22 Lean files but not the repository itself. It is an **extension** of
 this development, not a rewrite. Comparing the archive's Lean sources with this repository as it
 stood before the adoption (commit `30ba4fd`), over the 22 pre-existing Lean files:
@@ -668,8 +678,8 @@ stood before the adoption (commit `30ba4fd`), over the 22 pre-existing Lean file
 - four modules differ **only in their `import` lines** — `Core`, `Cocycles`, `ResidualCategory`,
   `Examples/Twist` — plus one comment in `Core.lean` (see below);
 - the entry file `ObserverEquivariance.lean` differs in its imports *and* carries a rewritten r4
-  header in the archive. Only the four added import lines were taken; the header is being
-  rewritten separately against r5, not copied from the archive.
+  header in the archive. Only the four added import lines were taken; the header was rewritten
+  separately against r5, not copied from the archive.
 
 No pre-existing statement, proof body, docstring or declaration name was changed by the archive.
 None of the four new modules contains `sorry`, `admit`, `axiom` or `native_decide`.
@@ -830,8 +840,8 @@ module, auxiliary `_proof_n` / `match_n` constants included, and which auxiliary
 generated depends on the instances and simp lemmas in scope — that is, on the import surface. The
 difference is an artefact of elaboration, not of added or removed content. **2766 declarations in
 25 modules** is what article revision r5 cites (`sec:lean`); the **2272 jobs** are this
-repository's own figure, which the article does not quote. Both are what this repository now
-produces.
+repository's own figure, which revision r5 does not quote and revision r6 does. Both are what this
+repository now produces.
 
 ### What was not adopted
 
@@ -848,3 +858,61 @@ one. None of it was taken:
 
 The archive's documents were read as a starting point only. Every claim in this section was checked
 against the actual source in this repository.
+
+## Article revision r6 and release build (25 September 2026)
+
+Reference paper from here on: revision r6 of 25 September 2026,
+`perspectives_invariance_calibration_2026-09-25_r6.tex` (distributed with the article, not with
+this repository). r6 is an editorial revision of r5. It revises the abstract, the introduction,
+the conclusion and the account of the formalization in `sec:lean`, and in `ex:complex-obstruction`
+it replaces "apply the forgetful functor to Vect_ℝ" with "restrict scalars to ℝ", which is what
+`realification` does. No mathematical statement and no LaTeX label changed: the label sets of r5
+and r6 are identical (57 labels), so every label cited in this repository resolves in both.
+
+### What changed in the repository
+
+Only comments, the companion documents and the audit script changed. No statement, proof, import
+or declaration name changed.
+
+- `ObserverEquivariance.lean`, header comment: it names r6 as the reference manuscript. It no longer
+  states the date of the recorded run, which is now given only in `BUILD_LOG.txt`, so the header
+  does not have to change with each release. The gloss on the labeled `LA ≠ L` now says that
+  `strictLawStabilizer_Lℓ_eq_bot` is proved for `Lℓ τ` and that the same argument would apply to
+  any labeled functor of this form. The declaration directory lists `MinSpec.no_strict_retraction`
+  as a result beyond `cor:section`, which asserts only that `p` is an equivalence.
+- `Comparisons.lean`, `Implementations.lean`, `Examples/ComplexObstruction.lean`,
+  `Examples/RecordsR4.lean`: the docstrings name article revision r5 instead of the draft
+  designation r4. The module name `RecordsR4` is kept; its docstring explains the name. This closes
+  the first item of `LEAN_COVERAGE.md` §3.6.
+- `scripts/audit.sh`: the audit line is now counted before the summary copies it into the same log.
+  The 2026-09-21 log therefore reported "passing #assert_standard_axioms lines: 2" for a single
+  module-wide assertion; the new log reports 1. Exit conditions are unchanged.
+- `README.md`, `LEAN_COVERAGE.md`, `CHANGES.md`: they name r6. `LEAN_COVERAGE.md` also no longer says
+  that the article quotes no job count or describes a run of 18 September with SHA-256 hashes and a
+  Python script (both were true of r5 only), gives `lake exe cache get` as the first reproduction
+  step, and files `MinSpec.no_strict_retraction` as a result beyond `cor:section` (as `README.md`
+  now does too). The labeled `LA ≠ L` gloss is made precise in the same way as in the header.
+  `README.md` no longer links to the manuscript under the untracked `doc/` directory, and it has
+  separate placeholders for the version DOI of the article revision and of this Lean package.
+
+### Release build
+
+`scripts/audit.sh` (exit 0) on 25 September 2026 at 11:36 UTC, environment pins unchanged. It was a
+clean build of the project: the project's own `.lake/build` was moved aside first, so all 26 Lean
+files were compiled in this run; mathlib came from the pinned prebuilt cache.
+
+- `lake build` green, **2272 jobs**, no errors and no warnings;
+- the source scan finds no forbidden construct in Lean code;
+- all **2766 declarations in 25 modules** depend only on `propext`, `Classical.choice` and
+  `Quot.sound`.
+
+The figures are those of the 2026-09-21 run, as expected for comment-only changes. `BUILD_LOG.txt`
+was regenerated for this run: new date, new blob hashes for the six changed files, r6 as reference
+paper. The 2026-09-21 log is in git history at commit `826d0bd`. A second, fully cached run of
+`scripts/audit.sh` also exits 0: Lake replays the stored messages of an up-to-date module
+("Replayed ObserverEquivariance"), so the module-wide audit line appears even when nothing is
+rebuilt.
+
+When the final article revision exists, repeat this step: point the header of
+`ObserverEquivariance.lean` and the three companion documents at it, rerun `scripts/audit.sh` and
+regenerate `BUILD_LOG.txt`.

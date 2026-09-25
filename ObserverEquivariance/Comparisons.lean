@@ -2,7 +2,7 @@ import ObserverEquivariance.Calibration
 import ObserverEquivariance.ProductModel
 
 /-!
-# Comparisons and prescribed targets (r4, `prop:comparisons`)
+# Comparisons and prescribed targets (article revision r5, `prop:comparisons`)
 
 The statements are expressed in the strict product normal form, with arbitrary
 base and target categories. `ResidualData.presentationFunctor` is the existing

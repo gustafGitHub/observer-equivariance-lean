@@ -1,4 +1,4 @@
-Build and axiom-audit log — revision for
+Build and axiom-audit log — release accompanying article revision r6 of
 "Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts"
 ==========================================================================
 
@@ -9,13 +9,15 @@ Examples/RecordsR4). The audit of the archived single-file groupoid development 
 preserved in git history at commit f3f9182 and is NOT reproduced here; that run certifies nothing
 in this revision, and this run certifies nothing about it.
 
-Reference paper: doc/perspectives_invariance_calibration_2026-09-19_r5.tex
-                 (revision r5, 19 September 2026).
+Reference paper: perspectives_invariance_calibration_2026-09-25_r6.tex
+                 (revision r6, 25 September 2026; an editorial revision of r5 of 19 September 2026
+                 with the same mathematical statements and LaTeX labels). The manuscript is
+                 distributed with the article, not with this repository.
 Coverage matrix: LEAN_COVERAGE.md.  Change description: CHANGES.md.
 
 Environment
 -----------
-  date                 2026-09-21 12:13 UTC
+  date                 2026-09-25 11:36 UTC
   platform             Darwin arm64
   lean-toolchain       leanprover/lean4:v4.31.0-rc1
   lean                 Lean (version 4.31.0-rc1, arm64-apple-darwin24.6.0,
@@ -39,27 +41,32 @@ Exact commands
   lake exe cache get
   lake build
 
+This run was a clean build of the project: the project's own .lake/build directory was moved aside
+before scripts/audit.sh ran, so all 26 Lean files below were compiled from these sources in this
+run (the raw log shows one "Built" line for each of them). mathlib and its dependencies came from
+the pinned prebuilt cache. BUILD_LOG_RAW.txt is generated locally by the script and is not tracked.
+
 Artifact (git blob SHA-1 of each source file, as built)
 -------------------------------------------------------
-  ObserverEquivariance.lean                                   359 lines  59f53d7396e6d6bdbf25d09164871f8d17f882f8
+  ObserverEquivariance.lean                                   366 lines  67f92e3b7485d44362413cc5bd45c858df83c523
   ObserverEquivariance/AxiomAudit.lean                         79 lines  1b5e2cdfc2b356eb741d77ce8da55611331980e9
   ObserverEquivariance/BaseChange.lean                        767 lines  b27bcc4f26da52f57bb7d3119fc0bec90441c51e
   ObserverEquivariance/BaseChangeCocycle.lean                 122 lines  b127d174f547a93f2af44b550025397a64c2801d
   ObserverEquivariance/Calibration.lean                       374 lines  b4aec368973308bd82573b068157e210c224c4d2
   ObserverEquivariance/Cocycles.lean                          512 lines  4a3897e9e80aed507f4ef68b8948f75ead3687e0
-  ObserverEquivariance/Comparisons.lean                       212 lines  743f63068b3c4301c68bc36ab053d0fb93cbcf84
+  ObserverEquivariance/Comparisons.lean                       212 lines  5de9fc3690ef18461bf705d47186fd3668a33773
   ObserverEquivariance/Components.lean                        887 lines  a7c6d2d4f82454156f710380a433530973e3d24a
   ObserverEquivariance/Core.lean                             2679 lines  14ddc110a32b3b28c1a3983ab1a45bbe35cde9df
   ObserverEquivariance/Descent.lean                           516 lines  b6754acefa9207c82eaa0df59c903995126732f5
-  ObserverEquivariance/Examples/ComplexObstruction.lean       283 lines  559240794d6c49b80058faf4ad71cdb833027b79
+  ObserverEquivariance/Examples/ComplexObstruction.lean       283 lines  2e93b3da1061f13c01f83b9f7be72ae90a30060a
   ObserverEquivariance/Examples/Holonomy.lean                1021 lines  5b6861b81bf13406ba749821655a6ae03154b25e
   ObserverEquivariance/Examples/NonFaithful.lean              384 lines  eae028e29fd2a8c686a2e64ffc8ea32bfa352862
   ObserverEquivariance/Examples/Records.lean                  741 lines  44a3fbdb3aa0270c5c6f52eb9615ed59ec340870
   ObserverEquivariance/Examples/RecordsCalibration.lean       587 lines  4442adffaa2cfe6c754e38b26853eaa265f1ed0c
-  ObserverEquivariance/Examples/RecordsR4.lean                218 lines  09023920f722aca5bc31b2c6c53580b6d2af26bb
+  ObserverEquivariance/Examples/RecordsR4.lean                221 lines  9d19f78d3830834322de5af736d2ea86061b4a09
   ObserverEquivariance/Examples/Twist.lean                    438 lines  dac63a0708e975d2a4a0e62095d6cff4db896b95
   ObserverEquivariance/Examples/TwoObject.lean                269 lines  627d37db3817ef1ce5b300af96714526af7b0b47
-  ObserverEquivariance/Implementations.lean                   130 lines  1001100229d910a31d03d3f3a4d42321b806d277
+  ObserverEquivariance/Implementations.lean                   131 lines  404a1fa91754fef61f58ac2c12045770c2146e1f
   ObserverEquivariance/LocalLifts.lean                        706 lines  28a3dfdfd1b1bbb968cf19b691d3b44140cc38a9
   ObserverEquivariance/MinSpec.lean                           357 lines  525871c3dfba3032ecfaa6fc974c4fd9d505aa06
   ObserverEquivariance/MinSpecCorrespondence.lean             313 lines  bdff8b7455aa9a6ede7073b0cbb582bd719f5fb0
@@ -67,9 +74,24 @@ Artifact (git blob SHA-1 of each source file, as built)
   ObserverEquivariance/ProductModel.lean                      126 lines  5d84fb403d47d6826b109b6cfef6f7a5641be76d
   ObserverEquivariance/Residual.lean                         1043 lines  23d57eedd831576bfecaf351078ee7851fa56b49
   ObserverEquivariance/ResidualCategory.lean                  395 lines  98c66f0788cff5a741896f625fa7ba39495f9c17
-  scripts/audit.sh                                             51 lines  f5542a87b6d729de81628cca1ef9a252cb9587ef
+  scripts/audit.sh                                             52 lines  d112436528fa6f85faeba437e6a5f844714f10c3
 
-  25 modules + the entry file, 14189 lines of Lean in total.
+  25 modules + the entry file, 14200 lines of Lean in total.
+
+Changes since the previous recorded run (2026-09-21 12:13 UTC, log at commit 826d0bd)
+-------------------------------------------------------------------------------------
+Only comments and the audit script changed; no statement, proof or import changed:
+  ObserverEquivariance.lean               header comment: reference manuscript r6 (source kept with
+                                          the article); run date removed, the header now defers run
+                                          date and blob hashes to this log; LA != L gloss made
+                                          precise; no_strict_retraction listed as beyond cor:section
+  Comparisons.lean, Implementations.lean,
+  Examples/ComplexObstruction.lean,
+  Examples/RecordsR4.lean                 docstrings name article revision r5 instead of the draft
+                                          designation r4 (the module name RecordsR4 is kept)
+  scripts/audit.sh                        the audit line is counted before the summary copies it
+                                          into the log, so the summary reports 1 passing line, not 2
+The figures of the build and the audit are unchanged: 2272 jobs and 2766 declarations.
 
 Import surface
 --------------
@@ -100,7 +122,8 @@ Result
 
 Executable axiom audit (this is a CHECK, not a diagnostic)
 ----------------------------------------------------------
-  ObserverEquivariance.lean:359:0: all 2766 declarations in 25 modules with prefix 'ObserverEquivariance' depend only on standard axioms ([ObserverEquivariance.Core,
+  (build output from BUILD_LOG_RAW.txt, leading 'info: ' removed and continuation lines indented)
+  ObserverEquivariance.lean:366:0: all 2766 declarations in 25 modules with prefix 'ObserverEquivariance' depend only on standard axioms ([ObserverEquivariance.Core,
   ObserverEquivariance.ProductModel,
   ObserverEquivariance.MinSpec,
   ObserverEquivariance.MinSpecCorrespondence,
@@ -125,8 +148,8 @@ Executable axiom audit (this is a CHECK, not a diagnostic)
   ObserverEquivariance.Examples.RecordsR4,
   ObserverEquivariance.Examples.ComplexObstruction,
   ObserverEquivariance.AxiomAudit])
-  ObserverEquivariance.lean:359:0: all 2766 declarations in 25 modules with prefix 'ObserverEquivariance' depend only on standard axioms ([ObserverEquivariance.Core,
-  passing #assert_standard_axioms lines: 2
+  passing #assert_standard_axioms lines: 1   (one module-wide assertion; the 2026-09-21 log reported
+                                              2 because the old script counted its own summary copy)
 
   "Standard axioms" means propext, Classical.choice and Quot.sound. The command
   #assert_standard_axioms_in_modules (ObserverEquivariance/AxiomAudit.lean) collects the transitive

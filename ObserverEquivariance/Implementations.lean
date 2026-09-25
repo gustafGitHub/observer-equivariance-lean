@@ -2,7 +2,7 @@ import ObserverEquivariance.Comparisons
 import ObserverEquivariance.LocalLifts
 
 /-!
-# Invariant implementations of twisted lifts (r4, `prop:data-implementation`)
+# Invariant implementations of twisted lifts (article revision r5, `prop:data-implementation`)
 
 The criterion is for one selected base transformation. It asserts no automatic
 coherence for a family of implementations indexed by a group.
@@ -77,7 +77,8 @@ def implementationEquiv (D : ResidualData S C G) (A : S ⥤ S) (θ : MulAut G) :
     apply Iso.ext
     exact restrictComparison_comparison (D := D.twisted A θ) (D' := D) β.val.hom
 
-/-- Invariant implementations have the coordinate-independent components stated in r4. -/
+/-- Invariant implementations have the coordinate-independent components stated in article
+    revision r5. -/
 theorem implementation_app (D : ResidualData S C G) (A : S ⥤ S) (θ : MulAut G)
     (α : D.InvariantImplementation A θ) (s : S) (a : G) :
     α.val.hom.app (s, ⟨a⟩) = (D.implementationEquiv A θ α).val.hom.app s := by

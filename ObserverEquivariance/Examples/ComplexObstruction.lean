@@ -5,7 +5,7 @@ import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 /-!
 # A twisted lift without an invariant complex-linear implementation
 
-Revision r4, `ex:complex-obstruction`. This uses the existing `C₃`, base
+Article revision r5, `ex:complex-obstruction`. This uses the existing `C₃`, base
 interchange, and inversion twist from `Examples.Twist`.
 -/
 

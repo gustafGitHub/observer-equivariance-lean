@@ -40,9 +40,10 @@ if [ -n "$hits" ]; then
 fi
 echo "none" | tee -a "$LOG"
 
+# Count the audit lines of the build output before the summary copies them into the same log.
+count=$({ grep -cE "depends? only on standard axioms" "$LOG" || true; })
 echo "== axiom audit summary" | tee -a "$LOG"
 { grep -E "depends? only on standard axioms" "$LOG" || true; } | grep -vE "^== " | cut -c1-200 | tee -a "$LOG" >/dev/null
-count=$({ grep -cE "depends? only on standard axioms" "$LOG" || true; })
 echo "passing #assert_standard_axioms lines: $count" | tee -a "$LOG"
 if [ "$status" -eq 0 ] && ! grep -q "depend only on standard axioms" "$LOG"; then
   echo "MODULE-WIDE AXIOM AUDIT DID NOT RUN" | tee -a "$LOG"

@@ -2,23 +2,29 @@
 
 This matrix maps the mathematical content of the revised article onto the Lean development in this
 repository. It is the coverage matrix that `Instruktion_till_Claude_Code.txt` §7 requires ("INSTR"
-below). The matrix gives one row per theorem, proposition, lemma, corollary, definition, example
-and mathematically contentful remark of §§2–7. It also gives one row per important claim that
+below; an internal instruction file, not part of this repository). The matrix gives one row per
+theorem, proposition, lemma, corollary, definition, example and mathematically contentful remark
+of §§2–7. It also gives one row per important claim that
 INSTR lists separately.
 
 ## 1. Scope, environment, reproduction, statuses
 
 **Paper.** G. Ullman, *Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts*,
-revision r5 of 19 September 2026, file
-`doc/perspectives_invariance_calibration_2026-09-19_r5.tex`. The labels below are that file's
-LaTeX labels. INSTR was written against `perspectives_normal_forms_final.tex`, and this matrix
-was first drafted against revision r2 (`…_2026-09-05_r2.tex`). r2 was a superset of the INSTR
+revision r6 of 25 September 2026, file `perspectives_invariance_calibration_2026-09-25_r6.tex`
+(distributed with the article, not with this repository). The labels below are that file's
+LaTeX labels. r6 is an editorial revision of r5 (19 September 2026,
+`perspectives_invariance_calibration_2026-09-19_r5.tex`): it revises the account of the
+formalization in the abstract, the introduction, `sec:lean` and the conclusion, and rewords one
+sentence of `ex:complex-obstruction` to name the restriction of scalars that `realification`
+uses. It changes no mathematical statement and no LaTeX label; the label sets of r5 and r6 are
+identical (57 labels). INSTR was written against `perspectives_normal_forms_final.tex`, and this
+matrix was first drafted against revision r2 (`…_2026-09-05_r2.tex`). r2 was a superset of the INSTR
 draft: it added `cor:invariant-calibration`, the "two information conditions" paragraph in
 `sec:records` and `sec:related`. Relative to r2/r3, r5 adds
 `prop:comparisons`, `prop:data-implementation`, `ex:complex-obstruction`, the subsection
 `sec:implementation` with its display `eq:implementation-intertwiner`, the table
 `tab:recovery-tasks`, and the Lean subsection `sec:lean-r5` (which replaces the earlier
-`sec:lean-r4`). All 50 labels cited in the tables below resolve in the r5 source — this was
+`sec:lean-r4`). All 50 labels cited in the tables below resolve in the r5 and r6 sources — this was
 checked mechanically against `\label{…}` — and no statement carried over from r2/r3 was changed.
 (`sec:lean-r4` itself is named only in the sentence above, as the label r5 retired.) The
 formalization targets the
@@ -39,8 +45,8 @@ MinSpecCorrespondence, NormalForm, LocalLifts, Descent, Residual, ResidualCatego
 Comparisons, Implementations, Components, BaseChange, Cocycles, BaseChangeCocycle,
 AxiomAudit}.lean` and `ObserverEquivariance/Examples/{Twist, TwoObject, NonFaithful, Holonomy,
 Records, RecordsCalibration, RecordsR4, ComplexObstruction}.lean`. The four modules
-`Comparisons`, `Implementations`, `Examples/ComplexObstruction` and `Examples/RecordsR4` are the
-additions of this revision; they are covered in §2.8.
+`Comparisons`, `Implementations`, `Examples/ComplexObstruction` and `Examples/RecordsR4` were
+added for article revision r5 (r6 adds no module); they are covered in §2.8.
 
 **Imports.** The blanket `import Mathlib` is gone. `Core` and `Cocycles` now list the mathlib
 files they actually use (`Core`: connected components, `SingleObj`, products, `Pi`, `ModuleCat`,
@@ -52,8 +58,9 @@ inherited statement or proof body is affected. What does change is the reproduct
 2272 build jobs instead of 8518 — and, with it, the number of declarations the audit sees; see the
 note under the run figures below.
 
-**How to reproduce.** Run `scripts/audit.sh [logfile]` from the repository root. The default log
-is `BUILD_LOG_RAW.txt`. The script does four things:
+**How to reproduce.** From a fresh clone, first run `lake exe cache get`, which fetches the pinned
+mathlib build. Then run `scripts/audit.sh [logfile]` from the repository root. The default log
+is `BUILD_LOG_RAW.txt`, which is generated locally and not tracked. The script does four things:
 
 1. It records the environment.
 2. It runs `lake build`.
@@ -69,7 +76,8 @@ declaration of any imported `ObserverEquivariance.*` module depends on an axiom 
 included in the check. The companion command `#assert_standard_axioms d₁ … dₙ` checks named
 declarations.
 
-**Final run for this revision** (2026-09-21; recorded in `BUILD_LOG.txt`):
+**Final run for this revision** (2026-09-25, a clean build of all 26 project files; recorded in
+`BUILD_LOG.txt`):
 
 - `lake build` completed successfully (2272 jobs) with no errors and no warnings.
 - The scan found no forbidden constructs.
@@ -80,12 +88,16 @@ declarations.
 walks, including generated auxiliary constants (`_proof_n`, `match_n`, equation lemmas). It
 therefore depends on the import surface as well as on the source: the same 25-module tree built
 with the old blanket `import Mathlib` reports 2761 declarations and 8518 jobs, and the earlier
-21-module tree reported 2599. The article's `sec:lean` cites 2,766 declarations in 25 imported modules; it does not quote a job count. The figure 2766 declarations / 25 modules / 2272 jobs is the one
-the article's `sec:lean` cites and the one the archived configuration in this repository
-reproduces; it is not a portable invariant of the mathematics.
+21-module tree reported 2599. The article's `sec:lean` (revision r6) cites 2,766 declarations in
+25 imported modules and a build of 2,272 jobs. These are the figures the archived configuration in
+this repository reproduces; the declaration count is not a portable invariant of the mathematics.
 
-`BUILD_LOG.txt` in the repository root records this revision's build and audit with per-file git blob SHA-1 hashes. (The article's `sec:lean` describes its own recorded run of 18 September 2026, with SHA-256 hashes and a Python reproduction script; that is the external contribution's layout, not this repository's.) It gives (environment, exact
-commands, per-file blob hashes, the scan, the build and the audit line). The *archived 2026-08-20
+`BUILD_LOG.txt` in the repository root records this revision's build and audit: the environment,
+the exact commands, the per-file git blob SHA-1 hashes and line counts, the scan, the build and
+the audit line. From revision r6 on, the article's `sec:lean` describes this repository's log
+layout (git blob SHA-1 hashes and line counts) and its reproduction (`lake exe cache get`, then
+`scripts/audit.sh`). Revision r5 had described a run of 18 September 2026 with SHA-256 hashes and
+a Python reproduction script, the layout of the external contribution, not of this repository. The *archived 2026-08-20
 log* of the pre-revision single-file development is preserved in git history at commit `f3f9182`;
 it certifies nothing in this revision. A baseline build of
 the unchanged pre-revision file (commit `f3f9182`) was also run at the start of the revision. It
@@ -171,7 +183,7 @@ Every declaration named below is in a module covered by that audit.
 | `cor:section`: `B` with `B(s) = b_s` and `pB = 𝟭` | `StrictSection` (fields `B`, `B_comp_p`, `η`, `η_vertical`), `OEData.sectionFunctor`, `OEData.sectionFunctor_obj` (`rfl`), `OEData.sectionFunctor_comp_p`, `OEData.strictSection`, `MinSpec.sectionFunctor`, `MinSpec.sectionFunctor_comp_p`, `MinSpec.strictSection`, `OEData.toMinSpec_sectionFunctor` (NormalForm) | `d` or `m` | verified | `B` is constructed from the data, not obtained as an arbitrary quasi-inverse, and `B ⋙ p = 𝟭 S` is a strict equality. |
 | `cor:section`: `B(u)` is the unique lift, and equals `χ_{u,b_t}` by (N4) | `OEData.sectionFunctor_map`, `OEData.p_map_sectionFunctor_map`, `OEData.sectionFunctor_map_unique`, `MinSpec.sectionFunctor_map_unique`, `OEData.sectionFunctor_map_eq_chi` (NormalForm) | `d` (or `m`), `u : s ⟶ t`; the uniqueness lemmas take `f : b_s ⟶ b_t` with `p.map f = eqToHom _ ≫ u ≫ eqToHom _` | verified | `sectionFunctor_map_eq_chi` is `B.map u = eqToHom (d.reind_base u).symm ≫ d.chi u (d.base t) (d.p_base t)`, which is (N4) rewritten on the source, exactly the paper's identification. |
 | `cor:section`: `η : Bp ≅ 𝟭` with vertical components, hence `p` an equivalence | `OEData.sectionEta`, `OEData.sectionEta_hom_app`, `OEData.sectionEta_hom_app_eq_liftOver`, `OEData.sectionEta_isVertical`, `OEData.sectionEta_naturality`, `MinSpec.sectionEta`, `StrictSection.η_inv_vertical`, `StrictSection.equivalence`, `IsVertical` (NormalForm) | `d`, `m` or a bare `σ : StrictSection p` | verified | `IsVertical p v := ∃ h : p.obj x = p.obj y, p.map v = eqToHom h`, the paper's definition of a vertical arrow. The component at `x` is `ℓ_{g_x, b_{p x}}` with its (N2) target identification, and naturality is the paper's `f η_x = η_y B(p f)`. |
-| `cor:section`: `p` is an equivalence but not a strict isomorphism | `MinSpec.no_strict_retraction` (NormalForm) | `m : MinSpec G p`, `[Nontrivial G]`, `[Nonempty S]` | verified | Proves `¬ ∃ B', p ⋙ B' = 𝟭 O`. The two hypotheses are exactly those under which the claim is true (for trivial `G` the projection is an isomorphism), so they are not extra strength. |
+| Beyond `cor:section` (not claimed in the article): `p` is an equivalence but not a strict isomorphism | `MinSpec.no_strict_retraction` (NormalForm) | `m : MinSpec G p`, `[Nontrivial G]`, `[Nonempty S]` | verified | Proves `¬ ∃ B', p ⋙ B' = 𝟭 O`. The two hypotheses are exactly those under which the claim is true (for trivial `G` the projection is an isomorphism), so they are not extra strength. About `p` itself, the article's `cor:section` claims only that it is an equivalence (with the strict section `pB = 𝟭`), not a strict isomorphism. Among the `cor:section` declarations in NormalForm this is the only one with a nonemptiness hypothesis. The LocalLifts section-formulation theorems `preservesCleavage_iff_exists_base_obj` and `preservesCleavage_iff_exists_section` take `[IsConnected S]`, but they are lift-classification results, which `sec:lean` names as the place where connectedness is imposed. The statement in `sec:lean` that the section results need no nonemptiness assumption is therefore unaffected. |
 | `rem:groupoid`, direction "`O` a groupoid ⇒ `S` a groupoid" | `OEData.base_hom_isIso` (Core); `MinSpec.base_hom_isIso` (NormalForm) | `d` (or `m`) plus the explicit hypothesis `hO : ∀ {x y : O} (f : x ⟶ y), IsIso f` | verified | The groupoid hypothesis is an explicit argument, not an instance: in this revision `[Category O]` is the ambient assumption, and `base_hom_isIso` is no longer a general theorem. |
 | `rem:groupoid`, converse "`S` a groupoid ⇒ `O` a groupoid" | `OEData.hom_isIso_of_base_isIso` (Core); `MinSpec.hom_isIso_of_base_isIso` (NormalForm) | `d` (or `m`) plus `hS : ∀ {s t : S} (u : s ⟶ t), IsIso u` | verified | Together with the previous row this is the remark's "the earlier groupoid model is a specialization". Neither direction is packaged as a `Groupoid` instance; that is a presentation choice, not a loss of content. That `S` may carry noninvertible arrows is exhibited concretely in `Examples/TwoObject` and `Examples/Records` (see §§2.6–2.7). |
 
@@ -266,7 +278,7 @@ Every declaration named below is in a module covered by that audit.
 | `sec:records`, two information conditions: no exact recovery without the label | `recInfo_no_recovery_at`, `recInfo_no_recovery` | `τ : ℝ` (and `I : RecDom` for the pointwise version) | verified | `¬ ∃ K : ∀ I, L(I) → L(I), ∀ I q ε, K I ((ε : ℝ) • q) = q`: quantified over arbitrary functions, with no naturality assumed, which is stronger than the paper's statement. The remark that convention-independent statistics such as the absolute values remain available is informal and is not formalized. |
 | `sec:records`, base symmetry and its lift group (INSTR §6E.6) | `recρ`, `recρ_cast`, `recρ_recρ`, `RecDom.rev`, `RecDom.mem_rev`, `RecDom.rev_rev`, `RecDom.rev_single_zero`, `recAFunctor`, `recAFunctor_comp_self`, `recA`, `recA_hom_obj`, `recA_mul_self`, `recA_inv`, `recA_ne_one`, `recH`, `mem_recH`, `recH_cases`, `recHMulEquiv`, `recH_card`, `recLift_obj`, `recPolarity_obj`, `recLift_comm_polarity`, `recSymProd`, `recSym` | none (uses the proved instance `IsConnected RecDom`) | verified | `recSym : AutBoxGOver recData recH ≃* Multiplicative (ZMod 2) × Multiplicative (ZMod 2)`, the paper's `Sym_H(p) ≅ C₂ × C₂`, obtained from `thm:strict` via `recSymProd`. Membership in `AutBoxGOver` already carries `IsGEquivariant` and `PreservesCleavage`, so transport preservation of `Ã` is part of the statement. |
 | `sec:records`, time reversal as a covariant implementation (INSTR §6E.7) | `recRevEquiv`, `recRevEquiv_apply`, `recα`, `recα_hom_app_apply`, `recα_naturality`, `recα_involution`, `recα_involution_apply`, `recα_involution_natTrans`, `recA_hom_comp_self_comp_L₀`, `recLabelIso`, `recαℓ`, `recαℓ_hom_app_snd`, `recαℓ_involution`, `Lℓ_eqToHom_snd` | `τ : ℝ` | verified | `(α_I x)_j = x_{ρ(j)}` as a linear isomorphism, natural in `I`, with the coherence `α_{ρ(I)} α_I = id` (up to the `ρρ = id` cast) in both the unlabeled and, since the review pass, the labeled encoding. |
-| `sec:records`, the representation question: `LA ≠ L` and `H ≠ H_L` | unlabeled `recIdxRecord`, `L₀_eqToHom_hom_apply_of_eq`, `recA_comp_L₀_ne`, `recA_not_mem_strictLawStabilizer_L₀`, `recH_not_le_strictLawStabilizer_L₀`; labeled `recLabel`, `Lℓ`, `Lℓ_comp_snd`, `Lℓ_obj_fst`, `recA_comp_Lℓ_ne`, `recA_not_mem_strictLawStabilizer`, `recH_not_le_strictLawStabilizer`, `strictLawStabilizer_Lℓ_eq_bot` | unlabeled: `τ ≠ 0`; labeled: any `τ : ℝ` | verified | Both readings are formalized, as INSTR §6E requires: the labeled one is the paper's literal statement ("for these explicitly labeled vector spaces"), and the unlabeled one answers the stronger question, by evaluating the index record `x_j = j` at an index of the reversed domain. Neither is an appeal to failure of `rfl`. Caveat to keep in mind when reading the labeled statements: `strictLawStabilizer (Lℓ τ) = ⊥` holds for label reasons alone, so the labeled inequality would follow for any labeled functor; the unlabeled `recA_comp_L₀_ne` is the one that carries content about `L` itself. |
+| `sec:records`, the representation question: `LA ≠ L` and `H ≠ H_L` | unlabeled `recIdxRecord`, `L₀_eqToHom_hom_apply_of_eq`, `recA_comp_L₀_ne`, `recA_not_mem_strictLawStabilizer_L₀`, `recH_not_le_strictLawStabilizer_L₀`; labeled `recLabel`, `Lℓ`, `Lℓ_comp_snd`, `Lℓ_obj_fst`, `recA_comp_Lℓ_ne`, `recA_not_mem_strictLawStabilizer`, `recH_not_le_strictLawStabilizer`, `strictLawStabilizer_Lℓ_eq_bot` | unlabeled: `τ ≠ 0`; labeled: any `τ : ℝ` | verified | Both readings are formalized, as INSTR §6E requires: the labeled one is the paper's literal statement ("for these explicitly labeled vector spaces"), and the unlabeled one answers the stronger question, by evaluating the index record `x_j = j` at an index of the reversed domain. Neither is an appeal to failure of `rfl`. Caveat to keep in mind when reading the labeled statements: the labels alone give `recA_comp_Lℓ_ne`, and the labels together with the thinness of the base give `strictLawStabilizer (Lℓ τ) = ⊥` (`strictLawStabilizer_Lℓ_eq_bot`, proved for `Lℓ τ`; the same argument would apply to any labeled functor of this form), so the labeled inequality would hold for any such functor; the unlabeled `recA_comp_L₀_ne` is the one that carries content about `L` itself. |
 
 ### 2.7 `sec:boundaries` — boundary calculations
 
@@ -292,7 +304,7 @@ Every declaration named below is in a module covered by that audit.
 
 ### 2.8 Additions for revision r5 (`sec:lean-r5`)
 
-Four modules were added in this revision: `Comparisons`, `Implementations`,
+Four modules were added for article revision r5: `Comparisons`, `Implementations`,
 `Examples/ComplexObstruction` and `Examples/RecordsR4`. None of them contains `sorry`, `admit`,
 `axiom`, `native_decide`, `unsafe` or `implemented_by`, and all four are inside the module-wide
 standard-axiom audit.
@@ -514,14 +526,16 @@ with the invertibility and invariance criteria separated.
 
 ### 3.6 Documentation debt in the sources
 
-- The four modules adopted from the external contribution still date themselves to the article's **r4**
-  in their own docstrings (`Comparisons.lean:5`, `Implementations.lean:5` and `:80`,
-  `Examples/ComplexObstruction.lean:8`, `Examples/RecordsR4.lean:5`), as does the module name
-  `RecordsR4`. What they prove are the r5 statements; only the version label in the prose lags.
+- Closed for the r6 release: the four modules adopted from the external contribution used to date
+  themselves to the article's draft **r4** in their docstrings. The docstrings now name article
+  revision r5 (`Comparisons.lean:5`, `Implementations.lean:5` and `:80`,
+  `Examples/ComplexObstruction.lean:8`, `Examples/RecordsR4.lean:5`). The module name `RecordsR4`
+  keeps the draft designation, which its docstring explains; renaming it would change module and
+  namespace names.
 
 - The header comment of the entry file `ObserverEquivariance.lean` was rewritten for r2 after this
-  matrix was drafted, and again for r5: it carries the r5 title and source file
-  (`doc/perspectives_invariance_calibration_2026-09-19_r5.tex`), the `sec:data`–`sec:boundaries`
+  matrix was drafted, and again for r5 and r6: it carries the r6 title and source file
+  (`perspectives_invariance_calibration_2026-09-25_r6.tex`), the `sec:data`–`sec:boundaries`
   label scheme extended with `sec:implementation` and `sec:lean-r5`, a scope note, the carriers of
   `[IsConnected S]` / `[Nonempty S]`, a module map for all 25 modules and a declaration directory
   per paper label, and it states `rem:groupoid` with the explicit groupoid hypothesis that
@@ -543,9 +557,10 @@ recorded here so that a reader can tell what a Lean statement does and does not 
 labeled vector spaces, `LA ≠ L` strictly" is formalized twice. The labeled reading is
 `Lℓ τ : RecDom ⥤ Pair RecDom × ModuleCat ℝ`, `Lℓ = recLabel.prod' (L₀ τ)`, with
 `Lℓ_comp_snd : Lℓ τ ⋙ Prod.snd = L₀ τ` recovering the unlabeled functor; there
-`recA_comp_Lℓ_ne` holds for every `τ`. But labels alone force `strictLawStabilizer (Lℓ τ) = ⊥`
-(`strictLawStabilizer_Lℓ_eq_bot`), so the labeled inequality would hold for *any* labeled functor
-and says nothing about the free-particle law. The unlabeled statement `recA_comp_L₀_ne` (for
+`recA_comp_Lℓ_ne` holds for every `τ`. But the labels, together with the thinness of the base,
+force `strictLawStabilizer (Lℓ τ) = ⊥` (`strictLawStabilizer_Lℓ_eq_bot`, stated for `Lℓ τ` only),
+so the labeled inequality would hold for *any* labeled functor of this form and says nothing about
+the free-particle law. The unlabeled statement `recA_comp_L₀_ne` (for
 `τ ≠ 0`) is therefore also proved, by evaluating the concrete record `x_j = j` (`recIdxRecord`)
 after the reversal; it uses linearity of the `ModuleCat` casts (`L₀_eqToHom_hom_apply_of_eq`).
 INSTR §6E asks precisely that the difference be documented rather than papered over with a failed
