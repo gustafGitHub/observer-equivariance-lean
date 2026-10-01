@@ -9,7 +9,8 @@ normal-form, descent, calibration and lift-classification results (Sections 2–
 > Concept DOI: [`10.5281/zenodo.17077437`](https://doi.org/10.5281/zenodo.17077437) (always
 > resolves to the latest version).
 
-Version DOI of this Lean package (repository release): **to be added** once minted.
+Version DOI of this Lean package (release v2.0.0):
+[`10.5281/zenodo.23079443`](https://doi.org/10.5281/zenodo.23079443).
 
 All labels below (`def:data`, `thm:strict`, `cor:invariant-calibration`, …) are LaTeX labels of
 the article. The paper's sections are `sec:data` (§2), `sec:normalform` (§3), `sec:descent` (§4,
