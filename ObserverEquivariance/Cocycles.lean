@@ -25,7 +25,6 @@ Throughout, `G` and `H` are arbitrary (not necessarily commutative) groups and
   (`conj_inl_section`, `cohomologous_iff_sectionConj`), `H¹(H,G)` classifies sections, equivalently
   complements to the kernel, up to conjugation by `G` (`H1EquivSectionClasses`,
   `section_range_isComplement`, `sectionComplementEquiv`, `H1EquivComplementClasses`).
-* INSTR §5 (end): same content.
 
 ## Scope (what `H1` is and is not)
 

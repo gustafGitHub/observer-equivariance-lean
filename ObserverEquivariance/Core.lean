@@ -52,7 +52,7 @@ structure NormalizedPreDatum (G : Type*) [Group G] (p : O ⥤ S) where
   -- Freeness of the action on objects within a fiber.  REDUNDANT: not a clause of paper
   -- `def:data`; it is derivable from `act_mul`, `base_coord` and `coord_base` (paper
   -- `lem:coordinates`; derived in `OEData.coordinate_identities`, MinSpecCorrespondence.lean).
-  -- Kept as a field for API compatibility; it adds no hypothesis beyond `def:data`.
+  -- It is a field for convenience; it adds no hypothesis beyond `def:data`.
   act_free  : ∀ x g h, act x g = act x h → g = h
   -- Right `G`-action on morphisms, with functoriality in the morphism slot.
   actHom    : ∀ {x y : O}, (x ⟶ y) → (g : G) → (act x g ⟶ act y g)
@@ -339,15 +339,15 @@ noncomputable def ΛIsoId (d : OEData G p) (g : G) : Λ d g ≅ 𝟭 O :=
     `def:lifts`.  The paper's `Sym_H(p)` additionally requires morphism-level equivariance and
     cleavage preservation: the latter is the separate predicate `PreservesCleavage`, while the
     former is DERIVED — given `p` faithful, any object-equivariant `F` covering a base map is
-    automatically morphism-equivariant (formalized as `isGEquivariant_map_actHom` in §11'),
+    automatically morphism-equivariant (formalized as `isGEquivariant_map_actHom` in §11),
     exactly as the paper's `def:lifts` remarks.  So `Sym_H(p)` is faithfully
     captured by `IsGEquivariant ∧ PreservesCleavage` (see `AutBoxG` / `AutBoxGOver`). -/
 def IsGEquivariant (d : OEData G p) (F : O ⥤ O) : Prop :=
   ∀ (x : O) (g : G), F.obj (d.act x g) = d.act (F.obj x) g
 
-/-- `F` covers the base autoequivalence `A`, i.e. `p ∘ F = A ∘ p` strictly.  NOTE: an unused
-    v0 variant, retained for reference only — the covering condition actually used throughout
-    is the field `PreservesCleavage.covers` (over a plain functor `A : S ⥤ S`). -/
+/-- `F` covers the base autoequivalence `A`, i.e. `p ∘ F = A ∘ p` strictly.  Not used elsewhere
+    in the development; the covering condition used throughout is the field
+    `PreservesCleavage.covers` (over a plain functor `A : S ⥤ S`). -/
 def CoversBase (p : O ⥤ S) (F : O ⥤ O) (A : S ≌ S) : Prop :=
   F ⋙ p = p ⋙ A.functor
 
@@ -357,7 +357,7 @@ def CoversBase (p : O ⥤ S) (F : O ⥤ O) (A : S ≌ S) : Prop :=
     chosen cartesian source `u*y` to the chosen cartesian source `(A u)*(F y)`.  This is
     the object-level shadow of "F maps chosen cartesian arrows to chosen cartesian arrows";
     given `p` faithful it is equivalent to the full morphism statement
-    `F(χ_{u,y}) = χ_{A u, F y}` (formalized as `PreservesCleavage.map_chi` in §11').
+    `F(χ_{u,y}) = χ_{A u, F y}` (formalized as `PreservesCleavage.map_chi` in §11).
     It is exactly what forces the local constant `g_s` in `rigidity`. -/
 structure PreservesCleavage (d : OEData G p) (F : O ⥤ O) (A : S ⥤ S) : Prop where
   covers : F ⋙ p = p ⋙ A
@@ -417,7 +417,7 @@ theorem lift_exists (d : OEData G p) (A : S ≌ S) :
     ∃ F : O ⥤ O, IsGEquivariant d F ∧ PreservesCleavage d F A.functor :=
   ⟨liftFunctor d A.functor, lift_isGEquivariant d A.functor, lift_preservesCleavage d A.functor⟩
 
-/-- Backward-compatibility alias for `lift_exists` (the old name overstated the conclusion). -/
+/-- Alias of `lift_exists`. -/
 alias strict_lift := lift_exists
 
 /-- Two equivariant functors covering the same base (i.e. equal after `⋙ p`) that agree on
@@ -546,16 +546,15 @@ theorem unbundled_lift_classification (d : OEData G p) [IsConnected S] :
     rintro ⟨g, rfl⟩
     exact Λ_preservesCleavage d g
 
-/-- Backward-compatibility alias for `unbundled_lift_classification` (the old name
-    `exact_sequence` suggested the group-theoretic short exact sequence, which is the separate
-    `Φ_surjective` / `ΛHom_injective` / `ker_Φ_eq_range_Λ` package). -/
+/-- Alias of `unbundled_lift_classification`.  The group-theoretic short exact sequence is the
+    separate `Φ_surjective` / `ΛHom_injective` / `ker_Φ_eq_range_Λ` package. -/
 alias exact_sequence := unbundled_lift_classification
 
 /-! ## 5. Non-degeneracy witness
 
   A concrete `OEData G (pWit G)` for an ARBITRARY group `G`.  It shows the structure is
   instantiable and — crucially — that `p_faithful` (thin fibers) coexists with `|G| > 1`,
-  so it does NOT silently reintroduce the discrete-fiber collapse.  `indiscrete ≠ discrete`:
+  so thin fibers do not force `G` to be trivial.  `indiscrete ≠ discrete`:
 
   The fiber is the PAIR (codiscrete) groupoid on `G` — objects are the `|G|` group elements,
   with exactly ONE morphism between any two.  It is thin (⇒ `p` faithful) and connected, and it
@@ -1093,7 +1092,7 @@ theorem twisted_lift_exists (d : OEData G p) (A : S ≌ S) (θ : MulAut G) :
   ⟨liftFunctorθ d A.functor θ, liftθ_isTwistedEquivariant d A.functor θ,
     liftθ_preservesCleavage d A.functor θ⟩
 
-/-- Backward-compatibility alias for `twisted_lift_exists`. -/
+/-- Alias of `twisted_lift_exists`. -/
 alias strict_liftθ := twisted_lift_exists
 
 /-- Twisted rigidity (analogue of `rigidity`).  Two `θ`-twisted equivariant cleavage-preserving
@@ -1832,8 +1831,8 @@ theorem normalForm_reind (d : OEData G p) {s t : S} (u : s ⟶ t) (y : O) (hy : 
   rw [d.p_reind, d.coord_reind]
 
 /-- The product normal form as an equivalence `O ≌ S × Pair G`, with comparison functor
-    `normalFormTo d`.  This is only the weak (equivalence) form of paper `thm:normalform`,
-    kept for compatibility.  The paper's strict isomorphism of categories is
+    `normalFormTo d`.  This is only the weak (equivalence) form of paper `thm:normalform`.
+    The paper's strict isomorphism of categories is
     `normalFormTo_comp_normalFormFrom` / `normalFormFrom_comp_normalFormTo` (NormalForm.lean).
     Fully faithful from `isFull` + `p_faithful`; essentially surjective since `(s, ⟨g⟩)` is
     hit on the nose by `base s · g`. -/
@@ -1898,9 +1897,8 @@ theorem normalForm_equivariant (d : OEData G p) (g : G) :
     invertible (hypothesis `hO`, i.e. `O` is a groupoid), then every base morphism
     `u : s ⟶ t` in `S` is invertible:  lift by `isFull`, invert in `O`, and reflect the iso
     back along the fully faithful projection.
-    API CHANGE: in the earlier groupoid-only development this held without `hO`, because `O`
-    carried a global groupoid instance.  Now `O` is an arbitrary category, and `hO` is the
-    explicit extra hypothesis of `rem:groupoid`; no general result depends on this theorem.
+    `O` is an arbitrary category, so the groupoid property is the explicit extra hypothesis
+    `hO` of `rem:groupoid`; no general result depends on this theorem.
     Stated as a theorem, not a global `Groupoid S` instance. -/
 theorem OEData.base_hom_isIso (d : OEData G p) (hO : ∀ {x y : O} (f : x ⟶ y), IsIso f)
     {s t : S} (u : s ⟶ t) : IsIso u := by
@@ -2538,7 +2536,7 @@ noncomputable def zmod3SemidirectWitness :
   autBoxGθMulEquivSemidirect (labData G3 G3) (θSingleObj G3)
 
 
-/-! ## 11'. Additional helper lemmas the article uses
+/-! ## 11. Additional helper lemmas the article uses
 
   A strict autoequivalence is determined by its `hom` functor (`StrictAut.ext_hom`); the
   packaging of `θSingleObj` as a genuine `MulEquiv` (`θSingleObjEquiv`); the full MORPHISM
@@ -2631,8 +2629,8 @@ theorem isGEquivariant_map_actHom (d : OEData G p) {F : O ⥤ O} {A : S ⥤ S}
   simp only [Functor.map_comp, eqToHom_map, Category.assoc, eqToHom_trans,
     eqToHom_trans_assoc]
 
-/-- Uniqueness of the covered base functor (the article's `def:lifts`: "the covering equation
-    therefore determines `A` strictly from `F`"):  since every base object is
+/-- Uniqueness of the covered base functor (the article's `def:lifts`: the base functor `A` is
+    determined by `F`):  since every base object is
     `p.obj (base s)` and every base arrow lifts through derived fullness, precomposition with
     `p` is injective on functors:  `p ⋙ A = p ⋙ B → A = B`.  Hence the `base` field of a
     bundle automorphism is determined by its `hom` field. -/

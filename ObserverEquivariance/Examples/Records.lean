@@ -25,7 +25,7 @@ Paper labels covered (all in `sec:records`, plus `def:law` and `thm:strict` as u
   `H` is not the strict stabilizer (`recA_not_mem_strictLawStabilizer_L₀`,
   `recH_not_le_strictLawStabilizer_L₀`, `recA_not_mem_strictLawStabilizer`).
 
-## Representation of labeled observation spaces (INSTR §6E, "Särskild representationsfråga")
+## Representation of labeled observation spaces
 
 The paper's claim `LA ≠ L` is made "for these explicitly labeled vector spaces". It is formalized
 at two levels. Neither argument rests on a failure of `rfl`, or on deciding an equality of carrier

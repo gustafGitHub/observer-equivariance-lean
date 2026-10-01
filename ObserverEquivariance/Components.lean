@@ -260,8 +260,8 @@ theorem liftMultiplier_factors_through_components (d : OEData G p) {F : O ⥤ O}
     induction c using Quotient.ind with
     | _ a => exact (hκ a).symm⟩
 
-/-- The multiplier `s ↦ γ [A s]` of the lift `Λ_γ Ã` (paper `prop:components`; INSTR §5: the
-    multiplier is `γ(A s)`, not `γ(s)`). -/
+/-- The multiplier `s ↦ γ [A s]` of the lift `Λ_γ Ã` (paper `prop:components`; the multiplier
+    is `γ(A s)`, not `γ(s)`). -/
 def componentLiftMultiplier (A : S ⥤ S) (γ : CategoryTheory.ConnectedComponents S → G) : S → G :=
   fun s => γ (compMk (A.obj s))
 
@@ -298,8 +298,8 @@ theorem autBoxGOverOfComponents_hom_eq (d : OEData G p) (H : Subgroup (StrictAut
       = liftFunctor d x.right.1.hom ⋙ ΛFun d (fun s => x.left (compMk s)) :=
   liftByMultiplier_components_eq d _ _
 
-/-- The multiplier of the lift attached to `(γ, A)` at `s` is `γ [A s]` (paper `prop:components`,
-    INSTR §5 parametrization). -/
+/-- The multiplier of the lift attached to `(γ, A)` at `s` is `γ [A s]` (paper
+    `prop:components`). -/
 theorem liftMultiplier_autBoxGOverOfComponents (d : OEData G p) (H : Subgroup (StrictAut S))
     (x : (CategoryTheory.ConnectedComponents S → G) ⋊[componentAction H G] H) (s : S) :
     liftMultiplier d (autBoxGOverOfComponents d H x).1.hom s = x.left (compMk (x.right.1.hom.obj s)) := by

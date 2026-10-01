@@ -41,9 +41,9 @@ Paper labels covered in this file:
   (`liftByMultiplierθ_comp_inv`, `liftByMultiplierθ_inv_comp`, `autBoxGθOverOfMultiplier`), and
   the unique factorization `Λ_a Ã_θ` (`exists_unique_eq_liftFunctorθ_comp_Λ`).
 
-Conventions: `F ⋙ G` is "first `F`, then `G`".  The rigidity internals of `Core.rigidity`
-(object form, local constancy, global constancy) are re-proved here as public lemmas
-(`lift_obj_eq`, `liftMultiplier_eq_of_hom`, `liftMultiplier_const`); `Core` is unchanged.
+Conventions: `F ⋙ G` is "first `F`, then `G`".  The object form, local constancy and global
+constancy used in the proof of `Core.rigidity` are stated here as public lemmas
+(`lift_obj_eq`, `liftMultiplier_eq_of_hom`, `liftMultiplier_const`).
 -/
 
 open CategoryTheory

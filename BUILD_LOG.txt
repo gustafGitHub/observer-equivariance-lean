@@ -1,31 +1,23 @@
-Build and axiom-audit log — release accompanying article revision r6 of
+Build and axiom-audit log
 "Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts"
 ==========================================================================
 
-This log records the build and the axiom audit of THIS revision: the modular development under
-ObserverEquivariance/, generalized from groupoids to categories, together with the four modules
-adopted for article revision r5 (Comparisons, Implementations, Examples/ComplexObstruction,
-Examples/RecordsR4). The audit of the archived single-file groupoid development of 2026-08-20 is
-preserved in git history at commit f3f9182 and is NOT reproduced here; that run certifies nothing
-in this revision, and this run certifies nothing about it.
+This log records the build and the axiom audit of the Lean 4 / mathlib development in this
+repository: the modules under ObserverEquivariance/ and the entry file ObserverEquivariance.lean.
 
-Reference paper: perspectives_invariance_calibration_2026-09-25_r6.tex
-                 (revision r6, 25 September 2026; an editorial revision of r5 of 19 September 2026
-                 with the same mathematical statements and LaTeX labels). The manuscript is
-                 distributed with the article, not with this repository.
-Coverage matrix: LEAN_COVERAGE.md.  Change description: CHANGES.md.
+Reference paper: G. Ullman, "Symmetry Between Perspectives: Invariant Calibration and Symmetry
+                 Lifts", Zenodo version 14, DOI 10.5281/zenodo.23040249.
+Coverage matrix: LEAN_COVERAGE.md.  Naming and encoding decisions: CHANGES.md.
 
 Environment
 -----------
-  date                 2026-09-25 11:36 UTC
+  date                 2026-09-30 07:56 UTC
   platform             Darwin arm64
   lean-toolchain       leanprover/lean4:v4.31.0-rc1
   lean                 Lean (version 4.31.0-rc1, arm64-apple-darwin24.6.0,
                        commit fd009949156901e6cf15b6d9bf1122294b8e697a, Release)
   lake                 Lake version 5.0.0-src+fd00994 (Lean version 4.31.0-rc1)
   mathlib rev          8834d3761934044a64c98afb757c1673fad03521  (lake-manifest.json)
-
-The pins are unchanged from the pre-revision snapshot: no toolchain or mathlib upgrade was made.
 
 Exact commands
 --------------
@@ -48,60 +40,42 @@ the pinned prebuilt cache. BUILD_LOG_RAW.txt is generated locally by the script 
 
 Artifact (git blob SHA-1 of each source file, as built)
 -------------------------------------------------------
-  ObserverEquivariance.lean                                   366 lines  67f92e3b7485d44362413cc5bd45c858df83c523
+  ObserverEquivariance.lean                                   356 lines  ea90cbfd931ddae4c0b31d34e0d627407be61870
   ObserverEquivariance/AxiomAudit.lean                         79 lines  1b5e2cdfc2b356eb741d77ce8da55611331980e9
-  ObserverEquivariance/BaseChange.lean                        767 lines  b27bcc4f26da52f57bb7d3119fc0bec90441c51e
+  ObserverEquivariance/BaseChange.lean                        767 lines  6217c2a38858241b5c9cd992a9151796e6463aae
   ObserverEquivariance/BaseChangeCocycle.lean                 122 lines  b127d174f547a93f2af44b550025397a64c2801d
-  ObserverEquivariance/Calibration.lean                       374 lines  b4aec368973308bd82573b068157e210c224c4d2
-  ObserverEquivariance/Cocycles.lean                          512 lines  4a3897e9e80aed507f4ef68b8948f75ead3687e0
-  ObserverEquivariance/Comparisons.lean                       212 lines  5de9fc3690ef18461bf705d47186fd3668a33773
-  ObserverEquivariance/Components.lean                        887 lines  a7c6d2d4f82454156f710380a433530973e3d24a
-  ObserverEquivariance/Core.lean                             2679 lines  14ddc110a32b3b28c1a3983ab1a45bbe35cde9df
+  ObserverEquivariance/Calibration.lean                       375 lines  b678b3266ee188d64d29912017664f7528a2e4f3
+  ObserverEquivariance/Cocycles.lean                          511 lines  7701b98d43ca7e4d80832e0440266bbd6edd5599
+  ObserverEquivariance/Comparisons.lean                       212 lines  240f66b4d3114ffd6faa613cdf87417fa56ff7cd
+  ObserverEquivariance/Components.lean                        887 lines  88601423575065ce7ad9ae9960d491455d425345
+  ObserverEquivariance/Core.lean                             2677 lines  ca801c1a61899a43c896ad726b8d2d8956120dd9
   ObserverEquivariance/Descent.lean                           516 lines  b6754acefa9207c82eaa0df59c903995126732f5
-  ObserverEquivariance/Examples/ComplexObstruction.lean       283 lines  2e93b3da1061f13c01f83b9f7be72ae90a30060a
+  ObserverEquivariance/Examples/ComplexObstruction.lean       283 lines  7141383400b105122f5afba3cb4519e8ffd65524
   ObserverEquivariance/Examples/Holonomy.lean                1021 lines  5b6861b81bf13406ba749821655a6ae03154b25e
   ObserverEquivariance/Examples/NonFaithful.lean              384 lines  eae028e29fd2a8c686a2e64ffc8ea32bfa352862
-  ObserverEquivariance/Examples/Records.lean                  741 lines  44a3fbdb3aa0270c5c6f52eb9615ed59ec340870
-  ObserverEquivariance/Examples/RecordsCalibration.lean       587 lines  4442adffaa2cfe6c754e38b26853eaa265f1ed0c
-  ObserverEquivariance/Examples/RecordsR4.lean                221 lines  9d19f78d3830834322de5af736d2ea86061b4a09
-  ObserverEquivariance/Examples/Twist.lean                    438 lines  dac63a0708e975d2a4a0e62095d6cff4db896b95
+  ObserverEquivariance/Examples/Records.lean                  741 lines  fe39811135373d239be1c345bc1a678fbb5c507d
+  ObserverEquivariance/Examples/RecordsCalibration.lean       587 lines  26aab1435eb08c4c31f96a4eab31fd57096c00c2
+  ObserverEquivariance/Examples/RecordsRecovery.lean          218 lines  5f38c623696ad9b9c469f38bdde980aa4ced9eec
+  ObserverEquivariance/Examples/Twist.lean                    438 lines  50585eeaa71b1fa994220a07db0c8d867bdcdc2f
   ObserverEquivariance/Examples/TwoObject.lean                269 lines  627d37db3817ef1ce5b300af96714526af7b0b47
-  ObserverEquivariance/Implementations.lean                   131 lines  404a1fa91754fef61f58ac2c12045770c2146e1f
-  ObserverEquivariance/LocalLifts.lean                        706 lines  28a3dfdfd1b1bbb968cf19b691d3b44140cc38a9
+  ObserverEquivariance/Implementations.lean                   131 lines  76ac7658e06cf22e5580c49b79f99b0f724de702
+  ObserverEquivariance/LocalLifts.lean                        706 lines  981028a168c79525ce68ee88370189ccd25559ce
   ObserverEquivariance/MinSpec.lean                           357 lines  525871c3dfba3032ecfaa6fc974c4fd9d505aa06
   ObserverEquivariance/MinSpecCorrespondence.lean             313 lines  bdff8b7455aa9a6ede7073b0cbb582bd719f5fb0
   ObserverEquivariance/NormalForm.lean                        671 lines  a9bd3f8ea19dfe8eb658f7fed3a32aeb1fe98bf7
   ObserverEquivariance/ProductModel.lean                      126 lines  5d84fb403d47d6826b109b6cfef6f7a5641be76d
-  ObserverEquivariance/Residual.lean                         1043 lines  23d57eedd831576bfecaf351078ee7851fa56b49
+  ObserverEquivariance/Residual.lean                         1043 lines  764fdd66dcbabc1cee9b3a611dd7a54989bef1af
   ObserverEquivariance/ResidualCategory.lean                  395 lines  98c66f0788cff5a741896f625fa7ba39495f9c17
   scripts/audit.sh                                             52 lines  d112436528fa6f85faeba437e6a5f844714f10c3
 
-  25 modules + the entry file, 14200 lines of Lean in total.
-
-Changes since the previous recorded run (2026-09-21 12:13 UTC, log at commit 826d0bd)
--------------------------------------------------------------------------------------
-Only comments and the audit script changed; no statement, proof or import changed:
-  ObserverEquivariance.lean               header comment: reference manuscript r6 (source kept with
-                                          the article); run date removed, the header now defers run
-                                          date and blob hashes to this log; LA != L gloss made
-                                          precise; no_strict_retraction listed as beyond cor:section
-  Comparisons.lean, Implementations.lean,
-  Examples/ComplexObstruction.lean,
-  Examples/RecordsR4.lean                 docstrings name article revision r5 instead of the draft
-                                          designation r4 (the module name RecordsR4 is kept)
-  scripts/audit.sh                        the audit line is counted before the summary copies it
-                                          into the log, so the summary reports 1 passing line, not 2
-The figures of the build and the audit are unchanged: 2272 jobs and 2766 declarations.
+  25 modules + the entry file, 14185 lines of Lean in total.
 
 Import surface
 --------------
-Core.lean, Cocycles.lean, ResidualCategory.lean and Examples/Twist.lean import the specific mathlib
-modules they use instead of the blanket `import Mathlib`. This is why `lake build` reports 2272
-jobs; with the blanket import the same tree required 8518. It changes no statement and no proof
-body. It does shift the DECLARATION COUNT below, because that count includes generated auxiliary
-constants (_proof_n, match_n) and which of those are generated depends on the instances and simp
-lemmas in scope: the same tree reports 2766 declarations with the narrowed imports and 2761 with
-the blanket import. The count is therefore a property of this pinned configuration, not of the
+Every module imports the specific mathlib files it uses; no module imports all of Mathlib. The
+DECLARATION COUNT below depends on this import surface, because it includes generated auxiliary
+constants (_proof_n, match_n), and which of those are generated depends on the instances and simp
+lemmas in scope. The count is therefore a property of this pinned configuration, not of the
 mathematics.
 
 Source check (comments stripped before scanning)
@@ -123,7 +97,7 @@ Result
 Executable axiom audit (this is a CHECK, not a diagnostic)
 ----------------------------------------------------------
   (build output from BUILD_LOG_RAW.txt, leading 'info: ' removed and continuation lines indented)
-  ObserverEquivariance.lean:366:0: all 2766 declarations in 25 modules with prefix 'ObserverEquivariance' depend only on standard axioms ([ObserverEquivariance.Core,
+  ObserverEquivariance.lean:356:0: all 2766 declarations in 25 modules with prefix 'ObserverEquivariance' depend only on standard axioms ([ObserverEquivariance.Core,
   ObserverEquivariance.ProductModel,
   ObserverEquivariance.MinSpec,
   ObserverEquivariance.MinSpecCorrespondence,
@@ -145,59 +119,46 @@ Executable axiom audit (this is a CHECK, not a diagnostic)
   ObserverEquivariance.Examples.Holonomy,
   ObserverEquivariance.Examples.Records,
   ObserverEquivariance.Examples.RecordsCalibration,
-  ObserverEquivariance.Examples.RecordsR4,
+  ObserverEquivariance.Examples.RecordsRecovery,
   ObserverEquivariance.Examples.ComplexObstruction,
   ObserverEquivariance.AxiomAudit])
-  passing #assert_standard_axioms lines: 1   (one module-wide assertion; the 2026-09-21 log reported
-                                              2 because the old script counted its own summary copy)
+  passing #assert_standard_axioms lines: 1
 
   "Standard axioms" means propext, Classical.choice and Quot.sound. The command
   #assert_standard_axioms_in_modules (ObserverEquivariance/AxiomAudit.lean) collects the transitive
   axiom dependencies of EVERY declaration of those modules — auxiliary _proof_n and match_n
   constants included — and raises an error if any other axiom appears. An error fails `lake build`,
   so this line is an assertion checked by the build, not a diagnostic whose output must be read.
-  It was tested against a `sorry`, a project-specific `axiom` and `native_decide`; each makes the
-  command fail.
+  The command fails on a `sorry`, on a project-specific `axiom` and on `native_decide`; each of the
+  three was tested.
 
-Retained diagnostic block (inherited from the archived snapshot)
-----------------------------------------------------------------
-The entry file still runs the older `#print axioms` commands on the declarations of the archived
-development. Their output in this environment was:
+Diagnostic block
+----------------
+The entry file also runs `#print axioms` on 18 selected declarations. Their output in this
+environment was:
 
-    'OEData.chi_isCartesian'         depends on axioms: [propext, Classical.choice, Quot.sound]
-    'productNormalForm'              depends on axioms: [propext, Classical.choice, Quot.sound]
-    'normalForm_equivariant'         depends on axioms: [propext, Classical.choice, Quot.sound]
-    'normalForm_base'                depends on axioms: [propext]
-    'normalForm_reind'               depends on axioms: [propext]
-    'projectionEquivalence'          depends on axioms: [propext, Classical.choice, Quot.sound]
-    'OEData.base_hom_isIso'          depends on axioms: [propext, Classical.choice, Quot.sound]
-    'idIsoΛ'                        depends on axioms: [propext, Classical.choice, Quot.sound]
-    'liftAut'                        depends on axioms: [propext, Classical.choice, Quot.sound]
-    'autBoxGMulEquivProd'            depends on axioms: [propext, Classical.choice, Quot.sound]
-    'autBoxGOverMulEquivProd'        depends on axioms: [propext, Classical.choice, Quot.sound]
-    'lawPreservingAutBoxMulEquiv'    depends on axioms: [propext, Classical.choice, Quot.sound]
-    'autBoxGθOverMulEquivSemidirect' depends on axioms: [propext, Classical.choice, Quot.sound]
-    'θSingleObj_zmod3_ne_one'       depends on axioms: [propext, Classical.choice, Quot.sound]
-    'zmod3SemidirectWitness'         depends on axioms: [propext, Classical.choice, Quot.sound]
-    'twisted_lift_exists'            depends on axioms: [propext, Classical.choice, Quot.sound]
-    'rigidityθ'                     depends on axioms: [propext, Classical.choice, Quot.sound]
-    'normalFormTo_fst'               depends on axioms: [propext, Classical.choice, Quot.sound]
+    'OEData.chi_isCartesian'          depends on axioms: [propext, Classical.choice, Quot.sound]
+    'productNormalForm'               depends on axioms: [propext, Classical.choice, Quot.sound]
+    'normalForm_equivariant'          depends on axioms: [propext, Classical.choice, Quot.sound]
+    'normalForm_base'                 depends on axioms: [propext]
+    'normalForm_reind'                depends on axioms: [propext]
+    'projectionEquivalence'           depends on axioms: [propext, Classical.choice, Quot.sound]
+    'OEData.base_hom_isIso'           depends on axioms: [propext, Classical.choice, Quot.sound]
+    'idIsoΛ'                          depends on axioms: [propext, Classical.choice, Quot.sound]
+    'liftAut'                         depends on axioms: [propext, Classical.choice, Quot.sound]
+    'autBoxGMulEquivProd'             depends on axioms: [propext, Classical.choice, Quot.sound]
+    'autBoxGOverMulEquivProd'         depends on axioms: [propext, Classical.choice, Quot.sound]
+    'lawPreservingAutBoxMulEquiv'     depends on axioms: [propext, Classical.choice, Quot.sound]
+    'autBoxGθOverMulEquivSemidirect'  depends on axioms: [propext, Classical.choice, Quot.sound]
+    'θSingleObj_zmod3_ne_one'         depends on axioms: [propext, Classical.choice, Quot.sound]
+    'zmod3SemidirectWitness'          depends on axioms: [propext, Classical.choice, Quot.sound]
+    'twisted_lift_exists'             depends on axioms: [propext, Classical.choice, Quot.sound]
+    'rigidityθ'                       depends on axioms: [propext, Classical.choice, Quot.sound]
+    'normalFormTo_fst'                depends on axioms: [propext, Classical.choice, Quot.sound]
 
 These 18 lines are diagnostics: a successful build does not by itself assert that their output has
 a predetermined value. They are subsumed by the executable audit above, which covers all 2766
 declarations.
-
-Baseline run (for comparison only)
-----------------------------------
-Before the revision, the UNCHANGED pre-revision file at commit f3f9182 (single file, groupoid
-formulation, 2394 lines) was rebuilt in this same environment:
-
-  lake build           Build completed successfully (8497 jobs)
-  exit status          0
-  audited declarations 18 (the #print axioms block above), all standard, no sorryAx
-
-This baseline says only that the starting point was green in this environment. It certifies nothing
-about the revision, and the revision certifies nothing about it.
 
 What this log does and does not establish
 -----------------------------------------

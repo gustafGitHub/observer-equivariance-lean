@@ -24,7 +24,7 @@ Paper labels covered (all in `sec:records`, using `prop:residual` and
   every invariant natural transformation `𝒟 ⟶ L p` (`recD_invariantNatTrans_eq_zero`), and
   non-existence of an invariant natural isomorphism (`recD_no_invariant_iso`,
   `recD_no_invariant_calibration`, the latter via `cor:invariant-calibration`);
-* paragraph "Two information conditions for calibration": for the underlying set-valued functors
+* paragraph "Information, compatibility, and exact recovery": for the underlying set-valued functors
   (composition with `forget (ModuleCat ℝ)`), an invariant natural transformation `K` has even
   components `K_I(-y) = K_I(y)` without any linearity (`recInfo_even`), in fact naturality along
   the vertical arrow is precisely evenness (`recInfo_vertical_naturality_iff_even`), such a
@@ -471,17 +471,17 @@ theorem recD_no_invariant_calibration (τ : ℝ) :
   fun h => recD_residualAction_ne_one τ RecDom.full
     ((calibration_i_iff_iii recData (recD τ) (recD_isInvariant τ)).mp h RecDom.full)
 
-/-! ## Two information conditions for calibration (paper `sec:records`) -/
+/-! ## Information, compatibility, and exact recovery (paper `sec:records`) -/
 
 /-- The underlying set-valued raw-record functor `𝒟` is strictly invariant (paper
-    `sec:records`, "View `𝒟` and `L p` as functors to sets"). -/
+    `sec:records`: invariant natural transformations `𝒟 ⟹ L p` on underlying sets). -/
 theorem recD_forget_isInvariant (τ : ℝ) :
     OEData.IsInvariant recData (recD τ ⋙ forget (ModuleCat.{0} ℝ)) := fun h => by
   rw [← Functor.assoc, recD_isInvariant τ h]
 
 /-- An invariant natural transformation of set-valued functors `K : 𝒟 ⟶ L p` has a common
-    component at `(I, ε)` and `(I, ε h)` (paper `sec:records`: "a common component `K_I` at
-    `(I,+1)` and `(I,-1)`"). -/
+    component at `(I, ε)` and `(I, ε h)` (paper `sec:records`: the same component `K_I` at both
+    polarities). -/
 theorem recInfo_common_component (τ : ℝ)
     (K : recD τ ⋙ forget (ModuleCat.{0} ℝ) ⟶ recP ⋙ L₀ τ ⋙ forget (ModuleCat.{0} ℝ))
     (hK : IsInvariantNatTrans recData (recD_forget_isInvariant τ)
@@ -490,7 +490,7 @@ theorem recInfo_common_component (τ : ℝ)
   (hK h X).trans (eqToHom_comp_comp_eqToHom_self _ _ _)
 
 /-- Vertical naturality of an invariant set-valued `K : 𝒟 ⟶ L p`: `K_I(h y) = K_I(y)`; no
-    linearity is used (paper `sec:records`, "Two information conditions for calibration"). -/
+    linearity is used (paper `sec:records`, "Information, compatibility, and exact recovery"). -/
 theorem recInfo_vertical (τ : ℝ)
     (K : recD τ ⋙ forget (ModuleCat.{0} ℝ) ⟶ recP ⋙ L₀ τ ⋙ forget (ModuleCat.{0} ℝ))
     (hK : IsInvariantNatTrans recData (recD_forget_isInvariant τ)
@@ -519,8 +519,8 @@ theorem recInfo_even (τ : ℝ)
   exact e
 
 /-- Naturality of a common component `k` along the vertical arrow `(I,ε) → (I,-ε)` is
-    precisely evenness, `k(-y) = k(y)` (paper `sec:records`: "`𝒟` sends it to `-id`, `L p` to
-    `id`; naturality is therefore precisely `K_I(-y) = K_I(y)`"). -/
+    precisely evenness, `k(-y) = k(y)` (paper `sec:records`: `𝒟` sends that arrow to `-id` and
+    `L p` to `id`, so naturality is `K_I(-y) = K_I(y)`). -/
 theorem recInfo_vertical_naturality_iff_even (τ : ℝ) (X : RecDom × Pair ℤˣ)
     (k : (recD τ ⋙ forget (ModuleCat.{0} ℝ)).obj X
       ⟶ (recP ⋙ L₀ τ ⋙ forget (ModuleCat.{0} ℝ)).obj X) :
@@ -545,8 +545,8 @@ theorem recInfo_vertical_naturality_iff_even (τ : ℝ) (X : RecDom × Pair ℤ�
     exact ConcreteCategory.hom_ext _ _ fun y => (hD y).trans ((hev y).trans (hL y).symm)
 
 /-- An invariant set-valued `K : 𝒟 ⟶ L p` never has the identity as a component, although
-    exact recovery would force `K_I = id` (paper `sec:records`: "`K_I` must be even, while exact
-    recovery requires it to be the identity on a nonzero record space"). -/
+    exact recovery would force `K_I = id` (paper `sec:records`: `K_I` is even, while exact
+    recovery requires the identity on a nonzero record space). -/
 theorem recInfo_invariant_ne_id (τ : ℝ)
     (K : recD τ ⋙ forget (ModuleCat.{0} ℝ) ⟶ recP ⋙ L₀ τ ⋙ forget (ModuleCat.{0} ℝ))
     (hK : IsInvariantNatTrans recData (recD_forget_isInvariant τ)
@@ -579,8 +579,8 @@ theorem recInfo_no_recovery_at (τ : ℝ) (I : RecDom) :
   norm_num at ej
 
 /-- Exact recovery of the signed record by one convention-independent map `K_I` at each
-    observation domain is impossible (paper `sec:records`, "Two information conditions for
-    calibration"). -/
+    observation domain is impossible (paper `sec:records`, "Information, compatibility, and exact
+    recovery"). -/
 theorem recInfo_no_recovery (τ : ℝ) :
     ¬ ∃ K : ∀ I : RecDom, (L₀ τ).obj I → (L₀ τ).obj I,
       ∀ (I : RecDom) (q : (L₀ τ).obj I) (ε : ℤˣ), K I ((((ε : ℤ) : ℝ)) • q) = q :=

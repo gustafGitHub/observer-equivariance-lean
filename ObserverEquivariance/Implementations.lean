@@ -2,7 +2,7 @@ import ObserverEquivariance.Comparisons
 import ObserverEquivariance.LocalLifts
 
 /-!
-# Invariant implementations of twisted lifts (article revision r5, `prop:data-implementation`)
+# Invariant implementations of twisted lifts (`prop:data-implementation`)
 
 The criterion is for one selected base transformation. It asserts no automatic
 coherence for a family of implementations indexed by a group.
@@ -32,7 +32,7 @@ theorem twisted_presentationFunctor (D : ResidualData S C G) (A : S ⥤ S) (θ :
         D.E.map (A.map f.1)) ≫ 𝟙 _
   simp only [one_mul, map_mul, map_inv, Category.id_comp, Category.comp_id]
 
-/-- The product formula is the existing canonical lift, including its action on arrows. -/
+/-- The product formula is the canonical lift of `thm:twisted`, including its action on arrows. -/
 theorem canonical_product_lift_eq (A : S ⥤ S) (θ : MulAut G) :
     liftFunctorθ (productData S G) A θ = multiplierProductFunctorθ A θ (fun _ => 1) := by
   refine CategoryTheory.Functor.ext (fun _ => rfl) (fun X Y f => ?_)
@@ -77,8 +77,8 @@ def implementationEquiv (D : ResidualData S C G) (A : S ⥤ S) (θ : MulAut G) :
     apply Iso.ext
     exact restrictComparison_comparison (D := D.twisted A θ) (D' := D) β.val.hom
 
-/-- Invariant implementations have the coordinate-independent components stated in article
-    revision r5. -/
+/-- Invariant implementations have the coordinate-independent components stated in
+    `prop:data-implementation`. -/
 theorem implementation_app (D : ResidualData S C G) (A : S ⥤ S) (θ : MulAut G)
     (α : D.InvariantImplementation A θ) (s : S) (a : G) :
     α.val.hom.app (s, ⟨a⟩) = (D.implementationEquiv A θ α).val.hom.app s := by

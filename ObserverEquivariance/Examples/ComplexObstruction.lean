@@ -5,7 +5,7 @@ import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 /-!
 # A twisted lift without an invariant complex-linear implementation
 
-Article revision r5, `ex:complex-obstruction`. This uses the existing `C₃`, base
+`ex:complex-obstruction`. This uses the `C₃`, base
 interchange, and inversion twist from `Examples.Twist`.
 -/
 
@@ -152,7 +152,7 @@ theorem no_invariant_complex_implementation :
   exact one_ne_zero (b.injective (h1.trans (map_zero b).symm))
 
 /-- The same obstruction holds for every transport-preserving inversion-twisted
-lift over the interchange, using the existing classification of all such lifts. -/
+lift over the interchange, using the classification of all such lifts (`thm:twisted`). -/
 theorem no_invariant_complex_implementation_any_lift
     (T : Pair (Fin 2) × Pair G3 ⥤ Pair (Fin 2) × Pair G3)
     (hT : IsTwistedEquivariant twistData (twistθ twistHSwap) T)

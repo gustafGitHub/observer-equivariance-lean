@@ -344,8 +344,9 @@ noncomputable def unrestrictedCalibration (d : OEData G p) (F : O ⥤ C) :
     F ≅ p ⋙ (d.sectionFunctor ⋙ F) :=
   (d.weakDescentIso F).symm
 
-/-- "Such a calibration may depend on the presentation", in general form (discussion after paper
-    `cor:invariant-calibration`, contrasting `prop:weak-descent`): for strictly invariant `F`, the
+/-- Dependence of the unrestricted calibration on the presentation, in general form (discussion
+    after paper `cor:invariant-calibration`, contrasting `prop:weak-descent`): for strictly
+    invariant `F`, the
     unrestricted calibration `F ≅ p ⋙ (B ⋙ F)` is an INVARIANT natural isomorphism iff every
     residual action of `F` is trivial.  So it fails to be invariant exactly when some `σ_s` is
     nontrivial (special case in `sec:records`: `recC_not_invariant`). -/

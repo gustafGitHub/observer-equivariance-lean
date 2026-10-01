@@ -2,10 +2,7 @@ import ObserverEquivariance.Examples.RecordsCalibration
 import Mathlib.LinearAlgebra.Quotient.Basic
 
 /-!
-# Additional measurement calculations in article revision r5
-
-The module name keeps the designation r4 of the draft in which these calculations first
-appeared.
+# Measurement calculations for the record model (`sec:records`, `sec:lean-modules`)
 
 Information access, naturality under restriction, the sign-orbit target,
 linear coinvariants, reference calibration, and fixed trajectories.
@@ -13,7 +10,7 @@ linear coinvariants, reference calibration, and fixed trajectories.
 
 open CategoryTheory
 
-namespace RecordsR4
+namespace RecordsRecovery
 
 noncomputable section
 
@@ -204,7 +201,7 @@ theorem reflectTrajectory_fixed_iff (τ : ℝ) (qv : ℝ × ℝ) :
 def trajectoryRecord (τ : ℝ) (I : RecDom) (q v : ℝ) : recordSpace τ I :=
   ⟨fun j => q + v * (((j : Fin 3) : ℕ) : ℝ) * τ, q, v, fun _ => rfl⟩
 
-/-- The parameter calculation agrees with the existing natural time-reflection map. -/
+/-- The parameter calculation agrees with the natural time-reflection map `recα`. -/
 theorem recα_trajectory (τ : ℝ) (I : RecDom) (q v : ℝ) :
     ((recα τ).hom.app I).hom (trajectoryRecord τ I.rev q v) =
       trajectoryRecord τ I (q + 2 * τ * v) (-v) := by
@@ -218,4 +215,4 @@ theorem recα_trajectory (τ : ℝ) (I : RecDom) (q v : ℝ) :
 
 end
 
-end RecordsR4
+end RecordsRecovery

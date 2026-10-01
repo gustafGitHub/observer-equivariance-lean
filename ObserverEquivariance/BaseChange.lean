@@ -39,7 +39,7 @@ Paper labels covered:
     (`liftHom_eq_of_base`, `liftHomOver_eq_of_base`);
   - the coboundary identity `z_c(AB) = z_c(A) θ_A(z_c(B))` for `z_c(A) = c θ_A(c⁻¹)`: the
     canonical statement is `OECocycle.coboundary_mul` (module `Cocycles`); the local copy
-    `baseChange_twistFactor_mul` is kept only for backward compatibility and is identified with
+    `baseChange_twistFactor_mul` states the same identity locally and is identified with
     `OECocycle.coboundary` by `baseChange_twistFactor_eq_coboundary`.
 * The remaining sentences of that paragraph, which need `Cocycles`, are in the bridge module
   `BaseChangeCocycle`: the conjugacy class of the canonical section under the kernel of
@@ -51,7 +51,7 @@ Paper labels covered:
 Conventions: `F ⋙ G` is "first `F`, then `G`", so the paper's operator-order `Λ_c Λ_a Λ_c⁻¹`
 is `Λ d c⁻¹ ⋙ Λ d a ⋙ Λ d c` and `Λ_{cθ_A(c⁻¹)} Ã_θ` is `liftFunctorθ d A θ ⋙ Λ d (c * θ c⁻¹)`.
 
-The hypotheses fixing "the same `p`, right action and cleavage" are
+The hypotheses fixing the same `p`, right action and cleavage are
 `hact : ∀ x g, d'.act x g = d.act x g` and
 `hreind : ∀ {s t} (u : s ⟶ t) y hy, d'.reind u y hy = d.reind u y hy`; the morphism action and the
 chosen arrows `χ` then agree automatically by faithfulness (see `OEData.ext_of_data`).
@@ -222,8 +222,8 @@ theorem parallel_family_eq_rebase_base [IsConnected S] (d : OEData G p) (b' : S 
 /-- Changing parallel basepoints (paper `prop:basechange`, first sentence): on a connected
     base, any other normalized datum `d'` with the same right action and the same transport has
     basepoints `b'_s = b_s · c` for ONE constant `c ∈ G`, and this `c` is unique.
-    (The action hypothesis records the paper's setting "fixed action and cleavage"; the proof
-    only needs the transport hypothesis, hence the binder name `_hact`.) -/
+    (The action hypothesis records that the right action is kept fixed; the proof only needs the
+    transport hypothesis, hence the binder name `_hact`.) -/
 theorem parallel_basepoints_eq_rebase [IsConnected S] (d d' : OEData G p)
     (_hact : ∀ x g, d'.act x g = d.act x g)
     (hreind : ∀ {s t : S} (u : s ⟶ t) (y : O) (hy : p.obj y = t),
@@ -757,7 +757,7 @@ end Identifications
 
 /-- The factor `z_c(A) = c θ_A(c⁻¹)` of `prop:basechange` satisfies the nonabelian cocycle
     identity `z_c(AB) = z_c(A) θ_A(z_c(B))` (paper `sec:normalization`, cocycle paragraph).
-    This is a local duplicate kept for compatibility: the canonical statement is
+    This is a local duplicate: the canonical statement is
     `OECocycle.coboundary_mul` in `Cocycles`, and `baseChange_twistFactor_eq_coboundary` (module
     `BaseChangeCocycle`) shows `c θ_A(c⁻¹) = OECocycle.coboundary θ c A`; downstream uses should
     cite `OECocycle.coboundary_mul`. -/

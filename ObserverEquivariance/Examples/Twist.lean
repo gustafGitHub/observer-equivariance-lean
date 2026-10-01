@@ -12,8 +12,8 @@ Paper labels covered:
   `S₃` illustration of left versus right translation;
 * `thm:twisted` — used through `autBoxGθOverMulEquivSemidirect` and `liftHomθOver_conj` (Core).
 
-The older `zmod3SemidirectWitness` of Core (the model `labData G3 G3` over `SingleObj G3`) is a
-different model and is left untouched.
+Core's `zmod3SemidirectWitness` (the model `labData G3 G3` over `SingleObj G3`) is a different
+model.
 
 Conventions.
 * Groups of strict automorphisms multiply in operator order: `(e₁ * e₂).hom = e₂.hom ⋙ e₁.hom`.

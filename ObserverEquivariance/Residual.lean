@@ -56,9 +56,9 @@ variable {C : Type*} [Category C]
 /-! ## Strict invariance on `O` (paper `prop:residual`) -/
 
 /-- The action functors cover the identity of the base: `R_h ⋙ p = p` (helper for paper
-    `prop:residual`).  This DUPLICATES `OEData.actFunctor_comp_p` of
+    `prop:residual`).  This DUPLICATES `LocalLifts.actFunctor_comp_p` of
     `ObserverEquivariance.LocalLifts` (same statement, same one-line proof from
-    `MinSpec.actFunctor_comp_p`); it is kept under a separate name because this module does not
+    `MinSpec.actFunctor_comp_p`); it has a separate name because this module does not
     import `LocalLifts`, and the two declarations would clash if it did. -/
 theorem OEData.actFunctor_covers_id (d : OEData G p) (h : G) : d.actFunctor h ⋙ p = p := by
   rw [← d.toMinSpec_actFunctor]; exact d.toMinSpec.actFunctor_comp_p h

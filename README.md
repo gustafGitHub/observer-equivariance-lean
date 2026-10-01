@@ -4,28 +4,20 @@ A Lean 4 + [mathlib](https://github.com/leanprover-community/mathlib4) formaliza
 normal-form, descent, calibration and lift-classification results (Sections 2–7) of
 
 > G. Ullman, *Symmetry Between Perspectives: Invariant Calibration and Symmetry Lifts*,
-> revised manuscript, 25 September 2026 (revision r6, an editorial revision of r5 of
-> 19 September 2026 with the same mathematical statements and LaTeX labels).
-> Source: `perspectives_invariance_calibration_2026-09-25_r6.tex`, distributed with the article,
-> not with this repository.
-> Version DOI of this article revision: **to be added** once minted.
-> Zenodo concept DOI of the article series: `10.5281/zenodo.17077437` (always resolves to the
-> latest version). The article's Section 9 cites the earlier, groupoid-formulated manuscript
-> (`10.5281/zenodo.22040848`) and the archived single-file Lean development
-> (`10.5281/zenodo.22028115`); the present revision supersedes that development.
+> Zenodo version 14,
+> DOI [`10.5281/zenodo.23040249`](https://doi.org/10.5281/zenodo.23040249).
+> Concept DOI: [`10.5281/zenodo.17077437`](https://doi.org/10.5281/zenodo.17077437) (always
+> resolves to the latest version).
 
 Version DOI of this Lean package (repository release): **to be added** once minted.
 
 All labels below (`def:data`, `thm:strict`, `cor:invariant-calibration`, …) are LaTeX labels of
-the r6 source; they are identical to those of r5. The paper's sections are `sec:data` (§2),
-`sec:normalform` (§3), `sec:descent` (§4, containing `prop:comparisons`), `sec:symmetries` (§5, containing `sec:implementation` and
-`ex:complex-obstruction`), `sec:law` (§6, containing `sec:records`) and `sec:boundaries`
-(§7, containing `sec:holonomy`). All statements and labels inherited from r2/r3 are unchanged;
-r5 adds `prop:comparisons`, `prop:data-implementation`, `ex:complex-obstruction`,
-`sec:implementation`, `eq:implementation-intertwiner`, `tab:recovery-tasks` and the Lean
-subsection `sec:lean-r5`. r6 changes no statement and no label; it revises the account of the
-formalization in the abstract, the introduction, Section 9 and the conclusion, and one sentence of
-`ex:complex-obstruction` (restriction of scalars).
+the article. The paper's sections are `sec:data` (§2), `sec:normalform` (§3), `sec:descent` (§4,
+containing `prop:comparisons`), `sec:symmetries` (§5, containing `sec:implementation` and
+`ex:complex-obstruction`), `sec:law` (§6, containing `sec:records`) and `sec:boundaries` (§7,
+containing `sec:holonomy`). Section 9 (`sec:lean`) describes this development, with the four
+modules `Comparisons`, `Implementations`, `Examples/ComplexObstruction` and
+`Examples/RecordsRecovery` in its subsection `sec:lean-modules`.
 
 ## Layout
 
@@ -42,15 +34,15 @@ of the principal declarations per paper label.
 | `Descent` | `def:vertical-trivial`, `thm:descent`, `prop:weak-descent`, `ex:invariant` |
 | `Residual`, `ResidualCategory` | `prop:residual` and the display after it |
 | `Calibration` | `cor:invariant-calibration` |
-| `Comparisons` | `prop:comparisons` (added in r5) |
-| `Implementations` | `sec:implementation`, `prop:data-implementation`, `eq:implementation-intertwiner` (added in r5) |
+| `Comparisons` | `prop:comparisons` |
+| `Implementations` | `sec:implementation`, `prop:data-implementation`, `eq:implementation-intertwiner` |
 | `LocalLifts` | `lem:local` |
 | `Components` | `prop:components`, `prop:nocleavage` |
 | `BaseChange`, `Cocycles`, `BaseChangeCocycle` | `prop:basechange`, `sec:normalization` |
 | `Examples/Twist`, `Examples/TwoObject`, `Examples/NonFaithful`, `Examples/Holonomy` | `ex:twist`, the example after `prop:nocleavage`, `ex:nonfaithful`, `sec:holonomy` |
 | `Examples/Records`, `Examples/RecordsCalibration` | `sec:records` |
-| `Examples/ComplexObstruction` | `ex:complex-obstruction` (added in r5) |
-| `Examples/RecordsR4` | the additional `sec:records` calculations, including the sign-orbit row of `tab:recovery-tasks` (added in r5) |
+| `Examples/ComplexObstruction` | `ex:complex-obstruction` |
+| `Examples/RecordsRecovery` | the measurement calculations of `sec:records`, including the sign-orbit row of `tab:recovery-tasks` |
 | `AxiomAudit` | the executable audit commands (no paper content) |
 
 ## What is formalized
@@ -79,9 +71,9 @@ chosen transport and vertical arrows being the *unique* lifts with the prescribe
   `normalFormFrom_comp_normalFormTo : M ⋙ N = 𝟭 (S × Pair G)`, as equalities of functors, both
   lying over `S` on the nose (`normalFormTo_fst`, and `MinSpec.normalFormTo_comp_fst` for the
   minimal specification; `normalFormFrom_comp_fst`) and
-  intertwining the right `G`-actions (`normalForm_equivariant`). The older
-  `productNormalForm : O ≌ S × Pair G` and `projectionEquivalence` are kept as the weak
-  (equivalence) form for compatibility.
+  intertwining the right `G`-actions (`normalForm_equivariant`).
+  `productNormalForm : O ≌ S × Pair G` and `projectionEquivalence` are the weak (equivalence)
+  form.
 - **Cartesianness (`prop:cartesian`).** `IsCartesianOver` is the strong existence-*and*-
   uniqueness property; `OEData.chi_isCartesian` and `OEData.isCartesian_of_fullyFaithful` show
   the chosen arrows — in fact all arrows — have it, and `OEData.chi_split_cartesian` bundles
@@ -197,8 +189,8 @@ invariant (`recD_isInvariant`) with residual sign action (`recD_residualAction_h
 not factor strictly (`recD_not_factors`); the calibration `recC : 𝒟 ≅ L p` exists but depends on
 the convention (`recC_hom_app_act`, `recC_not_invariant`), and no invariant calibration exists
 (`recD_invariantNatTrans_eq_zero`, `recD_no_invariant_iso`, `recD_no_invariant_calibration`).
-The two information conditions are `recInfo_even`, `recInfo_vertical_naturality_iff_even`,
-`recInfo_invariant_ne_id` and `recInfo_no_recovery`.
+The paragraph "Information, compatibility, and exact recovery" is formalized by `recInfo_even`,
+`recInfo_vertical_naturality_iff_even`, `recInfo_invariant_ne_id` and `recInfo_no_recovery`.
 
 ### Boundary calculations (`sec:boundaries`)
 
@@ -221,16 +213,16 @@ The two information conditions are `recInfo_even`, `recInfo_vertical_naturality_
   (`holLiftProjKerEquiv`). Both special cases are formalized: the `S₃` transposition
   (`holS3CentralizerEquiv`) and the nonsplit `Q₈` extension (`holQ8_no_section`).
 
-### Additions in revision r5 (`sec:lean-r5`)
+### Comparisons, implementations and further examples (`sec:lean-modules`)
 
-Four modules were added for r5. Their general statements are proved in the strict product
-normal form `S × Pair G`, for arbitrary base and target categories — the setting in which the
-paper states them — and are not separately restated for an abstract `OEData`; the passage is
-the inherited normal-form and residual-data machinery. No inherited statement changed.
+The general statements of these four modules are proved in the strict product normal form
+`S × Pair G`, for arbitrary base and target categories — the setting in which the paper states
+them — and are not separately restated for an abstract `OEData`; the passage is the normal-form
+and residual-data machinery above.
 
 - **Comparisons and prescribed targets (`prop:comparisons`, module `Comparisons`).** For
-  residual data `D`, `ResidualData.presentationFunctor D` is the existing composite
-  `residualQ S G ⋙ D.toFunctor` — not new data — and it is strictly invariant
+  residual data `D`, `ResidualData.presentationFunctor D` is the composite
+  `residualQ S G ⋙ D.toFunctor` of `prop:residual` — not new data — and it is strictly invariant
   (`presentationFunctor_isInvariant`). Unrestricted natural transformations between two such
   functors correspond bijectively to natural transformations of the base data:
   `comparisonEquiv : (D.presentationFunctor ⟶ D'.presentationFunctor) ≃ (D.E ⟶ D'.E)`, built
@@ -249,8 +241,8 @@ the inherited normal-form and residual-data machinery. No inherited statement ch
   `Implementations`).** `ResidualData.twisted D A θ` is the pullback datum `A ⋙ D.E` with
   `r ↦ σ_{A s}(θ r)`; it computes the residual data of the canonical twisted lift, on objects
   *and* arrows (`twisted_presentationFunctor`, `canonical_product_lift_eq`,
-  `liftFunctorθ_comp_presentationFunctor` — the lift is the existing `liftFunctorθ`, not a new
-  construction). The criterion is the bijection
+  `liftFunctorθ_comp_presentationFunctor` — the lift is the canonical lift `liftFunctorθ` of
+  `thm:twisted`). The criterion is the bijection
 
   ```
   implementationEquiv : D.InvariantImplementation A θ ≃ D.TwistedIntertwiner A θ
@@ -273,7 +265,7 @@ the inherited normal-form and residual-data machinery. No inherited statement ch
   (`intertwiner_eq_zero`, no invertibility assumed), so there is no invariant complex-linear
   implementation — `no_invariant_complex_implementation`, and
   `no_invariant_complex_implementation_any_lift` for **every** transport-preserving lift over the
-  interchange that is twisted-equivariant for the inversion twist, via the inherited classification
+  interchange that is twisted-equivariant for the inversion twist, via the twisted classification
   `exists_unique_eq_liftFunctorθ_comp_Λ`. The unrestricted comparison does exist
   (`unrestrictedImplementation`, whose component at `(s, ⟨g⟩)` is multiplication by
   `(character g)²`, `unrestrictedImplementation_app`)
@@ -282,8 +274,8 @@ the inherited normal-form and residual-data machinery. No inherited statement ch
   conjugation is an allowed morphism: `realImplementation` is an invariant implementation
   (`real_intertwines`, `realImplementation_app`) and satisfies the involution equation
   (`realImplementation_involution`). The target category, not the lift, decides.
-- **Further measurement calculations (`sec:records`, `tab:recovery-tasks`, module
-  `Examples/RecordsR4`).** A `Procedure` is a family of maps of record spaces with no
+- **Measurement calculations (`sec:records`, `tab:recovery-tasks`, module
+  `Examples/RecordsRecovery`).** A `Procedure` is a family of maps of record spaces with no
   presentation-coordinate argument; `IsEven` and `RespectsRestrictions` are the two conditions,
   stated separately because neither is automatic. The identity procedure is not even
   (`identity_not_even`); the even procedure `max |y_j| · 1` is even (`maxProcedure_even`) but
@@ -300,7 +292,7 @@ the inherited normal-form and residual-data machinery. No inherited statement ch
   functors, so they add no natural transformation to the ones ruled out above. Finally the time reflection on `(q, v)` is an involution whose
   fixed trajectories are exactly those with `v = 0` (`reflectTrajectory_involution`,
   `reflectTrajectory_fixed_iff`), and `recα_trajectory` identifies this parameter calculation
-  with the inherited record-space transformation `recα`.
+  with the record-space transformation `recα`.
 
 ## Assumptions and modelling choices
 
@@ -313,12 +305,15 @@ groupoid**; the only `Groupoid` instances in the project are those of the concre
   thin. Fullness is *derived* (`OEData.isFull`), and so is invertibility of the vertical arrows
   (`OEData.ltrans_isIso`).
 - **`[IsConnected S]`** appears only where the paper uses connectedness: `rigidity`,
-  `rigidityθ`, the kernel identities, the four classification isomorphisms
-  (`autBoxGMulEquivProd`, `autBoxGOverMulEquivProd`, `autBoxGθMulEquivSemidirect`,
-  `autBoxGθOverMulEquivSemidirect`), their law and state specializations, the connected-base
-  lemmas of `LocalLifts`, the parallel-family statements of `BaseChange` and all of
-  `BaseChangeCocycle`. The normal form, the section, descent, residual actions and calibration
-  carry no such hypothesis, and neither does the componentwise classification.
+  `rigidityθ`, `unbundled_lift_classification`, the kernel identities, the four classification
+  isomorphisms (`autBoxGMulEquivProd`, `autBoxGOverMulEquivProd`, `autBoxGθMulEquivSemidirect`,
+  `autBoxGθOverMulEquivSemidirect`), their law and state specializations, the `existsUnique_Λ…`
+  lemmas, the connected-base lemmas of `LocalLifts`, the connected specializations
+  `componentFunctionsMulEquiv`, `autBoxGOverMulEquivProdOfComponents` and `componentsUnique` of
+  `Components`, the parallel-family statements of `BaseChange` and all of `BaseChangeCocycle`;
+  the header of `ObserverEquivariance.lean` gives the complete list. The normal form, the
+  section, descent, residual actions and calibration carry no such hypothesis, and neither does
+  the componentwise classification itself.
 - **`[Nonempty S]`** suffices for `ΛHom_injective`, `ΛHomOver_injective`, `ΛHomθ_injective`,
   `ΛHomθOver_injective` (injectivity fails over an empty base) and for
   `parallel_basepoints_const_unique`; `MinSpec.no_strict_retraction` also needs
@@ -334,9 +329,9 @@ groupoid**; the only `Groupoid` instances in the project are those of the concre
 - **`Λ d g`** acts on arrows by transport along the chosen vertical arrows `ltrans`, not along
   the cleavage `χ`.
 - **Naming.** `OEData.IsInvariant` is namespaced because mathlib has a root `IsInvariant`.
-  Earlier names are retained as aliases: `strict_lift` → `lift_exists`, `strict_liftθ` →
-  `twisted_lift_exists`, `exact_sequence` → `unbundled_lift_classification`.
-  `CHANGES.md` lists every intentional deviation of name or encoding.
+  The aliases `strict_lift`, `strict_liftθ` and `exact_sequence` name `lift_exists`,
+  `twisted_lift_exists` and `unbundled_lift_classification`. `CHANGES.md` records the naming and
+  encoding decisions.
 
 ## The representation question in `sec:records`
 
@@ -364,11 +359,8 @@ about the free-particle law.
   and `prop:data-implementation` are formalized for **one** selected base transformation, and
   nothing here supplies coherence for a family indexed by a group. The two concrete involution
   coherences are proved (`realImplementation_involution`, and `recα` in the record model).
-- The r5 measurement additions do not package every absolute-value statistic as a natural
+- The measurement calculations do not package every absolute-value statistic as a natural
   transformation; `maxProcedure` is the one specified counterexample.
-- Section 9 of the article (`sec:lean`) describes this modular development from revision r3 on,
-  with the four r5 additions in its subsection `sec:lean-r5`; the r2 version of Section 9 was a
-  status section about the earlier archived groupoid development only.
 
 ## Audit and reproduction
 
@@ -379,38 +371,31 @@ declaration of any imported `ObserverEquivariance.*` module — auxiliary `_proo
 constants included — depends on an axiom other than `propext`, `Classical.choice`,
 `Quot.sound`.
 
-In the pinned environment, the run of 2026-09-25 reported:
+In the pinned environment, the run of 2026-09-29 recorded in `BUILD_LOG.txt` reported:
 
 - `lake build` green: 2272 jobs, no errors, no warnings;
 - all **2766 declarations in 25 modules** depend only on the three standard axioms;
 - no `sorry`, `admit`, project-specific `axiom` or `native_decide` in Lean code.
 
-The job count dropped from the 8518 of the 2026-09-17 run because the blanket `import Mathlib`
-in `Core`, `Cocycles`, `ResidualCategory` and `Examples/Twist` has been replaced by explicit
-mathlib imports, which is a much smaller reproduction footprint; the four r5 modules were added
-in the same step. The declaration count moves with the import surface for the same reason — it
-counts the auxiliary `_proof_n` / `match_n` constants of the imported `ObserverEquivariance.*`
-modules, so it is not a count of theorems, and counts are comparable only between runs of the
-same import configuration.
+Every module imports the specific mathlib files it uses, not all of `Mathlib`. The declaration
+count depends on that import surface: it counts the auxiliary `_proof_n` / `match_n` constants of
+the imported `ObserverEquivariance.*` modules, so it is not a count of theorems, and counts are
+comparable only between runs of the same import configuration.
 
 Reproduce it with [`scripts/audit.sh`](scripts/audit.sh) (default log `BUILD_LOG_RAW.txt`),
 which records the environment, runs `lake build`, scans all Lean code for forbidden constructs
 with comments stripped, checks that the module-wide audit ran, and exits non-zero on any
 failure.
 
-The `#print axioms` block just above the audit command is a diagnostic retained from the
-archived single-file snapshot; the executable audit below it is the authoritative check.
-[`BUILD_LOG.txt`](BUILD_LOG.txt) is the log of **this** revision's run, regenerated for the
-2026-09-25 build that accompanies article revision r6: environment, exact
-commands, the git blob SHA-1 and line count of every source file as built, the scan, the build,
-the audit line for all 2766 declarations, the retained 18 `#print axioms` diagnostics, and —
-separately — the baseline run of the pre-revision file. The archived 2026-08-20 log of the earlier
-single-file groupoid development is preserved in git history at commit `f3f9182`; the two runs
-**certify nothing about each other**.
+The `#print axioms` block just above the audit command prints the axioms of selected
+declarations as a diagnostic; the executable audit below it is the authoritative check.
+[`BUILD_LOG.txt`](BUILD_LOG.txt) is the log of the recorded run: environment, exact commands, the
+git blob SHA-1 and line count of every source file as built, the scan, the build, the audit line
+for all 2766 declarations and the 18 `#print axioms` diagnostics.
 
 Two companion documents: [`LEAN_COVERAGE.md`](LEAN_COVERAGE.md) maps each result of Sections
 2–7 onto its Lean declarations, with the actual hypotheses and a status per row;
-[`CHANGES.md`](CHANGES.md) records what changed against the pre-revision snapshot.
+[`CHANGES.md`](CHANGES.md) records the naming and encoding decisions.
 
 ## Building
 
